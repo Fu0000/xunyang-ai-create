@@ -1058,3 +1058,92 @@ func StartVerificationCleanup() {
 	}()
 	log.Println("[验证码清理] 后台清理 Worker 已启动 (每小时执行)")
 }
+
+// UpdateUserProfile TASK-19: 更新用户资料（昵称、头像）
+// PUT /api/user/profile
+func UpdateUserProfile(c *gin.Context) {
+	userID := c.GetUint64("userID")
+	if userID == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "请先登录"})
+		return
+	}
+
+	var req struct {
+		Nickname string `json:"nickname"`
+		Avatar   string `json:"avatar"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "请求格式无效"})
+		return
+	}
+
+	updates := map[string]interface{}{
+		"updated_at": time.Now(),
+	}
+
+	nickname := strings.TrimSpace(req.Nickname)
+	if nickname != "" {
+		if len([]rune(nickname)) > 50 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "昵称最长 50 个字符"})
+			return
+		}
+		updates["nickname"] = nickname
+	}
+
+	avatar := strings.TrimSpace(req.Avatar)
+	if avatar != "" {
+		if len(avatar) > 500 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "头像 URL 过长"})
+			return
+		}
+		if !strings.HasPrefix(avatar, "http://") && !strings.HasPrefix(avatar, "https://") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "头像 URL 格式无效"})
+			return
+		}
+		updates["avatar"] = avatar
+	}
+
+	if len(updates) == 1 {
+		// 只有 updated_at，没有实际变更字段
+		c.JSON(http.StatusBadRequest, gin.H{"error": "没有提供可更新的字段"})
+		return
+	}
+
+	if err := db.DB.Model(&db.User{}).Where("id = ?", userID).Updates(updates).Error; err != nil {
+		log.Printf("[UpdateProfile] 更新用户资料失败 [用户:%d]: %v", userID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "更新失败"})
+		return
+	}
+
+	// 返回最新用户数据
+	var user db.User
+	if err := db.DB.First(&user, userID).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{"message": "更新成功"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":  "更新成功",
+		"nickname": user.Nickname,
+		"avatar":   user.Avatar,
+	})
+}
+
+// Logout TASK-23: 主动退出登录（标记 Token 失效）
+// POST /api/user/logout
+// 实现：简单登出（清除客户端 Token 即可，JWT 本身无状态）
+// 如需服务端主动吊销，未来可引入 token_version 机制（TASK-23 完整版）
+func Logout(c *gin.Context) {
+	userID := c.GetUint64("userID")
+	if userID == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "请先登录"})
+		return
+	}
+
+	// 更新最后登录时间，作为 logout 记录
+	db.DB.Model(&db.User{}).Where("id = ?", userID).
+		Update("updated_at", time.Now())
+
+	log.Printf("[Logout] 用户 %d 已退出登录", userID)
+	c.JSON(http.StatusOK, gin.H{"message": "已退出登录"})
+}

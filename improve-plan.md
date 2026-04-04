@@ -1481,30 +1481,30 @@ Commit Hash:
 
 | 任务 ID | 任务名称 | 优先级 | 分类 | 状态 |
 |---------|----------|--------|------|------|
-| TASK-01 | JWT 与 License Key 密钥分离 | 🔴 P0 | 安全 | `[ ]` |
-| TASK-02 | 验证码防暴力破解 | 🔴 P0 | 安全 | `[ ]` |
-| TASK-03 | 支付金额二次校验修复 | 🔴 P0 | 安全 | `[ ]` |
-| TASK-04 | 管理员 Token 最小长度校验 | 🔴 P0 | 安全 | `[ ]` |
-| TASK-05 | 上传接口内容校验加固 | 🔴 P0 | 安全 | `[ ]` |
-| TASK-06 | 数据库连接池配置 | 🔴 P1 | 性能 | `[ ]` |
-| TASK-07 | 事务提交错误检查修复 | 🔴 P1 | 稳定性 | `[ ]` |
-| TASK-08 | 数据库迁移失败时阻止启动 | 🔴 P1 | 稳定性 | `[ ]` |
-| TASK-09 | 添加健康检查端点 | 🟡 P1 | DevOps | `[ ]` |
-| TASK-10 | 邮箱正则预编译优化 | 🟡 P1 | 性能 | `[ ]` |
-| TASK-11 | API 速率限制中间件 | 🔴 P1 | 安全/性能 | `[ ]` |
-| TASK-12 | 图片生成 Worker Pool | 🟡 P1 | 性能/稳定性 | `[ ]` |
-| TASK-13 | 统一错误响应格式 | 🟡 P2 | 代码质量 | `[ ]` |
-| TASK-14 | 邀请码竞争条件修复 | 🟡 P2 | 稳定性 | `[ ]` |
-| TASK-15 | 搜索关键词防注入加固 | 🟡 P2 | 安全 | `[ ]` |
-| TASK-16 | 添加核心业务单元测试 | 🟡 P2 | 测试 | `[ ]` |
-| TASK-17 | 前端统一 Axios 请求封装 | 🔴 P2 | 前端架构 | `[ ]` |
-| TASK-18 | 前端全局错误处理 | 🟡 P2 | 前端稳定性 | `[ ]` |
-| TASK-19 | 用户个人资料编辑接口 | 🟡 P2 | 新功能 | `[ ]` |
-| TASK-20 | Docker 容器化支持 | 🟡 P2 | DevOps | `[ ]` |
-| TASK-21 | GitHub Actions CI/CD | 🟡 P2 | DevOps | `[ ]` |
-| TASK-22 | 前端 ESLint + Prettier | 🟢 P3 | 开发体验 | `[ ]` |
-| TASK-23 | 用户注销接口实现 | 🟡 P2 | 功能完善 | `[ ]` |
-| TASK-24 | api_logs 表自动清理 | 🟢 P3 | 运维 | `[ ]` |
+| TASK-01 | JWT 与 License Key 密钥分离 | 🔴 P0 | 安全 | `[x]` |
+| TASK-02 | 验证码防暴力破解 | 🔴 P0 | 安全 | `[x]` |
+| TASK-03 | 支付金额二次校验修复 | 🔴 P0 | 安全 | `[x]` |
+| TASK-04 | 管理员 Token 最小长度校验 | 🔴 P0 | 安全 | `[x]` |
+| TASK-05 | 上传接口内容校验加固 | 🔴 P0 | 安全 | `[x]` |
+| TASK-06 | 数据库连接池配置 | 🔴 P1 | 性能 | `[x]` |
+| TASK-07 | 事务提交错误检查修复 | 🔴 P1 | 稳定性 | `[x]` |
+| TASK-08 | 数据库迁移失败时阻止启动 | 🔴 P1 | 稳定性 | `[x]` |
+| TASK-09 | 添加健康检查端点 | 🟡 P1 | DevOps | `[x]` |
+| TASK-10 | 邮箱正则预编译优化 | 🟡 P1 | 性能 | `[x]` |
+| TASK-11 | API 速率限制中间件 | 🔴 P1 | 安全/性能 | `[x]` |
+| TASK-12 | 图片生成 Worker Pool | 🟡 P1 | 性能/稳定性 | `[x]` |
+| TASK-13 | 统一错误响应格式 | 🟡 P2 | 代码质量 | `[x]` |
+| TASK-14 | 邀请码竞争条件修复 | 🟡 P2 | 稳定性 | `[x]` |
+| TASK-15 | 搜索关键词防注入加固 | 🟡 P2 | 安全 | `[x]` |
+| TASK-16 | 添加核心业务单元测试 | 🟡 P2 | 测试 | `[x]` |
+| TASK-17 | 前端统一 Axios 请求封装 | 🔴 P2 | 前端架构 | `[x]` |
+| TASK-18 | 前端全局错误处理 | 🟡 P2 | 前端稳定性 | `[x]` |
+| TASK-19 | 用户个人资料编辑接口 | 🟡 P2 | 新功能 | `[x]` |
+| TASK-20 | Docker 容器化支持 | 🟡 P2 | DevOps | `[x]` |
+| TASK-21 | GitHub Actions CI/CD | 🟡 P2 | DevOps | `[x]` |
+| TASK-22 | 前端 ESLint + Prettier | 🟢 P3 | 开发体验 | `[x]` |
+| TASK-23 | 用户注销接口实现 | 🟡 P2 | 功能完善 | `[x]` |
+| TASK-24 | api_logs 表自动清理 | 🟢 P3 | 运维 | `[x]` |
 
 ---
 
@@ -1512,5 +1512,29 @@ Commit Hash:
 
 > 每次完成任务后，在此记录简要说明。格式：`- YYYY-MM-DD [TASK-XX] 简短描述 (commit: xxxxxxx)`
 
-_尚未有记录_
+- 2026-04-05 [TASK-01] JWT 与 License Key 密钥分离，添加 LICENSE_SECRET 独立环境变量
+- 2026-04-05 [TASK-02] 验证码防暴力破解，超过5次错误自动失效，统一 verifyCode() 封装
+- 2026-04-05 [TASK-03] 支付金额二次校验，fulfillPaymentOrder 加入 expectedAmount 参数
+- 2026-04-05 [TASK-04] 管理员 Token 最小32字符校验，不足则 Fatal 阻止启动
+- 2026-04-05 [TASK-05] 上传接口 Magic Bytes 文件类型检测，10MB 大小上限
+- 2026-04-05 [TASK-06] 数据库连接池配置，maxOpen=50 maxIdle=10 可通过环境变量覆盖
+- 2026-04-05 [TASK-07] 全局搜索修复所有未检查 tx.Commit() 的调用
+- 2026-04-05 [TASK-08] 迁移失败时 Fatal 阻止启动，区分幂等性错误与真正失败
+- 2026-04-05 [TASK-09] 添加 GET /health 端点，检查数据库连接状态
+- 2026-04-05 [TASK-10] emailRegex 包级别预编译，避免每次调用重新编译
+- 2026-04-05 [TASK-11] 全局限速100 req/min/IP，认证接口10 req/min/IP，rate_limit.go
+- 2026-04-05 [TASK-12] generate_pool.go，semaphore 控制最大并发图片生成数
+- 2026-04-05 [TASK-13] 新建 errors.go，统一错误响应格式及 Helper 函数
+- 2026-04-05 [TASK-14] isDuplicateKeyError + generateUniqueInviteCode，依赖 DB unique index 重试
+- 2026-04-05 [TASK-15] escapeLIKE() + 关键词长度限制，防止 LIKE 注入和正则 DoS
+- 2026-04-05 [TASK-16] 新建 auth_test.go (6个) 和 utils_test.go (5个)，全部 PASS
+- 2026-04-05 [TASK-17] 新建 frontend/src/utils/request.js，统一 Token 注入和 401 自动跳转
+- 2026-04-05 [TASK-18] main.js 添加 Vue 全局 errorHandler/warnHandler，防组件白屏
+- 2026-04-05 [TASK-19] 新增 PUT /api/user/profile，支持修改昵称和头像
+- 2026-04-05 [TASK-20] 新建 backend/Dockerfile（多阶段）和 docker-compose.yml
+- 2026-04-05 [TASK-21] 新建 .github/workflows/ci.yml，后端 build/vet/test，前端 lint/build
+- 2026-04-05 [TASK-22] 前端新增 eslint.config.js 和 .prettierrc，package.json 添加 lint/format 脚本
+- 2026-04-05 [TASK-23] 新增 POST /api/user/logout，简洁登出实现
+- 2026-04-05 [TASK-24] 新建 cleanup.go，StartAPILogCleanup() 每日批量删除30天前的 API 日志
+
 

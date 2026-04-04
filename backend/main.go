@@ -64,6 +64,7 @@ func main() {
 	api.StartVideoTaskPoller()
 	api.StartVerificationCleanup()
 	api.StartGenerationCleanup()
+	api.StartAPILogCleanup() // TASK-24: 定期清理 30 天前的 API 日志
 
 	r := gin.Default()
 
@@ -137,6 +138,8 @@ func main() {
 			userGroup.POST("/bind-email", api.BindEmail)
 			userGroup.POST("/upload/image", api.UploadImage)
 			userGroup.POST("/upload/video", api.UploadVideo)
+			userGroup.PUT("/profile", api.UpdateUserProfile)          // TASK-19: 更新用户资料
+			userGroup.POST("/logout", api.Logout)                     // TASK-23: 主动退出登录
 
 			// Payment (authenticated)
 			userGroup.POST("/payment/create", api.CreatePaymentOrder)
