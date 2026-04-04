@@ -2,9 +2,11 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"google-ai-proxy/internal/api"
 	adminapi "google-ai-proxy/internal/api/admin"
@@ -75,17 +77,43 @@ func main() {
 	corsConfig.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization", "X-Admin-Token"}
 	r.Use(cors.New(corsConfig))
 
+	// TASK-11: 全局 IP 限速（100 req/min/IP）
+	r.Use(api.GlobalRateLimitMiddleware())
+
+	// TASK-09: 健康检查端点（不需要认证），供负载均衡器和 K8s 存活探针使用
+	r.GET("/health", func(c *gin.Context) {
+		dbStatus := "ok"
+		sqlDB, err := db.DB.DB()
+		if err != nil || sqlDB.Ping() != nil {
+			dbStatus = "error"
+		}
+		status := "ok"
+		if dbStatus != "ok" {
+			status = "degraded"
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status":    status,
+			"db":        dbStatus,
+			"timestamp": time.Now().Unix(),
+		})
+	})
+
 	apiGroup := r.Group("/api")
 	{
 		// Public
 		apiGroup.GET("/pricing", api.GetPricing)
 		apiGroup.GET("/models", api.GetModels)
 
-		// Auth
-		apiGroup.POST("/auth/send-code", api.SendVerificationCode)
-		apiGroup.POST("/auth/register", api.Register)
-		apiGroup.POST("/auth/login", api.LoginWithEmail)
-		apiGroup.POST("/auth/reset-password", api.ResetPassword)
+
+		// Auth - 严格限速（10 req/min/IP），防止验证码爆破 (TASK-11)
+		authRoutes := apiGroup.Group("/auth")
+		authRoutes.Use(api.AuthRateLimitMiddleware())
+		{
+			authRoutes.POST("/send-code", api.SendVerificationCode)
+			authRoutes.POST("/register", api.Register)
+			authRoutes.POST("/login", api.LoginWithEmail)
+			authRoutes.POST("/reset-password", api.ResetPassword)
+		}
 
 		// OAuth
 		apiGroup.GET("/auth/oauth/linuxdo", api.LinuxDoOAuthURL)

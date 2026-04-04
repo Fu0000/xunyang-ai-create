@@ -17,15 +17,22 @@ var SecretKey []byte
 // LicenseSecretKey License Key 签名密钥，通过 InitSecretKey() 从环境变量加载
 var LicenseSecretKey []byte
 
-// InitSecretKey 从环境变量 JWT_SECRET 初始化密钥，必须在加载 .env 之后调用
+// InitSecretKey 从环境变量初始化密钥，必须在加载 .env 之后调用
 func InitSecretKey() {
 	secret := config.GetJWTSecret()
 	if secret == "" {
 		log.Fatal("JWT_SECRET 环境变量未设置，服务无法启动")
 	}
 	SecretKey = []byte(secret)
-	LicenseSecretKey = []byte(secret)
-	log.Println("JWT 密钥已加载")
+
+	licenseSecret := config.GetLicenseSecret()
+	if licenseSecret == "" {
+		log.Fatal("LICENSE_SECRET 环境变量未设置，服务无法启动\n" +
+			"建议使用以下命令生成： openssl rand -hex 32")
+	}
+	LicenseSecretKey = []byte(licenseSecret)
+
+	log.Println("JWT 密钥和 License 密钥已加载")
 }
 
 // LicenseClaims 用于解析License密钥

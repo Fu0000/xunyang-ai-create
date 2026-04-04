@@ -14,11 +14,66 @@ import (
 	"gorm.io/gorm"
 )
 
+// emailRegex 预编译的邮箱格式正则（TASK-10：避免每次调用重新编译）
+var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+
 // isValidEmail 验证邮箱格式
 func isValidEmail(email string) bool {
-	pattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-	matched, _ := regexp.MatchString(pattern, email)
-	return matched
+	return emailRegex.MatchString(email)
+}
+
+// maxVerifyAttempts 验证码最大尝试次数，超出后验证码失效（TASK-02）
+const maxVerifyAttempts = 5
+
+// verifyCode 验证验证码并防止暴力破解（TASK-02）。
+// 成功时返回验证记录，失败时自动写入 HTTP 响应并返回 nil。
+func verifyCode(c *gin.Context, email, code, codeType string) *db.EmailVerification {
+	// 找到该邮箱最新未过期未使用的验证码记录
+	var verification db.EmailVerification
+	result := db.DB.Where(
+		"email = ? AND type = ? AND used = ? AND expires_at > ?",
+		email, codeType, false, time.Now(),
+	).Order("created_at DESC").First(&verification)
+
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "验证码无效或已过期"})
+		return nil
+	}
+
+	// 检查尝试次数是否已超限
+	if verification.Attempts >= maxVerifyAttempts {
+		db.DB.Model(&verification).Update("used", true)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "验证码已失效，请重新获取"})
+		return nil
+	}
+
+	// 校验验证码内容
+	if verification.Code != code {
+		newAttempts := verification.Attempts + 1
+		db.DB.Model(&verification).Update("attempts", newAttempts)
+		if newAttempts >= maxVerifyAttempts {
+			db.DB.Model(&verification).Update("used", true)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "验证码错误次数过多，已失效，请重新获取"})
+		} else {
+			remaining := maxVerifyAttempts - newAttempts
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":              "验证码内容错误",
+				"remaining_attempts": remaining,
+			})
+		}
+		return nil
+	}
+
+	return &verification
+}
+
+// escapeLIKE 转义 MySQL LIKE 查询中的特殊字符（TASK-15）
+// 必须配合 ESCAPE '\\' 子句使用
+func escapeLIKE(s string) string {
+	s = strings.ReplaceAll(s, `\`, `\\`)
+	s = strings.ReplaceAll(s, `%`, `\%`)
+	s = strings.ReplaceAll(s, `_`, `\_`)
+	return s
 }
 
 // sanitizeRequestBody 移除请求体中的 image 字段以减少日志大小

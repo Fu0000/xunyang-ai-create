@@ -130,7 +130,8 @@ func CreatePaymentOrder(c *gin.Context) {
 // locks the order row, marks it paid, adds diamonds to the user, and records
 // the credit transaction. Returns true if the order was newly fulfilled,
 // false if it was already processed. An error is returned on failure.
-func fulfillPaymentOrder(orderNo, tradeNo, notifyData string) (bool, error) {
+// expectedAmount: when non-empty, verifies the order amount matches before fulfilling (TASK-03).
+func fulfillPaymentOrder(orderNo, tradeNo, notifyData, expectedAmount string) (bool, error) {
 	tx := db.DB.Begin()
 	if tx.Error != nil {
 		return false, fmt.Errorf("begin tx: %w", tx.Error)
@@ -148,6 +149,12 @@ func fulfillPaymentOrder(orderNo, tradeNo, notifyData string) (bool, error) {
 	if order.Status != "pending" {
 		tx.Rollback()
 		return false, nil
+	}
+
+	// TASK-03: Verify amount when provided (callback + active-query paths)
+	if expectedAmount != "" && !amountsEqual(expectedAmount, order.Amount) {
+		tx.Rollback()
+		return false, fmt.Errorf("amount mismatch: expected %s, got %s", order.Amount, expectedAmount)
 	}
 
 	now := time.Now()
@@ -264,7 +271,7 @@ func LinuxDoCreditNotify(c *gin.Context) {
 		return
 	}
 
-	fulfilled, err := fulfillPaymentOrder(outTradeNo, tradeNo, string(notifyJSON))
+	fulfilled, err := fulfillPaymentOrder(outTradeNo, tradeNo, string(notifyJSON), money)
 	if err != nil {
 		log.Printf("[Payment] 处理订单失败 [订单:%s]: %v", outTradeNo, err)
 		c.String(http.StatusInternalServerError, "fail")
@@ -302,7 +309,7 @@ func GetPaymentStatus(c *gin.Context) {
 		result, err := linuxdoProvider.QueryOrder(&order)
 		if err == nil && result.TradeStatus == "TRADE_SUCCESS" {
 			log.Printf("[Payment] 主动查询发现已支付 [订单:%s], 触发处理", orderNo)
-			fulfilled, fErr := fulfillPaymentOrder(order.OrderNo, result.TradeNo, "")
+			fulfilled, fErr := fulfillPaymentOrder(order.OrderNo, result.TradeNo, "", order.Amount)
 			if fErr != nil {
 				log.Printf("[Payment] 主动查询后处理失败 [订单:%s]: %v", orderNo, fErr)
 			} else if fulfilled {

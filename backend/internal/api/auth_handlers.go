@@ -18,6 +18,35 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+// isDuplicateKeyError TASK-14: 判断是否为数据库唯一键冲突错误
+func isDuplicateKeyError(err error) bool {
+	if err == nil {
+		return false
+	}
+	s := strings.ToLower(err.Error())
+	return strings.Contains(s, "duplicate entry") ||
+		strings.Contains(s, "unique constraint") ||
+		strings.Contains(s, "1062")
+}
+
+// generateUniqueInviteCode TASK-14: 依赖数据库 unique index 保证唯一性。
+// 在事务 tx 中将用户的 InviteCode 设置并写入，失败时重试（最多 maxRetry 次）。
+func generateUniqueInviteCode(tx *gorm.DB, user *db.User) error {
+	const maxRetry = 10
+	for i := 0; i < maxRetry; i++ {
+		user.InviteCode = db.GenerateInviteCode()
+		err := tx.Create(user).Error
+		if err == nil {
+			return nil
+		}
+		if !isDuplicateKeyError(err) {
+			return err
+		}
+		// 重复键错误 -> 重新生成并重试
+	}
+	return fmt.Errorf("无法生成唯一邀请码，已重试 %d 次", maxRetry)
+}
+
 // SendVerificationCode 发送验证码
 func SendVerificationCode(c *gin.Context) {
 	var req SendCodeRequest
@@ -120,15 +149,9 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// 验证验证码
-	var verification db.EmailVerification
-	result := db.DB.Where(
-		"email = ? AND code = ? AND type = ? AND used = ? AND expires_at > ?",
-		req.Email, req.Code, "register", false, time.Now(),
-	).Order("created_at DESC").First(&verification)
-
-	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "验证码无效或已过期"})
+	// 验证验证码（自动处理防暴力破解）
+	verification := verifyCode(c, req.Email, req.Code, "register")
+	if verification == nil {
 		return
 	}
 
@@ -168,19 +191,7 @@ func Register(c *gin.Context) {
 		nickname = parts[0]
 	}
 
-	// 生成邀请码
-	inviteCode := db.GenerateInviteCode()
-	// 确保邀请码唯一
-	for {
-		var count int64
-		db.DB.Model(&db.User{}).Where("invite_code = ?", inviteCode).Count(&count)
-		if count == 0 {
-			break
-		}
-		inviteCode = db.GenerateInviteCode()
-	}
-
-	// 创建用户
+	// TASK-14: 利用数据库 unique index 驱动重试，替代 TOCTOU "先查再插"
 	now := time.Now()
 	user := db.User{
 		Email:         req.Email,
@@ -188,7 +199,6 @@ func Register(c *gin.Context) {
 		Nickname:      nickname,
 		Credits:       10, // 新用户赠送10钻石
 		EmailVerified: true,
-		InviteCode:    inviteCode,
 		LastLoginAt:   &now,
 		CreatedAt:     now,
 		UpdatedAt:     now,
@@ -202,7 +212,7 @@ func Register(c *gin.Context) {
 	// 开启事务
 	tx := db.DB.Begin()
 
-	if err := tx.Create(&user).Error; err != nil {
+	if err := generateUniqueInviteCode(tx, &user); err != nil {
 		tx.Rollback()
 		log.Printf("创建用户失败: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "注册失败"})
@@ -296,9 +306,12 @@ func Register(c *gin.Context) {
 		}
 	}
 
-	tx.Commit()
+	if err := tx.Commit().Error; err != nil {
+		log.Printf("[Register] 注册事务提交失败 [邮箱:%s]: %v", req.Email, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "注册失败，请稍后重试"})
+		return
+	}
 
-	// 发送欢迎通知
 	welcomeNotification := db.UserNotification{
 		UserID:    user.ID,
 		BizKey:    fmt.Sprintf("welcome-%d", user.ID),
@@ -364,15 +377,9 @@ func ResetPassword(c *gin.Context) {
 		return
 	}
 
-	// 验证验证码
-	var verification db.EmailVerification
-	result := db.DB.Where(
-		"email = ? AND code = ? AND type = ? AND used = ? AND expires_at > ?",
-		req.Email, req.Code, "reset", false, time.Now(),
-	).Order("created_at DESC").First(&verification)
-
-	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "验证码无效或已过期"})
+	// 验证验证码（自动处理防暴力破解）
+	verification := verifyCode(c, req.Email, req.Code, "reset")
+	if verification == nil {
 		return
 	}
 
@@ -448,19 +455,13 @@ func LoginWithEmail(c *gin.Context) {
 			return
 		}
 	} else if req.Code != "" {
-		// 验证码登录
-		var verification db.EmailVerification
-		result := db.DB.Where(
-			"email = ? AND code = ? AND type = ? AND used = ? AND expires_at > ?",
-			req.Email, req.Code, "login", false, time.Now(),
-		).Order("created_at DESC").First(&verification)
-
-		if result.Error != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "验证码无效或已过期"})
+		// 验证码登录（自动处理防暴力破解）
+		verification := verifyCode(c, req.Email, req.Code, "login")
+		if verification == nil {
 			return
 		}
 		// 标记验证码已使用
-		db.DB.Model(&verification).Update("used", true)
+		db.DB.Model(verification).Update("used", true)
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "请提供密码或验证码"})
 		return
@@ -616,9 +617,12 @@ func RedeemKey(c *gin.Context) {
 		return
 	}
 
-	tx.Commit()
+	if err := tx.Commit().Error; err != nil {
+		log.Printf("[Redeem] License 兑换事务提交失败 [用户:%d]: %v", userID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "兑换失败，请稍后重试"})
+		return
+	}
 
-	// 重新获取用户最新钻石
 	db.DB.First(&user, userID)
 
 	log.Printf("用户 %d 兑换密钥成功，获得 %d 钻石，当前总钻石: %d", userID, creditsToAdd, user.Credits)
@@ -644,19 +648,20 @@ func GetUserMe(c *gin.Context) {
 		return
 	}
 
-	// 如果用户没有邀请码，生成一个
+	// TASK-14: 补全邀请码时使用 unique index 驱动重试（防 TOCTOU）
 	if user.InviteCode == "" {
-		inviteCode := db.GenerateInviteCode()
-		for {
-			var count int64
-			db.DB.Model(&db.User{}).Where("invite_code = ?", inviteCode).Count(&count)
-			if count == 0 {
+		for i := 0; i < 10; i++ {
+			code := db.GenerateInviteCode()
+			err := db.DB.Model(&user).Update("invite_code", code).Error
+			if err == nil {
+				user.InviteCode = code
 				break
 			}
-			inviteCode = db.GenerateInviteCode()
+			if !isDuplicateKeyError(err) {
+				log.Printf("[GetUserMe] 更新邀请码失败: %v", err)
+				break
+			}
 		}
-		db.DB.Model(&user).Update("invite_code", inviteCode)
-		user.InviteCode = inviteCode
 	}
 
 	// Compute checkin status
@@ -702,19 +707,21 @@ func GetInvitationRecords(c *gin.Context) {
 		return
 	}
 
-	// 如果用户没有邀请码，生成一个
+
+	// TASK-14: 补全邀请码时使用 unique index 驱动重试（防 TOCTOU）
 	if user.InviteCode == "" {
-		inviteCode := db.GenerateInviteCode()
-		for {
-			var count int64
-			db.DB.Model(&db.User{}).Where("invite_code = ?", inviteCode).Count(&count)
-			if count == 0 {
+		for i := 0; i < 10; i++ {
+			code := db.GenerateInviteCode()
+			err := db.DB.Model(&user).Update("invite_code", code).Error
+			if err == nil {
+				user.InviteCode = code
 				break
 			}
-			inviteCode = db.GenerateInviteCode()
+			if !isDuplicateKeyError(err) {
+				log.Printf("[GetInvitationRecords] 更新邀请码失败: %v", err)
+				break
+			}
 		}
-		db.DB.Model(&user).Update("invite_code", inviteCode)
-		user.InviteCode = inviteCode
 	}
 
 	// 获取邀请记录

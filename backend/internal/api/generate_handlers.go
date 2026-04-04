@@ -174,8 +174,17 @@ func handleUnifiedImageGenerate(c *gin.Context, userID uint64, req UnifiedGenera
 	}
 	genID := genRecord.ID
 
+	// TASK-12: 检查并发槽位，防止无限 goroutine 累积
+	if !acquireImageSlot() {
+		updateGenerationFailed(genID, "服务繁忙，请稍后重试", requiredCredits, userID)
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "服务繁忙，请稍后重试"})
+		return
+	}
+
 	// 后台生成
 	go func() {
+		defer releaseImageSlot() // TASK-12: 生成完成后释放槽位
+
 		inputBase64s := make([]string, 0, len(req.Images))
 		for i, imgURL := range req.Images {
 			base64Data, err := downloadImageAsBase64(imgURL)
@@ -561,8 +570,17 @@ func handleUnifiedEcommerceGenerate(c *gin.Context, userID uint64, req UnifiedGe
 	}
 	genID := genRecord.ID
 
+	// TASK-12: 检查并发槽位，防止无限 goroutine 累积
+	if !acquireImageSlot() {
+		updateGenerationFailed(genID, "服务繁忙，请稍后重试", requiredCredits, userID)
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "服务繁忙，请稍后重试"})
+		return
+	}
+
 	// 后台生成
 	go func() {
+		defer releaseImageSlot() // TASK-12: 生成完成后释放槽位
+
 		generator, err := provider.Get(modelID)
 		if err != nil {
 			updateGenerationFailed(genID, "模型加载失败", requiredCredits, userID)

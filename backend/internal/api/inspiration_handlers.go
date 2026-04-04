@@ -609,8 +609,14 @@ func listInspirationsInternal(c *gin.Context, likedOnly bool, userID uint64) {
 		)
 	}
 	if keyword != "" {
-		likeExpr := "%" + keyword + "%"
-		query = query.Where("(inspiration_posts.title LIKE ? OR inspiration_posts.prompt LIKE ?)", likeExpr, likeExpr)
+		// TASK-15: 限制关键词长度并转义 LIKE 特殊字符，防止正则 DoS
+		if len(keyword) > 50 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "search keyword too long"})
+			return
+		}
+		safeKeyword := escapeLIKE(keyword)
+		likeExpr := "%" + safeKeyword + "%"
+		query = query.Where(`(inspiration_posts.title LIKE ? ESCAPE '\\' OR inspiration_posts.prompt LIKE ? ESCAPE '\\')`, likeExpr, likeExpr)
 	}
 	if likedOnly {
 		query = query.Joins(
@@ -1220,8 +1226,14 @@ func ListMyInspirations(c *gin.Context) {
 		)
 	}
 	if keyword != "" {
-		likeExpr := "%" + keyword + "%"
-		query = query.Where("(inspiration_posts.title LIKE ? OR inspiration_posts.prompt LIKE ?)", likeExpr, likeExpr)
+		// TASK-15: 限制关键词长度并转义 LIKE 特殊字符，防止正则 DoS
+		if len(keyword) > 50 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "search keyword too long"})
+			return
+		}
+		safeKeyword := escapeLIKE(keyword)
+		likeExpr := "%" + safeKeyword + "%"
+		query = query.Where(`(inspiration_posts.title LIKE ? ESCAPE '\\' OR inspiration_posts.prompt LIKE ? ESCAPE '\\')`, likeExpr, likeExpr)
 	}
 
 	var total int64

@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -68,6 +69,7 @@ type EmailVerification struct {
 	Type      string    `gorm:"type:varchar(20);comment:register/login/reset"`
 	ExpiresAt time.Time `gorm:"type:datetime;comment:Expiration time"`
 	Used      bool      `gorm:"type:boolean;default:false;comment:Whether used"`
+	Attempts  int       `gorm:"type:int;default:0;comment:Number of failed verification attempts"`
 	CreatedAt time.Time `gorm:"type:datetime;comment:Creation time"`
 }
 
@@ -310,6 +312,32 @@ func InitDB() {
 	}
 
 	runMigrations()
+
+	// TASK-06: 配置数据库连接池，防止高并发时连接耗尽
+	sqlDB, err := DB.DB()
+	if err != nil {
+		log.Fatalf("get sql.DB failed: %v", err)
+	}
+	// 最大打开连接数（可通过 DB_MAX_OPEN_CONNS 环境变量覆盖）
+	maxOpen := 50
+	if v := os.Getenv("DB_MAX_OPEN_CONNS"); v != "" {
+		if n, err2 := strconv.Atoi(v); err2 == nil && n > 0 {
+			maxOpen = n
+		}
+	}
+	// 最大空闲连接数（可通过 DB_MAX_IDLE_CONNS 环境变量覆盖）
+	maxIdle := 10
+	if v := os.Getenv("DB_MAX_IDLE_CONNS"); v != "" {
+		if n, err2 := strconv.Atoi(v); err2 == nil && n > 0 {
+			maxIdle = n
+		}
+	}
+	sqlDB.SetMaxOpenConns(maxOpen)
+	sqlDB.SetMaxIdleConns(maxIdle)
+	sqlDB.SetConnMaxLifetime(time.Hour)
+	sqlDB.SetConnMaxIdleTime(30 * time.Minute)
+	log.Printf("database connection pool: maxOpen=%d, maxIdle=%d", maxOpen, maxIdle)
+
 	log.Println("database initialized")
 }
 
@@ -377,7 +405,12 @@ func runMigrations() {
 		failed := false
 		for _, stmt := range stmts {
 			if err := DB.Exec(stmt).Error; err != nil {
-				log.Printf("migrations: [%s] statement error (may be expected): %v", name, err)
+				// TASK-08: 区分幂等性错误（已有列/表）与真正的失败
+				if isMigrationIdempotentError(err) {
+					log.Printf("migrations: [%s] skipping idempotent error: %v", name, err)
+					continue
+				}
+				log.Printf("migrations: [%s] fatal statement error: %v", name, err)
 				failed = true
 			}
 		}
@@ -386,12 +419,35 @@ func runMigrations() {
 			DB.Exec("INSERT INTO schema_migrations (version) VALUES (?)", name)
 			log.Printf("migrations: applied %s", name)
 		} else {
-			log.Printf("migrations: %s had errors, not marking as applied", name)
+			// TASK-08: 迁移失败时 Fatal 阻止启动，确保数据库结构一致
+			log.Fatalf("migrations: %s failed — fix the migration or database state and restart", name)
 		}
 	}
 }
 
-// splitSQL splits a SQL script into individual statements by semicolons,
+// isMigrationIdempotentError returns true for errors that can be safely ignored
+// because they indicate the desired state already exists (e.g., duplicate column).
+// TASK-08: This allows ADD COLUMN IF NOT EXISTS workaround on MySQL < 8.0.4.
+func isMigrationIdempotentError(err error) bool {
+	if err == nil {
+		return false
+	}
+	errMsg := strings.ToLower(err.Error())
+	idempotentPhrases := []string{
+		"duplicate column name",
+		"already exists",
+		"table already exists",
+		"duplicate key name",
+		"can't drop",
+	}
+	for _, phrase := range idempotentPhrases {
+		if strings.Contains(errMsg, phrase) {
+			return true
+		}
+	}
+	return false
+}
+
 // ignoring empty statements and comment-only lines.
 func splitSQL(content string) []string {
 	parts := strings.Split(content, ";")

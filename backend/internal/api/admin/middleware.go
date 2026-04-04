@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/hex"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -14,13 +15,16 @@ import (
 // AuthMiddleware protects admin endpoints with a static token.
 // Provide token via X-Admin-Token header (preferred) or Authorization: Bearer <token>.
 func AuthMiddleware() gin.HandlerFunc {
+	expected := strings.TrimSpace(os.Getenv("ADMIN_TOKEN"))
+	if expected == "" {
+		log.Fatal("ADMIN_TOKEN 环境变量未配置，无法启动管理接口")
+	}
+	// TASK-04: 强制最小长度，防止使用弱 Token
+	if len(expected) < 32 {
+		log.Fatal("ADMIN_TOKEN 至少需要 32 个字符，建议使用以下命令生成：\n  openssl rand -hex 32")
+	}
+
 	return func(c *gin.Context) {
-		expected := strings.TrimSpace(os.Getenv("ADMIN_TOKEN"))
-		if expected == "" {
-			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "admin token is not configured"})
-			c.Abort()
-			return
-		}
 
 		token := strings.TrimSpace(c.GetHeader("X-Admin-Token"))
 		if token == "" {

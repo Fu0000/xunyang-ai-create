@@ -57,6 +57,14 @@ func GetJWTSecret() string {
 	return os.Getenv("JWT_SECRET")
 }
 
+// GetLicenseSecret 获取 License Key 签名密钥（独立于 JWT_SECRET）。
+func GetLicenseSecret() string {
+	if s := os.Getenv("LICENSE_SECRET"); s != "" {
+		return s
+	}
+	return os.Getenv("JWT_SECRET") // 向后兼容：若未设置则 fatal 在 auth 层
+}
+
 // GetLinuxDoClientID 获取 Linux.do OAuth Client ID。
 func GetLinuxDoClientID() string {
 	return os.Getenv("LINUXDO_CLIENT_ID")
