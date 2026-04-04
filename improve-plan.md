@@ -63,7 +63,7 @@ chore(ci): 添加 GitHub Actions 工作流
 ```
 完成时间: 2026-04-05
 修改文件: backend/internal/auth/auth.go, backend/internal/config/config.go, backend/.env.example
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: LICENSE_SECRET 独立密钥，启动时必强校验，缺失则 Fatal 退出
 ```
 
@@ -125,7 +125,7 @@ Commit Hash:
 ```
 完成时间: 2026-04-05
 修改文件: backend/migrations/027_add_verification_attempts.sql, backend/internal/api/utils.go
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: verifyCode() 统一封装，超过 5 次错误后验证码自动失效
 ```
 
@@ -180,7 +180,7 @@ Commit Hash:
 ```
 完成时间: 2026-04-05
 修改文件: backend/internal/api/payment_handlers.go
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: fulfillPaymentOrder 加入 expectedAmount 参数，主动查询路径也传入金额进行二次校验
 ```
 
@@ -238,7 +238,7 @@ Commit Hash:
 ```
 完成时间: 2026-04-05
 修改文件: backend/internal/api/admin/middleware.go
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: 添加 len(expected) >= 32 校验，不足则 Fatal 并提示生成命令
 ```
 
@@ -294,7 +294,7 @@ Commit Hash:
 ```
 完成时间: 2026-04-05
 修改文件: backend/internal/api/resource_handlers.go
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: 添加 Magic Bytes 文件类型检测（JPEG/PNG/WebP/GIF）和 10MB 大小上限，不符则 413/415
 ```
 
@@ -676,7 +676,7 @@ Commit Hash:
 ```
 完成时间: 2026-04-05
 修改文件: backend/internal/api/generate_pool.go (新建), backend/internal/api/generate_handlers.go
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: semaphore 持有并发槽位，满载时此立即退款返回 503，不再无限 goroutine
 ```
 
@@ -752,7 +752,7 @@ Commit Hash:
 ```
 完成时间: 2026-04-05
 修改文件: backend/internal/api/errors.go (新建)
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: 定义 ErrorResponse{code, message} 和语义化 Helper，为后续重构各 handler 提供基础
 ```
 
@@ -819,7 +819,7 @@ Commit Hash:
 ```
 完成时间: 2026-04-05
 修改文件: backend/internal/api/auth_handlers.go
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: 添加 isDuplicateKeyError + generateUniqueInviteCode 辅助函数，所有邀请码生成改为依赖 DB unique index 重试
 ```
 
@@ -955,7 +955,7 @@ Commit Hash:
 ```
 完成时间: 2026-04-05
 修改文件: backend/internal/auth/auth_test.go (新建), backend/internal/api/utils_test.go (新建)
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: auth 包 6 个测试函数， api 包 5 个; all PASS
 ```
 
@@ -1022,7 +1022,7 @@ Commit Hash:
 ```
 完成时间: 2026-04-05
 修改文件: frontend/src/utils/request.js (新建), frontend/src/main.js
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: 请求拦截自动附加 Token; 401 广播 auth:logout 事件; 统一提取 {code, message} 错误格式
 ```
 
@@ -1106,7 +1106,7 @@ Commit Hash:
 ```
 完成时间: 2026-04-05
 修改文件: frontend/src/main.js
-Commit Hash: 待 commit
+Commit Hash: e1d11a1/badb7dc
 备注: app.config.errorHandler 防白屏; warnHandler 开发模式暴露 Vue 警告
 ```
 
