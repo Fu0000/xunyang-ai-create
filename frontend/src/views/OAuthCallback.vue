@@ -58,7 +58,7 @@ const retry = () => {
 <template>
   <div class="oauth-callback">
     <div class="callback-card">
-      <img src="/images/icon.png" alt="小野 AI" class="logo" />
+      <img src="/images/icon.png" alt="寻氧AI" class="logo" />
 
       <template v-if="status === 'loading'">
         <div class="spinner"></div>

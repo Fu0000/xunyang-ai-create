@@ -70,7 +70,7 @@ func (p *LinuxDoCreditProvider) CreatePayment(order *db.PaymentOrder) (*PaymentR
 		"out_trade_no": order.OrderNo,
 		"notify_url":   notifyURL,
 		"return_url":   returnURL,
-		"name":         fmt.Sprintf("小野AI %s - %d diamonds", order.PlanName, order.Diamonds),
+		"name":         fmt.Sprintf("寻氧AI %s - %d diamonds", order.PlanName, order.Diamonds),
 		"money":        order.Amount,
 	}
 	params["sign"] = sign(params, key)

@@ -385,7 +385,7 @@ const downloadAsset = (url, i, fallbackExt = 'png') => {
   }
   const a = document.createElement('a')
   a.href = url
-  a.download = `nanobanana-${Date.now()}-${i}.${ext}`
+  a.download = `o2ai-${Date.now()}-${i}.${ext}`
   a.click()
 }
 

@@ -1,4 +1,4 @@
-# NanoBanana Admin Frontend
+# O2AI Admin Frontend
 
 Separated admin frontend for inspiration moderation.
 

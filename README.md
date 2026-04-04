@@ -1,4 +1,4 @@
-# 小野AI 内容创作平台
+# 寻氧AI 内容创作平台
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 

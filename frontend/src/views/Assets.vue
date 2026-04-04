@@ -200,7 +200,7 @@ const downloadImage = (url, i) => {
   if (!url) return
   const a = document.createElement('a')
   a.href = url
-  a.download = `nanobanana-${Date.now()}-${i}.png`
+  a.download = `o2ai-${Date.now()}-${i}.png`
   a.click()
 }
 

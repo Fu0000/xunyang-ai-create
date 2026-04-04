@@ -375,8 +375,8 @@ const handleLinuxDoLogin = async () => {
       <!-- Header -->
       <div class="auth-header">
         <div class="auth-brand">
-          <img src="/images/icon.png" alt="小野 AI" class="logo-icon" />
-          <h1>小野 AI</h1>
+          <img src="/images/icon.png" alt="寻氧AI" class="logo-icon" />
+          <h1>寻氧AI</h1>
         </div>
         <p class="subtitle">
           {{ mode === 'redeem' ? $t('auth.redeemDiamonds') : mode === 'register' ? $t('auth.createAccount') : mode === 'reset' ? $t('auth.resetPassword') : $t('auth.welcomeBack') }}

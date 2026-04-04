@@ -169,7 +169,7 @@ watch(
   <aside class="app-sidebar">
     <!-- Logo -->
     <div class="sidebar-logo" @click="navigateTo('/inspiration')">
-      <img src="/images/icon.png" alt="小野 AI" class="logo-icon" />
+      <img src="/images/icon.png" alt="寻氧AI" class="logo-icon" />
     </div>
 
     <!-- Nav icons -->
@@ -232,7 +232,7 @@ watch(
         </template>
         <div class="community-popover">
           <div class="community-qr">
-            <img src="/images/qrcode.jpg" :alt="$t('sidebar.communityTitle')" class="qr-image" />
+            <img src="/images/fish.jpg" :alt="$t('sidebar.communityTitle')" class="qr-image" />
           </div>
           <div class="community-body">
             <div class="community-title">{{ $t('sidebar.communityTitle') }}</div>

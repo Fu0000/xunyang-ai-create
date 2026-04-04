@@ -36,7 +36,7 @@ func InitEmail() {
 	}
 	fromName = os.Getenv("SMTP_FROM_NAME")
 	if fromName == "" {
-		fromName = "小野 AI"
+		fromName = "寻氧AI"
 	}
 
 	if smtpUser != "" && smtpPassword != "" {
@@ -62,15 +62,15 @@ func SendVerificationCode(to, code, purpose string) error {
 
 	switch purpose {
 	case "register":
-		subject = "小野 AI - 注册验证码"
+		subject = "寻氧AI - 注册验证码"
 		body = fmt.Sprintf(`
 			<html>
 			<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
 				<div style="background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); padding: 30px; text-align: center;">
-					<h1 style="color: white; margin: 0;">🎨 小野 AI</h1>
+					<h1 style="color: white; margin: 0;">🎨 寻氧AI</h1>
 				</div>
 				<div style="padding: 30px; background: #f9f9f9;">
-					<h2 style="color: #333;">欢迎注册 小野 AI</h2>
+					<h2 style="color: #333;">欢迎注册 寻氧AI</h2>
 					<p style="color: #666;">您的验证码是：</p>
 					<div style="background: white; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
 						<span style="font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 8px;">%s</span>
@@ -79,18 +79,18 @@ func SendVerificationCode(to, code, purpose string) error {
 					<p style="color: #999; font-size: 14px;">如果这不是您的操作，请忽略此邮件。</p>
 				</div>
 				<div style="background: #333; padding: 20px; text-align: center;">
-					<p style="color: #999; margin: 0; font-size: 12px;">© %d 小野 AI. All rights reserved.</p>
+					<p style="color: #999; margin: 0; font-size: 12px;">© %d 寻氧AI. All rights reserved.</p>
 				</div>
 			</body>
 			</html>
 		`, code, time.Now().Year())
 	case "login":
-		subject = "小野 AI - 登录验证码"
+		subject = "寻氧AI - 登录验证码"
 		body = fmt.Sprintf(`
 			<html>
 			<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
 				<div style="background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); padding: 30px; text-align: center;">
-					<h1 style="color: white; margin: 0;">🎨 小野 AI</h1>
+					<h1 style="color: white; margin: 0;">🎨 寻氧AI</h1>
 				</div>
 				<div style="padding: 30px; background: #f9f9f9;">
 					<h2 style="color: #333;">登录验证</h2>
@@ -102,18 +102,18 @@ func SendVerificationCode(to, code, purpose string) error {
 					<p style="color: #999; font-size: 14px;">如果这不是您的操作，请忽略此邮件。</p>
 				</div>
 				<div style="background: #333; padding: 20px; text-align: center;">
-					<p style="color: #999; margin: 0; font-size: 12px;">© %d 小野 AI. All rights reserved.</p>
+					<p style="color: #999; margin: 0; font-size: 12px;">© %d 寻氧AI. All rights reserved.</p>
 				</div>
 			</body>
 			</html>
 		`, code, time.Now().Year())
 	case "reset":
-		subject = "小野 AI - 重置密码验证码"
+		subject = "寻氧AI - 重置密码验证码"
 		body = fmt.Sprintf(`
 			<html>
 			<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
 				<div style="background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); padding: 30px; text-align: center;">
-					<h1 style="color: white; margin: 0;">🎨 小野 AI</h1>
+					<h1 style="color: white; margin: 0;">🎨 寻氧AI</h1>
 				</div>
 				<div style="padding: 30px; background: #f9f9f9;">
 					<h2 style="color: #333;">重置密码</h2>
@@ -125,13 +125,13 @@ func SendVerificationCode(to, code, purpose string) error {
 					<p style="color: #999; font-size: 14px;">如果这不是您的操作，请立即检查账号安全。</p>
 				</div>
 				<div style="background: #333; padding: 20px; text-align: center;">
-					<p style="color: #999; margin: 0; font-size: 12px;">© %d 小野 AI. All rights reserved.</p>
+					<p style="color: #999; margin: 0; font-size: 12px;">© %d 寻氧AI. All rights reserved.</p>
 				</div>
 			</body>
 			</html>
 		`, code, time.Now().Year())
 	default:
-		subject = "小野 AI - 验证码"
+		subject = "寻氧AI - 验证码"
 		body = fmt.Sprintf(`您的验证码是: %s，有效期10分钟。`, code)
 	}
 

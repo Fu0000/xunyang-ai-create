@@ -104,7 +104,7 @@ const handleStart = () => {
       <div class="nav-container">
         <div class="nav-brand">
           <img src="/images/icon.png" alt="" class="brand-icon" />
-          <span class="brand-text">小野 AI</span>
+          <span class="brand-text">寻氧AI</span>
         </div>
         <div class="nav-links">
           <a href="#features" class="nav-link">{{ $t('landing.navFeatures') }}</a>
@@ -281,7 +281,7 @@ const handleStart = () => {
         <div class="models-grid">
           <div class="model-card animate-on-scroll" style="--delay: 0s">
             <div class="model-icon">🍌</div>
-            <div class="model-name">Nanobanana Pro</div>
+            <div class="model-name">O2AI Pro</div>
             <div class="model-provider">Gemini 3 Pro</div>
             <div class="model-badge">{{ $t('landing.modelRecommended') }}</div>
           </div>
@@ -322,7 +322,7 @@ const handleStart = () => {
       <div class="section-container animate-on-scroll">
         <div class="community-card">
           <div class="community-qr">
-            <img src="/images/qrcode.jpg" alt="微信群二维码" class="qr-image" />
+            <img src="/images/fish.jpg" alt="微信群二维码" class="qr-image" />
           </div>
           <div class="community-info">
             <h3 class="community-title">{{ $t('landing.communityTitle') }}</h3>

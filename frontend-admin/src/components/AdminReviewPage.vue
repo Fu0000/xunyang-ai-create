@@ -251,7 +251,7 @@ onMounted(async () => {
     <div class="login-grid">
       <section class="intro-panel">
         <span class="intro-badge">ADMIN PANEL</span>
-        <h1>NanoBanana 管理端</h1>
+        <h1>O2AI 管理端</h1>
         <p>统一管理灵感审核、用户与生成记录。当前版本先开放 Token 登录与审核工作台。</p>
         <ul>
           <li>灵感内容审核</li>
@@ -262,7 +262,7 @@ onMounted(async () => {
 
       <a-card class="login-card" :bordered="false">
         <div class="login-head">
-          <span class="logo-mark">NB</span>
+          <span class="logo-mark">O2</span>
           <div>
             <h2>管理端登录</h2>
             <p>请输入后端配置的 ADMIN_TOKEN</p>
@@ -286,7 +286,7 @@ onMounted(async () => {
       <div class="sider-logo">
         <span class="logo-mark">NB</span>
         <div class="logo-text">
-          <strong>NanoBanana</strong>
+          <strong>O2AI</strong>
           <span>Admin Workspace</span>
         </div>
       </div>
