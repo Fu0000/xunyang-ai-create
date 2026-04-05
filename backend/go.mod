@@ -1,6 +1,6 @@
 module google-ai-proxy
 
-go 1.25.0
+go 1.23.0
 
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.10+incompatible
