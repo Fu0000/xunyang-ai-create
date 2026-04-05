@@ -1,5 +1,24 @@
 version: '3.8'
 services:
+  db:
+    image: mysql:8.0
+    container_name: xiaoye-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: XiaoyeRoot@2026
+      MYSQL_DATABASE: xiaoye_ai
+      MYSQL_USER: xiaoye_app
+      MYSQL_PASSWORD: XiaoyeApp@2026
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    networks:
+      - xiaoye-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pXiaoyeRoot@2026"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
@@ -12,6 +31,9 @@ services:
       - ./backend/.env.prod
     volumes:
       - ./data/uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - xiaoye-net
 
