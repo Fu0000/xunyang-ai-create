@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine
+FROM golang:1.23-alpine
 RUN apk add --no-cache ca-certificates tzdata
 ENV TZ=Asia/Shanghai
 ENV GOPROXY=https://goproxy.cn,https://goproxy.io,direct
