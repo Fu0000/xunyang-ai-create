@@ -138,18 +138,45 @@ const goBack = () => {
 </script>
 
 <template>
-  <div class="rp-page" @paste="handlePaste" tabindex="0">
+  <div
+    class="rp-page"
+    tabindex="0"
+    @paste="handlePaste"
+  >
     <div class="rp-topbar">
-      <button class="back-btn" @click="goBack">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
+      <button
+        class="back-btn"
+        @click="goBack"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6" />
         </svg>
         <span>{{ $t('tools.reversePrompt.back') }}</span>
       </button>
-      <h2 class="rp-page-title">{{ $t('tools.reversePrompt.title') }}</h2>
+      <h2 class="rp-page-title">
+        {{ $t('tools.reversePrompt.title') }}
+      </h2>
       <div class="rp-cost-badge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
         </svg>
         <span>{{ $t('tools.reversePrompt.costPerUse') }}</span>
       </div>
@@ -159,7 +186,9 @@ const goBack = () => {
       <!-- Left: Upload + Options -->
       <div class="rp-left">
         <div class="rp-section">
-          <div class="section-label">{{ $t('tools.reversePrompt.uploadLabel') }}</div>
+          <div class="section-label">
+            {{ $t('tools.reversePrompt.uploadLabel') }}
+          </div>
           <div
             v-if="!imageSrc"
             class="upload-zone"
@@ -169,21 +198,65 @@ const goBack = () => {
             @dragover="handleDragOver"
             @dragleave="handleDragLeave"
           >
-            <svg class="upload-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
+            <svg
+              class="upload-icon"
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line
+                x1="12"
+                y1="3"
+                x2="12"
+                y2="15"
+              />
             </svg>
-            <p class="upload-text">{{ $t('tools.reversePrompt.upload') }}</p>
-            <p class="upload-hint">{{ $t('tools.reversePrompt.uploadHint') }}</p>
+            <p class="upload-text">
+              {{ $t('tools.reversePrompt.upload') }}
+            </p>
+            <p class="upload-hint">
+              {{ $t('tools.reversePrompt.uploadHint') }}
+            </p>
           </div>
-          <div v-else class="preview-area">
-            <img :src="imageSrc" class="preview-img" alt="uploaded" />
-            <button class="change-btn" @click="openFilePicker" :title="$t('tools.reversePrompt.changeImage')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
+          <div
+            v-else
+            class="preview-area"
+          >
+            <img
+              :src="imageSrc"
+              class="preview-img"
+              alt="uploaded"
+            >
+            <button
+              class="change-btn"
+              :title="$t('tools.reversePrompt.changeImage')"
+              @click="openFilePicker"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line
+                  x1="12"
+                  y1="3"
+                  x2="12"
+                  y2="15"
+                />
               </svg>
             </button>
           </div>
@@ -193,12 +266,14 @@ const goBack = () => {
             accept="image/png,image/jpeg,image/webp,image/bmp"
             style="display:none"
             @change="handleFileSelect"
-          />
+          >
         </div>
 
         <!-- Options -->
         <div class="rp-section">
-          <div class="section-label">{{ $t('tools.reversePrompt.optionsLabel') }}</div>
+          <div class="section-label">
+            {{ $t('tools.reversePrompt.optionsLabel') }}
+          </div>
           <div class="options-grid">
             <div class="option-group">
               <span class="option-label">{{ $t('tools.reversePrompt.language') }}</span>
@@ -208,7 +283,9 @@ const goBack = () => {
                   :key="opt.value"
                   :class="['chip', { active: language === opt.value }]"
                   @click="language = opt.value"
-                >{{ $t(opt.labelKey) }}</button>
+                >
+                  {{ $t(opt.labelKey) }}
+                </button>
               </div>
             </div>
             <div class="option-group">
@@ -229,13 +306,31 @@ const goBack = () => {
             type="primary"
             :disabled="!imageSrc || loading"
             :loading="loading"
-            @click="submit"
             class="submit-btn"
+            @click="submit"
           >
             <template #icon>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="8"
+                />
+                <line
+                  x1="21"
+                  y1="21"
+                  x2="16.65"
+                  y2="16.65"
+                />
               </svg>
             </template>
             {{ loading ? $t('tools.reversePrompt.analyzing') : $t('tools.reversePrompt.submit') }}
@@ -245,33 +340,78 @@ const goBack = () => {
 
       <!-- Right: Result -->
       <div class="rp-right">
-        <div class="section-label">{{ $t('tools.reversePrompt.resultLabel') }}</div>
-        <div v-if="loading" class="result-area result-loading">
+        <div class="section-label">
+          {{ $t('tools.reversePrompt.resultLabel') }}
+        </div>
+        <div
+          v-if="loading"
+          class="result-area result-loading"
+        >
           <NSpin size="medium" />
           <span class="loading-text">{{ $t('tools.reversePrompt.analyzing') }}</span>
         </div>
-        <div v-else-if="resultPrompt" class="result-area result-ready">
-          <div class="result-prompt">{{ resultPrompt }}</div>
+        <div
+          v-else-if="resultPrompt"
+          class="result-area result-ready"
+        >
+          <div class="result-prompt">
+            {{ resultPrompt }}
+          </div>
           <div class="result-footer">
-            <div class="result-meta" v-if="resultMeta">
+            <div
+              v-if="resultMeta"
+              class="result-meta"
+            >
               <span class="meta-item">{{ $t('tools.reversePrompt.creditsSpent', { n: resultMeta.credits_spent }) }}</span>
               <span class="meta-sep">·</span>
               <span class="meta-item">{{ resultMeta.latency_ms }}ms</span>
             </div>
             <div class="result-actions">
-              <NButton size="small" @click="copyPrompt">
+              <NButton
+                size="small"
+                @click="copyPrompt"
+              >
                 <template #icon>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect
+                      x="9"
+                      y="9"
+                      width="13"
+                      height="13"
+                      rx="2"
+                      ry="2"
+                    />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                   </svg>
                 </template>
                 {{ $t('tools.reversePrompt.copy') }}
               </NButton>
-              <NButton size="small" type="primary" @click="useForGenerate">
+              <NButton
+                size="small"
+                type="primary"
+                @click="useForGenerate"
+              >
                 <template #icon>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polygon points="5 3 19 12 5 21 5 3" />
                   </svg>
                 </template>
                 {{ $t('tools.reversePrompt.useGenerate') }}
@@ -279,12 +419,35 @@ const goBack = () => {
             </div>
           </div>
         </div>
-        <div v-else class="result-area result-empty">
-          <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
+        <div
+          v-else
+          class="result-area result-empty"
+        >
+          <svg
+            class="empty-icon"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line
+              x1="16"
+              y1="13"
+              x2="8"
+              y2="13"
+            />
+            <line
+              x1="16"
+              y1="17"
+              x2="8"
+              y2="17"
+            />
           </svg>
           <span class="empty-text">{{ $t('tools.reversePrompt.noResult') }}</span>
         </div>

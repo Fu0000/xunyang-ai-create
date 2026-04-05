@@ -2,7 +2,9 @@
   <main class="legal-page">
     <article class="legal-card">
       <h1>隐私政策</h1>
-      <p class="meta">更新日期：2026-02-13</p>
+      <p class="meta">
+        更新日期：2026-02-13
+      </p>
 
       <h2>1. 我们收集的信息</h2>
       <p>为提供服务，我们可能收集您提交的账户信息、登录信息、设备与日志信息，以及您在平台内上传或生成的内容数据。</p>
@@ -31,7 +33,12 @@
       <h2>9. 联系方式</h2>
       <p>如您对本政策有疑问，可通过平台内公告或客服渠道与我们联系。</p>
 
-      <router-link to="/" class="back-link">返回首页</router-link>
+      <router-link
+        to="/"
+        class="back-link"
+      >
+        返回首页
+      </router-link>
     </article>
   </main>
 </template>

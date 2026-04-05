@@ -147,6 +147,16 @@ export const useUserStore = defineStore('user', () => {
     return response.data
   }
 
+  // 更新用户资料
+  async function updateProfile(data) {
+    if (!token.value) return
+    const response = await axios.put('/api/user/profile', data, {
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+    await fetchUserInfo()
+    return response.data
+  }
+
   return {
     // 状态
     isLoggedIn,
@@ -184,6 +194,7 @@ export const useUserStore = defineStore('user', () => {
     bindEmail,
     dailyCheckin,
     createPaymentOrder,
-    getPaymentStatus
+    getPaymentStatus,
+    updateProfile
   }
 })

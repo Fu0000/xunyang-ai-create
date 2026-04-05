@@ -14,16 +14,28 @@ const handleSuccess = () => {
 </script>
 
 <template>
-  <div class="redeem-modal-overlay" @click.self="emit('close')">
+  <div
+    class="redeem-modal-overlay"
+    @click.self="emit('close')"
+  >
     <div class="redeem-modal">
       <!-- 关闭按钮 -->
-      <button class="close-btn" @click="emit('close')">✕</button>
+      <button
+        class="close-btn"
+        @click="emit('close')"
+      >
+        ✕
+      </button>
 
       <!-- Header -->
       <div class="redeem-header">
-        <div class="header-icon">💎</div>
+        <div class="header-icon">
+          💎
+        </div>
         <h2>{{ $t('redeem.title') }}</h2>
-        <p class="subtitle">{{ $t('redeem.subtitle') }}</p>
+        <p class="subtitle">
+          {{ $t('redeem.subtitle') }}
+        </p>
       </div>
 
       <!-- 余额展示 -->
@@ -41,10 +53,15 @@ const handleSuccess = () => {
         <div class="buy-divider">
           <span>{{ $t('redeem.noKey') }}</span>
         </div>
-        <button class="buy-link" @click="emit('open-pricing')">
+        <button
+          class="buy-link"
+          @click="emit('open-pricing')"
+        >
           💎 {{ $t('redeem.viewPricing') }} →
         </button>
-        <p class="buy-tip">{{ $t('redeem.buyTip') }}</p>
+        <p class="buy-tip">
+          {{ $t('redeem.buyTip') }}
+        </p>
       </div>
     </div>
   </div>

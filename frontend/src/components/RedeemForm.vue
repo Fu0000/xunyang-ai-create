@@ -47,7 +47,10 @@ const handleRedeem = async () => {
 </script>
 
 <template>
-  <form @submit.prevent="handleRedeem" class="redeem-form">
+  <form
+    class="redeem-form"
+    @submit.prevent="handleRedeem"
+  >
     <div class="form-group">
       <label class="form-label">{{ $t('redeem.key') }}</label>
       <input
@@ -56,23 +59,38 @@ const handleRedeem = async () => {
         :placeholder="$t('redeem.keyPlaceholder')"
         class="form-input"
         :disabled="loading"
-      />
+      >
     </div>
 
-    <p class="form-hint">{{ $t('redeem.hint') }}</p>
+    <p class="form-hint">
+      {{ $t('redeem.hint') }}
+    </p>
 
-    <div v-if="successMessage" class="success-alert">
+    <div
+      v-if="successMessage"
+      class="success-alert"
+    >
       <span class="success-icon">✓</span>
       <span>{{ successMessage }}</span>
     </div>
 
-    <div v-if="error" class="error-alert">
+    <div
+      v-if="error"
+      class="error-alert"
+    >
       <span class="error-icon">⚠️</span>
       <span>{{ error }}</span>
     </div>
 
-    <button type="submit" :disabled="loading" class="submit-btn">
-      <span v-if="loading" class="spinner"></span>
+    <button
+      type="submit"
+      :disabled="loading"
+      class="submit-btn"
+    >
+      <span
+        v-if="loading"
+        class="spinner"
+      />
       {{ loading ? $t('redeem.redeeming') : $t('redeem.redeem') }}
     </button>
   </form>

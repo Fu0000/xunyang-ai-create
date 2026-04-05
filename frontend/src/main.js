@@ -1,11 +1,15 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import naive from 'naive-ui'
+import naive, { createDiscreteApi, darkTheme } from 'naive-ui'
 import router from './router'
 import i18n from './i18n'
 import './style.css'
 import App from './App.vue'
 import { usePricingStore } from './stores/pricing'
+
+const { message } = createDiscreteApi(['message'], {
+  configProviderProps: { theme: darkTheme }
+})
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -18,6 +22,8 @@ app.use(naive)
 // TASK-18: 全局 Vue 错误处理，防止未捕获异常导致白屏
 app.config.errorHandler = (err, _vm, info) => {
   console.error('[Vue Error]', err, '\nComponent Info:', info)
+  const errMsg = err?.message || '未知错误'
+  message.error(`应用遇到问题: ${errMsg}`, { duration: 5000 })
   // 如需接入 Sentry 等监控，在此添加：
   // Sentry.captureException(err, { extra: { info } })
 }

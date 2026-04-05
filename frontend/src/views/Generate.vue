@@ -423,56 +423,138 @@ const getStatusText = (s) => ({ queued: t('generate.queued'), running: t('genera
 
 <template>
   <div class="generate-page">
-    <div class="timeline-area" ref="resultsContainer" @scroll="handleScroll">
-      <div v-if="!hasAnyContent" class="empty-state">
+    <div
+      ref="resultsContainer"
+      class="timeline-area"
+      @scroll="handleScroll"
+    >
+      <div
+        v-if="!hasAnyContent"
+        class="empty-state"
+      >
         <p>{{ $t('generate.noRecords') }}</p>
-        <p class="empty-hint">{{ $t('generate.noRecordsHint') }}</p>
+        <p class="empty-hint">
+          {{ $t('generate.noRecordsHint') }}
+        </p>
       </div>
 
-      <template v-for="group in timelineGroups" :key="group.label">
-        <div class="date-divider"><span>{{ group.label }}</span></div>
-        <template v-for="gen in group.items" :key="gen.id">
+      <template
+        v-for="group in timelineGroups"
+        :key="group.label"
+      >
+        <div class="date-divider">
+          <span>{{ group.label }}</span>
+        </div>
+        <template
+          v-for="gen in group.items"
+          :key="gen.id"
+        >
           <div class="chat-row user-row">
             <div class="bubble user-bubble">
-              <p class="bubble-text">{{ gen.prompt }}</p>
+              <p class="bubble-text">
+                {{ gen.prompt }}
+              </p>
             </div>
           </div>
           <div class="chat-row ai-row">
-            <div class="ai-avatar"><img src="/images/icon.png" alt="" class="ai-avatar-img" /></div>
+            <div class="ai-avatar">
+              <img
+                src="/images/icon.png"
+                alt=""
+                class="ai-avatar-img"
+              >
+            </div>
             <div class="bubble ai-bubble">
-              <div v-if="['generating','queued','running'].includes(gen.status)" class="generating-state">
+              <div
+                v-if="['generating','queued','running'].includes(gen.status)"
+                class="generating-state"
+              >
                 <NSpin size="small" /><span>{{ getStatusText(gen.status) }}</span>
               </div>
-              <div v-else-if="gen.status === 'failed'" class="error-state">
+              <div
+                v-else-if="gen.status === 'failed'"
+                class="error-state"
+              >
                 <span>❌</span><span>{{ gen.error_msg || $t('generate.failed') }}</span>
-                <NButton size="tiny" quaternary @click="regenerate(gen)">{{ $t('generate.retry') }}</NButton>
+                <NButton
+                  size="tiny"
+                  quaternary
+                  @click="regenerate(gen)"
+                >
+                  {{ $t('generate.retry') }}
+                </NButton>
               </div>
-              <div v-else-if="gen.images?.length" class="result-images">
+              <div
+                v-else-if="gen.images?.length"
+                class="result-images"
+              >
                 <NImageGroup>
-                  <div class="image-grid" :class="{ single: gen.images.length === 1 }">
-                    <div v-for="(img, i) in gen.images" :key="i" class="image-item">
-                      <NImage :src="img" object-fit="contain" lazy :preview-src="img" />
+                  <div
+                    class="image-grid"
+                    :class="{ single: gen.images.length === 1 }"
+                  >
+                    <div
+                      v-for="(img, i) in gen.images"
+                      :key="i"
+                      class="image-item"
+                    >
+                      <NImage
+                        :src="img"
+                        object-fit="contain"
+                        lazy
+                        :preview-src="img"
+                      />
                     </div>
                   </div>
                 </NImageGroup>
                 <div class="result-actions">
-                  <button class="result-action-btn" type="button" :title="t('generate.download')" @click="downloadAsset(gen.images[0], 0, 'png')">
-                    <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <button
+                    class="result-action-btn"
+                    type="button"
+                    :title="t('generate.download')"
+                    @click="downloadAsset(gen.images[0], 0, 'png')"
+                  >
+                    <svg
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M12 4v10" />
                       <path d="M8 10l4 4 4-4" />
                       <path d="M5 19h14" />
                     </svg>
                   </button>
-                  <button class="result-action-btn" type="button" :title="t('generate.regenerate')" @click="regenerate(gen)">
-                    <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <button
+                    class="result-action-btn"
+                    type="button"
+                    :title="t('generate.regenerate')"
+                    @click="regenerate(gen)"
+                  >
+                    <svg
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M20 8a8 8 0 0 0-14-3" />
                       <path d="M6 5H3V2" />
                       <path d="M4 16a8 8 0 0 0 14 3" />
                       <path d="M18 19h3v3" />
                     </svg>
                   </button>
-                  <button class="result-action-btn" type="button" :title="t('generate.editFromThis')" @click="editImage(gen.images[0])">
-                    <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <button
+                    class="result-action-btn"
+                    type="button"
+                    :title="t('generate.editFromThis')"
+                    @click="editImage(gen.images[0])"
+                  >
+                    <svg
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20z" />
                       <path d="M14.5 5.5l4 4" />
                     </svg>
@@ -485,44 +567,109 @@ const getStatusText = (s) => ({ queued: t('generate.queued'), running: t('genera
                     :disabled="isShareLoading(gen)"
                     @click="toggleShareInspiration(gen)"
                   >
-                    <svg v-if="gen.is_shared" class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <svg
+                      v-if="gen.is_shared"
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M5 12l4 4L19 6" />
                     </svg>
-                    <svg v-else class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <svg
+                      v-else
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M12 5v10" />
                       <path d="M8 9l4-4 4 4" />
                       <path d="M5 14v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4" />
                     </svg>
                   </button>
-                  <NPopover trigger="click" placement="top" :show-arrow="false">
+                  <NPopover
+                    trigger="click"
+                    placement="top"
+                    :show-arrow="false"
+                  >
                     <template #trigger>
-                      <button class="result-action-btn" type="button" :title="t('generate.toolbox')">
-                        <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <button
+                        class="result-action-btn"
+                        type="button"
+                        :title="t('generate.toolbox')"
+                      >
+                        <svg
+                          class="result-action-icon"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          aria-hidden="true"
+                        >
                           <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                         </svg>
                       </button>
                     </template>
                     <div class="toolbox-menu">
-                      <button class="toolbox-menu-item" @click="openImageToSvg(gen.images[0])">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                      <button
+                        class="toolbox-menu-item"
+                        @click="openImageToSvg(gen.images[0])"
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /></svg>
                         {{ t('generate.toSvg') }}
                       </button>
                     </div>
                   </NPopover>
                 </div>
               </div>
-              <div v-else-if="gen.video_url" class="video-result">
-                <video controls :src="gen.video_url" class="result-video" preload="metadata" />
+              <div
+                v-else-if="gen.video_url"
+                class="video-result"
+              >
+                <video
+                  controls
+                  :src="gen.video_url"
+                  class="result-video"
+                  preload="metadata"
+                />
                 <div class="result-actions">
-                  <button class="result-action-btn" type="button" :title="t('generate.download')" @click="downloadAsset(gen.video_url, 0, 'mp4')">
-                    <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <button
+                    class="result-action-btn"
+                    type="button"
+                    :title="t('generate.download')"
+                    @click="downloadAsset(gen.video_url, 0, 'mp4')"
+                  >
+                    <svg
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M12 4v10" />
                       <path d="M8 10l4 4 4-4" />
                       <path d="M5 19h14" />
                     </svg>
                   </button>
-                  <button class="result-action-btn" type="button" :title="t('generate.regenerate')" @click="regenerate(gen)">
-                    <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <button
+                    class="result-action-btn"
+                    type="button"
+                    :title="t('generate.regenerate')"
+                    @click="regenerate(gen)"
+                  >
+                    <svg
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M20 8a8 8 0 0 0-14-3" />
                       <path d="M6 5H3V2" />
                       <path d="M4 16a8 8 0 0 0 14 3" />
@@ -537,10 +684,22 @@ const getStatusText = (s) => ({ queued: t('generate.queued'), running: t('genera
                     :disabled="isShareLoading(gen)"
                     @click="toggleShareInspiration(gen)"
                   >
-                    <svg v-if="gen.is_shared" class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <svg
+                      v-if="gen.is_shared"
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M5 12l4 4L19 6" />
                     </svg>
-                    <svg v-else class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <svg
+                      v-else
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M12 5v10" />
                       <path d="M8 9l4-4 4 4" />
                       <path d="M5 14v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4" />
@@ -548,43 +707,101 @@ const getStatusText = (s) => ({ queued: t('generate.queued'), running: t('genera
                   </button>
                 </div>
               </div>
-              <div v-if="gen.credits_cost" class="credits-used">{{ $t('generate.creditsUsed', { credits: gen.credits_cost }) }}</div>
+              <div
+                v-if="gen.credits_cost"
+                class="credits-used"
+              >
+                {{ $t('generate.creditsUsed', { credits: gen.credits_cost }) }}
+              </div>
             </div>
           </div>
         </template>
       </template>
 
       <template v-if="currentResults.length">
-        <div class="date-divider"><span>{{ $t('generate.currentSession') }}</span></div>
-        <template v-for="result in currentResults" :key="result.id">
+        <div class="date-divider">
+          <span>{{ $t('generate.currentSession') }}</span>
+        </div>
+        <template
+          v-for="result in currentResults"
+          :key="result.id"
+        >
           <div class="chat-row user-row">
             <div class="bubble user-bubble">
               <span class="bubble-tag">{{ result.type === 'video' ? $t('generate.video') : result.type === 'ecommerce' ? $t('generate.ecommerce') : $t('generate.image') }}</span>
-              <p class="bubble-text">{{ result.prompt }}</p>
+              <p class="bubble-text">
+                {{ result.prompt }}
+              </p>
             </div>
           </div>
           <div class="chat-row ai-row">
-            <div class="ai-avatar"><img src="/images/icon.png" alt="" class="ai-avatar-img" /></div>
+            <div class="ai-avatar">
+              <img
+                src="/images/icon.png"
+                alt=""
+                class="ai-avatar-img"
+              >
+            </div>
             <div class="bubble ai-bubble">
-              <div v-if="['generating','queued','running'].includes(result.status)" class="generating-state">
+              <div
+                v-if="['generating','queued','running'].includes(result.status)"
+                class="generating-state"
+              >
                 <NSpin size="small" /><span>{{ getStatusText(result.status) }}</span>
               </div>
-              <div v-else-if="result.status === 'failed'" class="error-state">
+              <div
+                v-else-if="result.status === 'failed'"
+                class="error-state"
+              >
                 <span>❌</span><span>{{ result.error_msg || $t('generate.failed') }}</span>
-                <NButton size="tiny" quaternary @click="regenerate(result)">{{ $t('generate.retry') }}</NButton>
+                <NButton
+                  size="tiny"
+                  quaternary
+                  @click="regenerate(result)"
+                >
+                  {{ $t('generate.retry') }}
+                </NButton>
               </div>
-              <div v-else-if="result.video_url" class="video-result">
-                <video controls :src="result.video_url" class="result-video" preload="metadata" />
+              <div
+                v-else-if="result.video_url"
+                class="video-result"
+              >
+                <video
+                  controls
+                  :src="result.video_url"
+                  class="result-video"
+                  preload="metadata"
+                />
                 <div class="result-actions">
-                  <button class="result-action-btn" type="button" :title="t('generate.download')" @click="downloadAsset(result.video_url, 0, 'mp4')">
-                    <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <button
+                    class="result-action-btn"
+                    type="button"
+                    :title="t('generate.download')"
+                    @click="downloadAsset(result.video_url, 0, 'mp4')"
+                  >
+                    <svg
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M12 4v10" />
                       <path d="M8 10l4 4 4-4" />
                       <path d="M5 19h14" />
                     </svg>
                   </button>
-                  <button class="result-action-btn" type="button" :title="t('generate.regenerate')" @click="regenerate(result)">
-                    <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <button
+                    class="result-action-btn"
+                    type="button"
+                    :title="t('generate.regenerate')"
+                    @click="regenerate(result)"
+                  >
+                    <svg
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M20 8a8 8 0 0 0-14-3" />
                       <path d="M6 5H3V2" />
                       <path d="M4 16a8 8 0 0 0 14 3" />
@@ -599,44 +816,106 @@ const getStatusText = (s) => ({ queued: t('generate.queued'), running: t('genera
                     :disabled="isShareLoading(result)"
                     @click="toggleShareInspiration(result)"
                   >
-                    <svg v-if="result.is_shared" class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <svg
+                      v-if="result.is_shared"
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M5 12l4 4L19 6" />
                     </svg>
-                    <svg v-else class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <svg
+                      v-else
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M12 5v10" />
                       <path d="M8 9l4-4 4 4" />
                       <path d="M5 14v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4" />
                     </svg>
                   </button>
                 </div>
-                <div v-if="result.credits_cost" class="credits-used">{{ $t('generate.creditsUsed', { credits: result.credits_cost }) }}</div>
+                <div
+                  v-if="result.credits_cost"
+                  class="credits-used"
+                >
+                  {{ $t('generate.creditsUsed', { credits: result.credits_cost }) }}
+                </div>
               </div>
-              <div v-else-if="result.images?.length" class="result-images">
+              <div
+                v-else-if="result.images?.length"
+                class="result-images"
+              >
                 <NImageGroup>
-                  <div class="image-grid" :class="{ single: result.images.length === 1 }">
-                    <div v-for="(img, i) in result.images" :key="i" class="image-item">
-                      <NImage :src="img" object-fit="contain" lazy :preview-src="img" />
+                  <div
+                    class="image-grid"
+                    :class="{ single: result.images.length === 1 }"
+                  >
+                    <div
+                      v-for="(img, i) in result.images"
+                      :key="i"
+                      class="image-item"
+                    >
+                      <NImage
+                        :src="img"
+                        object-fit="contain"
+                        lazy
+                        :preview-src="img"
+                      />
                     </div>
                   </div>
                 </NImageGroup>
                 <div class="result-actions">
-                  <button class="result-action-btn" type="button" :title="t('generate.download')" @click="downloadAsset(result.images[0], 0, 'png')">
-                    <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <button
+                    class="result-action-btn"
+                    type="button"
+                    :title="t('generate.download')"
+                    @click="downloadAsset(result.images[0], 0, 'png')"
+                  >
+                    <svg
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M12 4v10" />
                       <path d="M8 10l4 4 4-4" />
                       <path d="M5 19h14" />
                     </svg>
                   </button>
-                  <button class="result-action-btn" type="button" :title="t('generate.regenerate')" @click="regenerate(result)">
-                    <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <button
+                    class="result-action-btn"
+                    type="button"
+                    :title="t('generate.regenerate')"
+                    @click="regenerate(result)"
+                  >
+                    <svg
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M20 8a8 8 0 0 0-14-3" />
                       <path d="M6 5H3V2" />
                       <path d="M4 16a8 8 0 0 0 14 3" />
                       <path d="M18 19h3v3" />
                     </svg>
                   </button>
-                  <button class="result-action-btn" type="button" :title="t('generate.editFromThis')" @click="editImage(result.images[0])">
-                    <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <button
+                    class="result-action-btn"
+                    type="button"
+                    :title="t('generate.editFromThis')"
+                    @click="editImage(result.images[0])"
+                  >
+                    <svg
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20z" />
                       <path d="M14.5 5.5l4 4" />
                     </svg>
@@ -649,32 +928,74 @@ const getStatusText = (s) => ({ queued: t('generate.queued'), running: t('genera
                     :disabled="isShareLoading(result)"
                     @click="toggleShareInspiration(result)"
                   >
-                    <svg v-if="result.is_shared" class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <svg
+                      v-if="result.is_shared"
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M5 12l4 4L19 6" />
                     </svg>
-                    <svg v-else class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <svg
+                      v-else
+                      class="result-action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
                       <path d="M12 5v10" />
                       <path d="M8 9l4-4 4 4" />
                       <path d="M5 14v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4" />
                     </svg>
                   </button>
-                  <NPopover trigger="click" placement="top" :show-arrow="false">
+                  <NPopover
+                    trigger="click"
+                    placement="top"
+                    :show-arrow="false"
+                  >
                     <template #trigger>
-                      <button class="result-action-btn" type="button" :title="t('generate.toolbox')">
-                        <svg class="result-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <button
+                        class="result-action-btn"
+                        type="button"
+                        :title="t('generate.toolbox')"
+                      >
+                        <svg
+                          class="result-action-icon"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          aria-hidden="true"
+                        >
                           <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                         </svg>
                       </button>
                     </template>
                     <div class="toolbox-menu">
-                      <button class="toolbox-menu-item" @click="openImageToSvg(result.images[0])">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                      <button
+                        class="toolbox-menu-item"
+                        @click="openImageToSvg(result.images[0])"
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /></svg>
                         {{ t('generate.toSvg') }}
                       </button>
                     </div>
                   </NPopover>
                 </div>
-                <div v-if="result.credits_cost" class="credits-used">{{ $t('generate.creditsUsed', { credits: result.credits_cost }) }}</div>
+                <div
+                  v-if="result.credits_cost"
+                  class="credits-used"
+                >
+                  {{ $t('generate.creditsUsed', { credits: result.credits_cost }) }}
+                </div>
               </div>
             </div>
           </div>

@@ -172,19 +172,35 @@ onMounted(() => {
 <template>
   <div class="svg-page">
     <div class="svg-topbar">
-      <button class="back-btn" @click="goBack">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
+      <button
+        class="back-btn"
+        @click="goBack"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6" />
         </svg>
         <span>{{ $t('tools.svg.back') }}</span>
       </button>
-      <h2 class="svg-page-title">{{ $t('tools.imageToSvg') }}</h2>
+      <h2 class="svg-page-title">
+        {{ $t('tools.imageToSvg') }}
+      </h2>
     </div>
 
     <div class="svg-main">
       <!-- Left: Original image -->
       <div class="svg-panel">
-        <div class="panel-label">{{ $t('tools.svg.original') }}</div>
+        <div class="panel-label">
+          {{ $t('tools.svg.original') }}
+        </div>
         <div
           v-if="!originalSrc"
           class="upload-zone"
@@ -194,21 +210,64 @@ onMounted(() => {
           @dragover="handleDragOver"
           @dragleave="handleDragLeave"
         >
-          <svg class="upload-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
+          <svg
+            class="upload-icon"
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line
+              x1="12"
+              y1="3"
+              x2="12"
+              y2="15"
+            />
           </svg>
-          <p class="upload-text">{{ $t('tools.svg.upload') }}</p>
-          <p class="upload-hint">{{ $t('tools.svg.uploadHint') }}</p>
+          <p class="upload-text">
+            {{ $t('tools.svg.upload') }}
+          </p>
+          <p class="upload-hint">
+            {{ $t('tools.svg.uploadHint') }}
+          </p>
         </div>
-        <div v-else class="preview-area">
-          <img :src="originalSrc" class="preview-img" alt="original" />
-          <button class="change-btn" @click="openFilePicker">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
+        <div
+          v-else
+          class="preview-area"
+        >
+          <img
+            :src="originalSrc"
+            class="preview-img"
+            alt="original"
+          >
+          <button
+            class="change-btn"
+            @click="openFilePicker"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line
+                x1="12"
+                y1="3"
+                x2="12"
+                y2="15"
+              />
             </svg>
           </button>
         </div>
@@ -218,21 +277,37 @@ onMounted(() => {
           accept="image/png,image/jpeg,image/bmp"
           style="display:none"
           @change="handleFileSelect"
-        />
+        >
       </div>
 
       <!-- Right: SVG Preview -->
       <div class="svg-panel">
-        <div class="panel-label">{{ $t('tools.svg.result') }}</div>
-        <div v-if="converting" class="preview-area loading-area">
+        <div class="panel-label">
+          {{ $t('tools.svg.result') }}
+        </div>
+        <div
+          v-if="converting"
+          class="preview-area loading-area"
+        >
           <NSpin size="medium" />
           <span class="converting-text">{{ $t('tools.svg.converting') }}</span>
         </div>
-        <div v-else-if="svgString" class="preview-area svg-preview">
-          <div class="svg-render" v-html="svgString"></div>
-          <div class="svg-size-badge">{{ svgFileSize() }}</div>
+        <div
+          v-else-if="svgString"
+          class="preview-area svg-preview"
+        >
+          <div
+            class="svg-render"
+            v-html="svgString"
+          />
+          <div class="svg-size-badge">
+            {{ svgFileSize() }}
+          </div>
         </div>
-        <div v-else class="preview-area empty-preview">
+        <div
+          v-else
+          class="preview-area empty-preview"
+        >
           <span class="empty-text">{{ $t('tools.svg.noResult') }}</span>
         </div>
       </div>
@@ -249,20 +324,43 @@ onMounted(() => {
               :key="p.key"
               :class="['preset-chip', { active: activePreset === p.key }]"
               @click="applyPreset(p)"
-            >{{ $t(p.label) }}</button>
+            >
+              {{ $t(p.label) }}
+            </button>
           </div>
         </div>
         <div class="slider-group">
           <span class="param-label">{{ $t('tools.svg.colors') }}: {{ params.numberofcolors }}</span>
-          <NSlider v-model:value="params.numberofcolors" :min="2" :max="64" :step="1" :tooltip="false" @update:value="activePreset = ''" />
+          <NSlider
+            v-model:value="params.numberofcolors"
+            :min="2"
+            :max="64"
+            :step="1"
+            :tooltip="false"
+            @update:value="activePreset = ''"
+          />
         </div>
         <div class="slider-group">
           <span class="param-label">{{ $t('tools.svg.blur') }}: {{ params.blurradius }}</span>
-          <NSlider v-model:value="params.blurradius" :min="0" :max="10" :step="1" :tooltip="false" @update:value="activePreset = ''" />
+          <NSlider
+            v-model:value="params.blurradius"
+            :min="0"
+            :max="10"
+            :step="1"
+            :tooltip="false"
+            @update:value="activePreset = ''"
+          />
         </div>
         <div class="slider-group">
           <span class="param-label">{{ $t('tools.svg.simplify') }}: {{ params.pathomit }}</span>
-          <NSlider v-model:value="params.pathomit" :min="0" :max="40" :step="1" :tooltip="false" @update:value="activePreset = ''" />
+          <NSlider
+            v-model:value="params.pathomit"
+            :min="0"
+            :max="40"
+            :step="1"
+            :tooltip="false"
+            @update:value="activePreset = ''"
+          />
         </div>
       </div>
       <div class="action-row">
@@ -274,10 +372,16 @@ onMounted(() => {
         >
           {{ svgString ? $t('tools.svg.reconvert') : $t('tools.svg.convertBtn') }}
         </NButton>
-        <NButton :disabled="!svgString" @click="downloadSvg">
+        <NButton
+          :disabled="!svgString"
+          @click="downloadSvg"
+        >
           {{ $t('tools.svg.download') }}
         </NButton>
-        <NButton :disabled="!svgString" @click="copySvgCode">
+        <NButton
+          :disabled="!svgString"
+          @click="copySvgCode"
+        >
           {{ $t('tools.svg.copyCode') }}
         </NButton>
       </div>

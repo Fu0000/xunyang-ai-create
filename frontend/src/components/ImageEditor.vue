@@ -249,24 +249,44 @@ defineExpose({ setGenerating: (v) => { generating.value = v } })
 <template>
   <Teleport to="body">
     <Transition name="editor-fade">
-      <div v-if="show" class="editor-overlay" @click.self="close">
+      <div
+        v-if="show"
+        class="editor-overlay"
+        @click.self="close"
+      >
         <div class="editor-card">
-          <button class="editor-close" @click="close" :title="t('common.cancel')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+          <button
+            class="editor-close"
+            :title="t('common.cancel')"
+            @click="close"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ><path d="M18 6L6 18" /><path d="M6 6l12 12" /></svg>
           </button>
 
           <div class="editor-layout">
             <!-- Left: Canvas area -->
             <div class="editor-canvas-area">
-              <div class="editor-canvas-container" ref="containerRef">
+              <div
+                ref="containerRef"
+                class="editor-canvas-container"
+              >
                 <img
                   ref="imgRef"
                   :src="imageSrc"
                   crossorigin="anonymous"
-                  @load="onImageLoad"
                   class="editor-image"
                   draggable="false"
-                />
+                  @load="onImageLoad"
+                >
                 <canvas
                   ref="canvasRef"
                   class="editor-canvas"
@@ -282,18 +302,64 @@ defineExpose({ setGenerating: (v) => { generating.value = v } })
 
               <div class="editor-toolbar">
                 <label class="brush-label">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ><path d="M12 19l7-7 3 3-7 7-3-3z" /><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" /><path d="M2 2l7.586 7.586" /><circle
+                    cx="11"
+                    cy="11"
+                    r="2"
+                  /></svg>
                   <span>{{ t('editor.brushSize') }}</span>
                 </label>
-                <input type="range" v-model.number="brushSize" min="5" max="100" class="brush-slider" />
+                <input
+                  v-model.number="brushSize"
+                  type="range"
+                  min="5"
+                  max="100"
+                  class="brush-slider"
+                >
                 <span class="brush-value">{{ brushSize }}px</span>
-                <div class="toolbar-spacer"></div>
-                <button class="toolbar-btn" @click="undo" :disabled="undoStack.length === 0" :title="t('editor.undo')">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+                <div class="toolbar-spacer" />
+                <button
+                  class="toolbar-btn"
+                  :disabled="undoStack.length === 0"
+                  :title="t('editor.undo')"
+                  @click="undo"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ><path d="M3 7v6h6" /><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" /></svg>
                   {{ t('editor.undo') }}
                 </button>
-                <button class="toolbar-btn" @click="clearCanvas" :title="t('editor.clear')">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                <button
+                  class="toolbar-btn"
+                  :title="t('editor.clear')"
+                  @click="clearCanvas"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>
                   {{ t('editor.clear') }}
                 </button>
               </div>
@@ -301,56 +367,121 @@ defineExpose({ setGenerating: (v) => { generating.value = v } })
 
             <!-- Right: Controls -->
             <div class="editor-controls">
-              <h3 class="editor-title">{{ t('editor.title') }}</h3>
+              <h3 class="editor-title">
+                {{ t('editor.title') }}
+              </h3>
 
               <!-- Model pill (locked) -->
               <div class="editor-param-row">
-                <button class="param-pill model-pill locked" disabled>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <button
+                  class="param-pill model-pill locked"
+                  disabled
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ><rect
+                    x="3"
+                    y="11"
+                    width="18"
+                    height="11"
+                    rx="2"
+                    ry="2"
+                  /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
                   Nanobanana Pro
                 </button>
               </div>
 
               <!-- Ratio & Size selector -->
               <div class="editor-param-row">
-                <button class="param-pill" @click="showRatioPanel = !showRatioPanel">
+                <button
+                  class="param-pill"
+                  @click="showRatioPanel = !showRatioPanel"
+                >
                   <span>▢ {{ aspectRatio }}</span>
                   <span class="pill-sep">·</span>
                   <span>{{ imageSize }}</span>
-                  <span v-if="currentCredits" class="pill-badge">{{ currentCredits }}💎</span>
-                  <svg class="pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                  <span
+                    v-if="currentCredits"
+                    class="pill-badge"
+                  >{{ currentCredits }}💎</span>
+                  <svg
+                    class="pill-arrow"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  ><path d="M6 9l6 6 6-6" /></svg>
                 </button>
               </div>
 
               <!-- Ratio/Size panel (inline) -->
-              <div v-if="showRatioPanel" class="ratio-size-panel">
-                <div class="panel-section-title">{{ t('composer.selectRatio') }}</div>
+              <div
+                v-if="showRatioPanel"
+                class="ratio-size-panel"
+              >
+                <div class="panel-section-title">
+                  {{ t('composer.selectRatio') }}
+                </div>
                 <div class="ratio-grid">
                   <button
-                    v-for="r in imageRatios" :key="r.value"
+                    v-for="r in imageRatios"
+                    :key="r.value"
                     :class="['ratio-cell', { active: aspectRatio === r.value }]"
                     @click="aspectRatio = r.value"
                   >
-                    <span class="ratio-icon" :style="{ width: r.w + 'px', height: r.h + 'px' }"></span>
+                    <span
+                      class="ratio-icon"
+                      :style="{ width: r.w + 'px', height: r.h + 'px' }"
+                    />
                     <span class="ratio-label">{{ r.value }}</span>
                   </button>
                 </div>
-                <div class="panel-section-title" style="margin-top: 12px;">{{ t('composer.selectResolution') }}</div>
+                <div
+                  class="panel-section-title"
+                  style="margin-top: 12px;"
+                >
+                  {{ t('composer.selectResolution') }}
+                </div>
                 <div class="seg-group">
                   <button
-                    v-for="s in imageSizeOptions" :key="s.value"
+                    v-for="s in imageSizeOptions"
+                    :key="s.value"
                     :class="['seg-btn', { active: imageSize === s.value }]"
                     @click="imageSize = s.value"
                   >
                     {{ s.label }}
-                    <span v-if="s.badge" class="seg-badge">{{ s.badge }}</span>
+                    <span
+                      v-if="s.badge"
+                      class="seg-badge"
+                    >{{ s.badge }}</span>
                   </button>
                 </div>
               </div>
 
               <!-- Credits display -->
-              <div class="editor-credits" v-if="userStore.user">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              <div
+                v-if="userStore.user"
+                class="editor-credits"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ><path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" /></svg>
                 <span>{{ t('editor.balance') }}: {{ userStore.user.credits }}</span>
               </div>
 
@@ -361,8 +492,18 @@ defineExpose({ setGenerating: (v) => { generating.value = v } })
                 rows="4"
               />
 
-              <div v-if="!hasMask" class="editor-hint">{{ t('editor.noMask') }}</div>
-              <div v-else-if="!prompt.trim()" class="editor-hint">{{ t('editor.noPrompt') }}</div>
+              <div
+                v-if="!hasMask"
+                class="editor-hint"
+              >
+                {{ t('editor.noMask') }}
+              </div>
+              <div
+                v-else-if="!prompt.trim()"
+                class="editor-hint"
+              >
+                {{ t('editor.noPrompt') }}
+              </div>
 
               <button
                 class="editor-generate-btn"
@@ -370,12 +511,15 @@ defineExpose({ setGenerating: (v) => { generating.value = v } })
                 @click="handleGenerate"
               >
                 <template v-if="generating">
-                  <span class="spinner"></span>
+                  <span class="spinner" />
                   {{ t('generate.generating') }}
                 </template>
                 <template v-else>
                   {{ t('editor.generate') }}
-                  <span v-if="currentCredits" class="gen-cost">{{ currentCredits }}💎</span>
+                  <span
+                    v-if="currentCredits"
+                    class="gen-cost"
+                  >{{ currentCredits }}💎</span>
                 </template>
               </button>
             </div>

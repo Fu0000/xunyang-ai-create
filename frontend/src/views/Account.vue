@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { NCard, NButton, NInput, NDataTable, NEmpty, useMessage } from 'naive-ui'
+import { NCard, NButton, NInput, NDataTable, NEmpty, useMessage, NModal, NForm, NFormItem } from 'naive-ui'
 import { useUserStore } from '../stores/user'
 import axios from 'axios'
 
@@ -45,6 +45,35 @@ const onPageVisible = () => {
   if (document.visibilityState === 'visible') {
     loadInvitations()
     loadTransactions()
+  }
+}
+
+const showProfileModal = ref(false)
+const profileForm = ref({
+  nickname: '',
+  avatar: ''
+})
+const profileLoading = ref(false)
+
+const openProfileModal = () => {
+  profileForm.value.nickname = userStore.currentUser?.nickname || ''
+  profileForm.value.avatar = userStore.currentUser?.avatar || ''
+  showProfileModal.value = true
+}
+
+const saveProfile = async () => {
+  profileLoading.value = true
+  try {
+    await userStore.updateProfile({
+      nickname: profileForm.value.nickname,
+      avatar: profileForm.value.avatar
+    })
+    message.success(t('account.profileUpdated') || '更新成功')
+    showProfileModal.value = false
+  } catch (e) {
+    message.error(e.response?.data?.error || t('account.profileUpdateFailed') || '更新失败')
+  } finally {
+    profileLoading.value = false
   }
 }
 
@@ -170,15 +199,51 @@ const transactionTotalPages = computed(() => Math.max(1, Math.ceil(transactions.
   <div class="account-page">
     <div class="account-content">
       <div class="account-container">
-        <h1 class="page-title">{{ $t('account.title') }}</h1>
+        <h1 class="page-title">
+          {{ $t('account.title') }}
+        </h1>
 
-        <NCard class="hero-card" :bordered="false">
+        <NCard
+          class="hero-card"
+          :bordered="false"
+        >
           <div class="hero-main">
             <div class="hero-user">
-              <div class="avatar-large">{{ userStore.userAvatar }}</div>
+              <img
+                v-if="userStore.currentUser?.avatar"
+                :src="userStore.currentUser?.avatar"
+                class="avatar-large avatar-img"
+                alt="Avatar"
+              >
+              <div
+                v-else
+                class="avatar-large"
+              >
+                {{ userStore.userAvatar }}
+              </div>
               <div class="user-meta">
-                <div class="user-name">{{ userStore.userNickname }}</div>
-                <div class="user-email">{{ userStore.currentUser?.email }}</div>
+                <div class="user-name">
+                  {{ userStore.userNickname }}
+                  <NButton
+                    text
+                    class="edit-profile-btn"
+                    @click="openProfileModal"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                  </NButton>
+                </div>
+                <div class="user-email">
+                  {{ userStore.currentUser?.email }}
+                </div>
               </div>
             </div>
             <div class="balance-panel">
@@ -195,8 +260,14 @@ const transactionTotalPages = computed(() => Math.max(1, Math.ceil(transactions.
 
         <div class="content-grid">
           <div class="left-col">
-            <NCard :title="'📅 ' + $t('checkin.title')" class="section-card checkin-card" :bordered="false">
-              <p class="checkin-subtitle">{{ $t('checkin.subtitle') }}</p>
+            <NCard
+              :title="'📅 ' + $t('checkin.title')"
+              class="section-card checkin-card"
+              :bordered="false"
+            >
+              <p class="checkin-subtitle">
+                {{ $t('checkin.subtitle') }}
+              </p>
               <div class="checkin-dots">
                 <div
                   v-for="(reward, idx) in checkinRewards"
@@ -215,10 +286,16 @@ const transactionTotalPages = computed(() => Math.max(1, Math.ceil(transactions.
               </div>
               <div class="checkin-action">
                 <div class="checkin-info">
-                  <span class="checkin-streak-text" v-if="userStore.checkinStreak > 0">
+                  <span
+                    v-if="userStore.checkinStreak > 0"
+                    class="checkin-streak-text"
+                  >
                     {{ $t('checkin.streak') }}: {{ userStore.checkinStreak }} {{ $t('checkin.days') }}
                   </span>
-                  <span class="checkin-reward-text" v-if="userStore.dailyCheckinAvailable">
+                  <span
+                    v-if="userStore.dailyCheckinAvailable"
+                    class="checkin-reward-text"
+                  >
                     {{ $t('checkin.todayReward') }}: +{{ userStore.nextCheckinReward }} 💎
                   </span>
                 </div>
@@ -233,85 +310,236 @@ const transactionTotalPages = computed(() => Math.max(1, Math.ceil(transactions.
               </div>
             </NCard>
 
-            <NCard :title="'🔑 ' + $t('account.redeemDiamonds')" class="section-card" :bordered="false">
+            <NCard
+              :title="'🔑 ' + $t('account.redeemDiamonds')"
+              class="section-card"
+              :bordered="false"
+            >
               <div class="redeem-row">
                 <NInput
                   v-model:value="redeemKey"
                   :placeholder="$t('account.redeemPlaceholder')"
                   @keydown.enter="redeemCredits"
                 />
-                <NButton type="primary" :loading="redeemLoading" @click="redeemCredits" :disabled="!redeemKey.trim()">
+                <NButton
+                  type="primary"
+                  :loading="redeemLoading"
+                  :disabled="!redeemKey.trim()"
+                  @click="redeemCredits"
+                >
                   {{ $t('account.redeem') }}
                 </NButton>
               </div>
-              <div v-if="redeemMessage" class="success-msg">{{ redeemMessage }}</div>
-              <div v-if="redeemError" class="error-msg">{{ redeemError }}</div>
+              <div
+                v-if="redeemMessage"
+                class="success-msg"
+              >
+                {{ redeemMessage }}
+              </div>
+              <div
+                v-if="redeemError"
+                class="error-msg"
+              >
+                {{ redeemError }}
+              </div>
             </NCard>
 
-            <NCard :title="'🎁 ' + $t('account.inviteFriends')" class="section-card" :bordered="false">
-              <p class="invite-desc">{{ $t('account.inviteDesc') }}</p>
+            <NCard
+              :title="'🎁 ' + $t('account.inviteFriends')"
+              class="section-card"
+              :bordered="false"
+            >
+              <p class="invite-desc">
+                {{ $t('account.inviteDesc') }}
+              </p>
               <div class="invite-code-row">
                 <code class="invite-code">{{ userStore.inviteCode }}</code>
-                <NButton type="primary" size="small" @click="copyInviteLink">{{ $t('account.copyInviteLink') }}</NButton>
+                <NButton
+                  type="primary"
+                  size="small"
+                  @click="copyInviteLink"
+                >
+                  {{ $t('account.copyInviteLink') }}
+                </NButton>
               </div>
-              <p class="invite-count">{{ $t('account.invitedCount', { count: userStore.currentUser?.invite_count || 0 }) }}</p>
+              <p class="invite-count">
+                {{ $t('account.invitedCount', { count: userStore.currentUser?.invite_count || 0 }) }}
+              </p>
 
-              <div v-if="invitations.length && !isMobileView" class="records-wrap">
+              <div
+                v-if="invitations.length && !isMobileView"
+                class="records-wrap"
+              >
                 <NDataTable
                   :columns="inviteColumns"
                   :data="mobilePagedInvitations"
                   size="small"
                 />
               </div>
-              <div v-else-if="mobilePagedInvitations.length" class="mobile-list">
-                <div v-for="row in mobilePagedInvitations" :key="row.id" class="record-card">
-                  <div class="record-line strong">{{ row.invitee_email }}</div>
-                  <div class="record-line">{{ formatDate(row.created_at) }}</div>
-                  <div class="record-line gain">+{{ row.credits_rewarded || 0 }} 💎</div>
+              <div
+                v-else-if="mobilePagedInvitations.length"
+                class="mobile-list"
+              >
+                <div
+                  v-for="row in mobilePagedInvitations"
+                  :key="row.id"
+                  class="record-card"
+                >
+                  <div class="record-line strong">
+                    {{ row.invitee_email }}
+                  </div>
+                  <div class="record-line">
+                    {{ formatDate(row.created_at) }}
+                  </div>
+                  <div class="record-line gain">
+                    +{{ row.credits_rewarded || 0 }} 💎
+                  </div>
                 </div>
               </div>
-              <NEmpty v-else-if="!loadingInvitations" :description="$t('account.noInvitations')" />
-              <div v-if="invitations.length > pageSize" class="more-row">
-                <NButton text :disabled="invitationPage <= 1" @click="invitationPage--">上一页</NButton>
+              <NEmpty
+                v-else-if="!loadingInvitations"
+                :description="$t('account.noInvitations')"
+              />
+              <div
+                v-if="invitations.length > pageSize"
+                class="more-row"
+              >
+                <NButton
+                  text
+                  :disabled="invitationPage <= 1"
+                  @click="invitationPage--"
+                >
+                  上一页
+                </NButton>
                 <span class="page-text">{{ invitationPage }} / {{ invitationTotalPages }}</span>
-                <NButton text :disabled="invitationPage >= invitationTotalPages" @click="invitationPage++">下一页</NButton>
+                <NButton
+                  text
+                  :disabled="invitationPage >= invitationTotalPages"
+                  @click="invitationPage++"
+                >
+                  下一页
+                </NButton>
               </div>
             </NCard>
           </div>
 
           <div class="right-col">
-            <NCard :title="'📒 ' + $t('account.creditRecords')" class="section-card ledger-card" :bordered="false">
-              <div v-if="transactions.length && !isMobileView" class="records-wrap">
+            <NCard
+              :title="'📒 ' + $t('account.creditRecords')"
+              class="section-card ledger-card"
+              :bordered="false"
+            >
+              <div
+                v-if="transactions.length && !isMobileView"
+                class="records-wrap"
+              >
                 <NDataTable
                   :columns="transactionColumns"
                   :data="mobilePagedTransactions"
                   size="small"
                 />
               </div>
-              <div v-else-if="mobilePagedTransactions.length" class="mobile-list">
-                <div v-for="row in mobilePagedTransactions" :key="row.id" class="record-card">
+              <div
+                v-else-if="mobilePagedTransactions.length"
+                class="mobile-list"
+              >
+                <div
+                  v-for="row in mobilePagedTransactions"
+                  :key="row.id"
+                  class="record-card"
+                >
                   <div class="record-top">
                     <span class="record-type">{{ txTypeText(row.type) }}</span>
-                    <span class="record-delta" :class="{ loss: row.delta < 0, gain: row.delta > 0 }">
+                    <span
+                      class="record-delta"
+                      :class="{ loss: row.delta < 0, gain: row.delta > 0 }"
+                    >
                       {{ row.delta > 0 ? '+' : '' }}{{ row.delta }}
                     </span>
                   </div>
-                  <div class="record-line">{{ formatDate(row.created_at) }}</div>
-                  <div class="record-line">{{ $t('account.txBalanceAfter') }}: {{ row.balance_after }}</div>
-                  <div class="record-line muted">{{ row.note || '-' }}</div>
+                  <div class="record-line">
+                    {{ formatDate(row.created_at) }}
+                  </div>
+                  <div class="record-line">
+                    {{ $t('account.txBalanceAfter') }}: {{ row.balance_after }}
+                  </div>
+                  <div class="record-line muted">
+                    {{ row.note || '-' }}
+                  </div>
                 </div>
               </div>
-              <NEmpty v-else-if="!loadingTransactions" :description="$t('account.noCreditRecords')" />
-              <div v-if="transactions.length > pageSize" class="more-row">
-                <NButton text :disabled="transactionPage <= 1" @click="transactionPage--">上一页</NButton>
+              <NEmpty
+                v-else-if="!loadingTransactions"
+                :description="$t('account.noCreditRecords')"
+              />
+              <div
+                v-if="transactions.length > pageSize"
+                class="more-row"
+              >
+                <NButton
+                  text
+                  :disabled="transactionPage <= 1"
+                  @click="transactionPage--"
+                >
+                  上一页
+                </NButton>
                 <span class="page-text">{{ transactionPage }} / {{ transactionTotalPages }}</span>
-                <NButton text :disabled="transactionPage >= transactionTotalPages" @click="transactionPage++">下一页</NButton>
+                <NButton
+                  text
+                  :disabled="transactionPage >= transactionTotalPages"
+                  @click="transactionPage++"
+                >
+                  下一页
+                </NButton>
               </div>
             </NCard>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Profile Edit Modal -->
+    <NModal
+      v-model:show="showProfileModal"
+      preset="card"
+      title="编辑个人资料"
+      style="width: 400px; border-radius: 16px; background: rgba(18, 18, 32, 0.95); border: 1px solid rgba(255, 255, 255, 0.08);"
+      :bordered="false"
+    >
+      <NForm :model="profileForm">
+        <NFormItem
+          label="昵称 (选填)"
+          path="nickname"
+        >
+          <NInput
+            v-model:value="profileForm.nickname"
+            placeholder="输入新的昵称"
+            maxlength="50"
+          />
+        </NFormItem>
+        <NFormItem
+          label="头像 URL (选填)"
+          path="avatar"
+        >
+          <NInput
+            v-model:value="profileForm.avatar"
+            placeholder="输入头像外链地址 (例如 https://...)"
+          />
+        </NFormItem>
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
+          <NButton @click="showProfileModal = false">
+            取消
+          </NButton>
+          <NButton
+            type="primary"
+            :loading="profileLoading"
+            @click="saveProfile"
+          >
+            保存修改
+          </NButton>
+        </div>
+      </NForm>
+    </NModal>
   </div>
 </template>
 
@@ -408,6 +636,27 @@ const transactionTotalPages = computed(() => Math.max(1, Math.ceil(transactions.
   font-size: 20px;
   font-weight: 700;
   color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+}
+
+.edit-profile-btn {
+  margin-left: 8px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-profile-btn:hover {
+  color: #00cae0;
+}
+
+.avatar-img {
+  object-fit: cover;
+  background: none;
+  border-width: 0;
 }
 
 .user-email {

@@ -293,20 +293,30 @@ onMounted(() => {
 </script>
 
 <template>
-  <NConfigProvider :theme="naiveTheme" :theme-overrides="themeOverrides" :locale="naiveLocale" :date-locale="naiveDateLocale">
+  <NConfigProvider
+    :theme="naiveTheme"
+    :theme-overrides="themeOverrides"
+    :locale="naiveLocale"
+    :date-locale="naiveDateLocale"
+  >
     <NMessageProvider>
       <NDialogProvider>
         <div class="app-root">
           <!-- 全局粒子背景 -->
           <div class="particle-field">
-            <div class="particle" v-for="i in 30" :key="i" :style="{
-              '--x': Math.random() * 100 + '%',
-              '--y': Math.random() * 100 + '%',
-              '--size': (Math.random() * 3 + 1) + 'px',
-              '--duration': (Math.random() * 20 + 10) + 's',
-              '--delay': (Math.random() * 10) + 's',
-              '--opacity': Math.random() * 0.5 + 0.1
-            }"></div>
+            <div
+              v-for="i in 30"
+              :key="i"
+              class="particle"
+              :style="{
+                '--x': Math.random() * 100 + '%',
+                '--y': Math.random() * 100 + '%',
+                '--size': (Math.random() * 3 + 1) + 'px',
+                '--duration': (Math.random() * 20 + 10) + 's',
+                '--delay': (Math.random() * 10) + 's',
+                '--opacity': Math.random() * 0.5 + 0.1
+              }"
+            />
           </div>
           <router-view />
 

@@ -37,8 +37,12 @@ const navigateTo = (routeName) => {
 <template>
   <div class="tools-page">
     <div class="tools-header">
-      <h1 class="tools-title">{{ $t('tools.title') }}</h1>
-      <p class="tools-subtitle">{{ $t('tools.subtitle') }}</p>
+      <h1 class="tools-title">
+        {{ $t('tools.title') }}
+      </h1>
+      <p class="tools-subtitle">
+        {{ $t('tools.subtitle') }}
+      </p>
     </div>
     <div class="tools-grid">
       <button
@@ -48,45 +52,141 @@ const navigateTo = (routeName) => {
         @click="navigateTo(tool.route)"
       >
         <div class="tool-icon-wrap">
-          <svg v-if="tool.icon === 'reverse-prompt'" class="tool-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-            <path d="M14 2v4M18 6l-4-4"/>
+          <svg
+            v-if="tool.icon === 'reverse-prompt'"
+            class="tool-icon"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect
+              x="3"
+              y="3"
+              width="18"
+              height="18"
+              rx="2"
+              ry="2"
+            />
+            <circle
+              cx="8.5"
+              cy="8.5"
+              r="1.5"
+            />
+            <polyline points="21 15 16 10 5 21" />
+            <path d="M14 2v4M18 6l-4-4" />
           </svg>
-          <svg v-else-if="tool.icon === 'svg'" class="tool-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-            <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
-            <polyline points="7.5 19.79 7.5 14.6 3 12"/>
-            <polyline points="21 12 16.5 14.6 16.5 19.79"/>
-            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          <svg
+            v-else-if="tool.icon === 'svg'"
+            class="tool-icon"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <polyline points="7.5 4.21 12 6.81 16.5 4.21" />
+            <polyline points="7.5 19.79 7.5 14.6 3 12" />
+            <polyline points="21 12 16.5 14.6 16.5 19.79" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line
+              x1="12"
+              y1="22.08"
+              x2="12"
+              y2="12"
+            />
           </svg>
-          <svg v-else-if="tool.icon === 'convert'" class="tool-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <polyline points="16 3 16 9 21 9"/>
-            <path d="M8 14l2 2 4-4"/>
+          <svg
+            v-else-if="tool.icon === 'convert'"
+            class="tool-icon"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect
+              x="3"
+              y="3"
+              width="18"
+              height="18"
+              rx="2"
+              ry="2"
+            />
+            <polyline points="16 3 16 9 21 9" />
+            <path d="M8 14l2 2 4-4" />
           </svg>
         </div>
         <div class="tool-info">
-          <div class="tool-name">{{ $t(tool.labelKey) }}</div>
-          <div class="tool-desc">{{ $t(tool.descKey) }}</div>
+          <div class="tool-name">
+            {{ $t(tool.labelKey) }}
+          </div>
+          <div class="tool-desc">
+            {{ $t(tool.descKey) }}
+          </div>
         </div>
-        <svg class="tool-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"/>
+        <svg
+          class="tool-arrow"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="9 18 15 12 9 6" />
         </svg>
       </button>
 
       <div class="tool-card coming-soon">
         <div class="tool-icon-wrap placeholder">
-          <svg class="tool-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          <svg
+            class="tool-icon"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+            />
+            <line
+              x1="12"
+              y1="8"
+              x2="12"
+              y2="12"
+            />
+            <line
+              x1="12"
+              y1="16"
+              x2="12.01"
+              y2="16"
+            />
           </svg>
         </div>
         <div class="tool-info">
-          <div class="tool-name placeholder-text">{{ $t('tools.comingSoon') }}</div>
+          <div class="tool-name placeholder-text">
+            {{ $t('tools.comingSoon') }}
+          </div>
         </div>
       </div>
     </div>

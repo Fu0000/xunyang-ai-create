@@ -2,7 +2,9 @@
   <main class="legal-page">
     <article class="legal-card">
       <h1>用户协议</h1>
-      <p class="meta">更新日期：2026-02-13</p>
+      <p class="meta">
+        更新日期：2026-02-13
+      </p>
 
       <h2>1. 协议范围</h2>
       <p>本协议适用于您使用 寻氧AI 网站及相关服务的全部行为。您访问、注册或使用本平台，即视为已阅读并同意本协议。</p>
@@ -28,7 +30,12 @@
       <h2>8. 联系方式</h2>
       <p>如您对本协议有疑问，可通过平台内公告或客服渠道与我们联系。</p>
 
-      <router-link to="/" class="back-link">返回首页</router-link>
+      <router-link
+        to="/"
+        class="back-link"
+      >
+        返回首页
+      </router-link>
     </article>
   </main>
 </template>

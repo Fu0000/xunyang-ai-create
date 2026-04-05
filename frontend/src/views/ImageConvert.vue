@@ -142,19 +142,35 @@ const goBack = () => {
 <template>
   <div class="convert-page">
     <div class="convert-topbar">
-      <button class="back-btn" @click="goBack">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
+      <button
+        class="back-btn"
+        @click="goBack"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6" />
         </svg>
         <span>{{ $t('tools.convert.back') }}</span>
       </button>
-      <h2 class="convert-page-title">{{ $t('tools.imageConvert.name') }}</h2>
+      <h2 class="convert-page-title">
+        {{ $t('tools.imageConvert.name') }}
+      </h2>
     </div>
 
     <div class="convert-main">
       <!-- Left: Original image -->
       <div class="convert-panel">
-        <div class="panel-label">{{ $t('tools.convert.original') }}</div>
+        <div class="panel-label">
+          {{ $t('tools.convert.original') }}
+        </div>
         <div
           v-if="!originalSrc"
           class="upload-zone"
@@ -164,22 +180,70 @@ const goBack = () => {
           @dragover="handleDragOver"
           @dragleave="handleDragLeave"
         >
-          <svg class="upload-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
+          <svg
+            class="upload-icon"
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line
+              x1="12"
+              y1="3"
+              x2="12"
+              y2="15"
+            />
           </svg>
-          <p class="upload-text">{{ $t('tools.convert.upload') }}</p>
-          <p class="upload-hint">{{ $t('tools.convert.uploadHint') }}</p>
+          <p class="upload-text">
+            {{ $t('tools.convert.upload') }}
+          </p>
+          <p class="upload-hint">
+            {{ $t('tools.convert.uploadHint') }}
+          </p>
         </div>
-        <div v-else class="preview-area">
-          <img :src="originalSrc" class="preview-img" alt="original" />
-          <div v-if="originalSize" class="size-badge">{{ originalSize }}</div>
-          <button class="change-btn" @click="openFilePicker">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
+        <div
+          v-else
+          class="preview-area"
+        >
+          <img
+            :src="originalSrc"
+            class="preview-img"
+            alt="original"
+          >
+          <div
+            v-if="originalSize"
+            class="size-badge"
+          >
+            {{ originalSize }}
+          </div>
+          <button
+            class="change-btn"
+            @click="openFilePicker"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line
+                x1="12"
+                y1="3"
+                x2="12"
+                y2="15"
+              />
             </svg>
           </button>
         </div>
@@ -189,24 +253,46 @@ const goBack = () => {
           accept="image/png,image/jpeg,image/webp,image/bmp"
           style="display:none"
           @change="handleFileSelect"
-        />
+        >
       </div>
 
       <!-- Right: Result Preview -->
       <div class="convert-panel">
-        <div class="panel-label">{{ $t('tools.convert.result') }}</div>
-        <div v-if="converting" class="preview-area loading-area">
+        <div class="panel-label">
+          {{ $t('tools.convert.result') }}
+        </div>
+        <div
+          v-if="converting"
+          class="preview-area loading-area"
+        >
           <NSpin size="medium" />
           <span class="converting-text">{{ $t('tools.convert.converting') }}</span>
         </div>
-        <div v-else-if="resultUrl" class="preview-area">
-          <img :src="resultUrl" class="preview-img" alt="result" />
+        <div
+          v-else-if="resultUrl"
+          class="preview-area"
+        >
+          <img
+            :src="resultUrl"
+            class="preview-img"
+            alt="result"
+          >
           <div class="size-badge-group">
-            <div class="size-badge">{{ convertedSize }}</div>
-            <div class="ratio-badge" :class="{ shrink: compressionRatio.startsWith('-') }">{{ compressionRatio }}</div>
+            <div class="size-badge">
+              {{ convertedSize }}
+            </div>
+            <div
+              class="ratio-badge"
+              :class="{ shrink: compressionRatio.startsWith('-') }"
+            >
+              {{ compressionRatio }}
+            </div>
           </div>
         </div>
-        <div v-else class="preview-area empty-preview">
+        <div
+          v-else
+          class="preview-area empty-preview"
+        >
           <span class="empty-text">{{ $t('tools.convert.noResult') }}</span>
         </div>
       </div>
@@ -223,17 +309,34 @@ const goBack = () => {
               :key="f.value"
               :class="['format-chip', { active: outputFormat === f.value }]"
               @click="outputFormat = f.value"
-            >{{ f.label }}</button>
+            >
+              {{ f.label }}
+            </button>
           </div>
         </div>
-        <div v-if="showQuality" class="slider-group">
+        <div
+          v-if="showQuality"
+          class="slider-group"
+        >
           <span class="param-label">{{ $t('tools.convert.quality') }}: {{ quality }}</span>
-          <NSlider v-model:value="quality" :min="1" :max="100" :step="1" :tooltip="false" />
+          <NSlider
+            v-model:value="quality"
+            :min="1"
+            :max="100"
+            :step="1"
+            :tooltip="false"
+          />
         </div>
-        <div v-if="originalFile && resultBlob" class="stats-group">
+        <div
+          v-if="originalFile && resultBlob"
+          class="stats-group"
+        >
           <span class="stat-item">{{ $t('tools.convert.originalSize') }}: {{ originalSize }}</span>
           <span class="stat-item">{{ $t('tools.convert.convertedSize') }}: {{ convertedSize }}</span>
-          <span class="stat-item" :class="{ shrink: compressionRatio.startsWith('-') }">{{ $t('tools.convert.compressionRatio') }}: {{ compressionRatio }}</span>
+          <span
+            class="stat-item"
+            :class="{ shrink: compressionRatio.startsWith('-') }"
+          >{{ $t('tools.convert.compressionRatio') }}: {{ compressionRatio }}</span>
         </div>
       </div>
       <div class="action-row">
@@ -245,7 +348,10 @@ const goBack = () => {
         >
           {{ resultUrl ? $t('tools.convert.reconvert') : $t('tools.convert.convertBtn') }}
         </NButton>
-        <NButton :disabled="!resultUrl" @click="download">
+        <NButton
+          :disabled="!resultUrl"
+          @click="download"
+        >
           {{ $t('tools.convert.download') }}
         </NButton>
       </div>

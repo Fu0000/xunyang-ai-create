@@ -58,22 +58,41 @@ const retry = () => {
 <template>
   <div class="oauth-callback">
     <div class="callback-card">
-      <img src="/images/icon.png" alt="寻氧AI" class="logo" />
+      <img
+        src="/images/icon.png"
+        alt="寻氧AI"
+        class="logo"
+      >
 
       <template v-if="status === 'loading'">
-        <div class="spinner"></div>
-        <p class="status-text">{{ $t('auth.oauthLoading') }}</p>
+        <div class="spinner" />
+        <p class="status-text">
+          {{ $t('auth.oauthLoading') }}
+        </p>
       </template>
 
       <template v-if="status === 'success'">
-        <div class="success-icon">✓</div>
-        <p class="status-text success">{{ $t('auth.oauthSuccess') }}</p>
+        <div class="success-icon">
+          ✓
+        </div>
+        <p class="status-text success">
+          {{ $t('auth.oauthSuccess') }}
+        </p>
       </template>
 
       <template v-if="status === 'error'">
-        <div class="error-icon">✕</div>
-        <p class="status-text error">{{ errorMsg }}</p>
-        <button @click="retry" class="retry-btn">{{ $t('auth.oauthRetry') }}</button>
+        <div class="error-icon">
+          ✕
+        </div>
+        <p class="status-text error">
+          {{ errorMsg }}
+        </p>
+        <button
+          class="retry-btn"
+          @click="retry"
+        >
+          {{ $t('auth.oauthRetry') }}
+        </button>
       </template>
     </div>
   </div>

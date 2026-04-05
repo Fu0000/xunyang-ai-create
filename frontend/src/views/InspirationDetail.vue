@@ -250,11 +250,29 @@ onMounted(loadDetail)
 
 <template>
   <div class="detail-page">
-    <div v-if="loading" class="detail-loading">{{ t('inspiration.detailLoading') }}</div>
-    <div v-else-if="!post" class="detail-loading">{{ t('inspiration.detailNotFound') }}</div>
-    <div v-else class="detail-layout">
+    <div
+      v-if="loading"
+      class="detail-loading"
+    >
+      {{ t('inspiration.detailLoading') }}
+    </div>
+    <div
+      v-else-if="!post"
+      class="detail-loading"
+    >
+      {{ t('inspiration.detailNotFound') }}
+    </div>
+    <div
+      v-else
+      class="detail-layout"
+    >
       <section class="detail-media">
-        <button class="back-btn" @click="goBack">×</button>
+        <button
+          class="back-btn"
+          @click="goBack"
+        >
+          ×
+        </button>
         <video
           v-if="isVideoPost && activeVideoUrl"
           class="main-video"
@@ -267,8 +285,16 @@ onMounted(loadDetail)
           muted
           loop
         />
-        <img v-else-if="activeImage" :src="activeImage" alt="inspiration" class="main-image" />
-        <div v-if="mediaUrls.length > 1" class="thumb-row">
+        <img
+          v-else-if="activeImage"
+          :src="activeImage"
+          alt="inspiration"
+          class="main-image"
+        >
+        <div
+          v-if="mediaUrls.length > 1"
+          class="thumb-row"
+        >
           <button
             v-for="(url, idx) in mediaUrls"
             :key="url + idx"
@@ -276,7 +302,10 @@ onMounted(loadDetail)
             :class="{ active: mediaIndex === idx }"
             @click="mediaIndex = idx"
           >
-            <img :src="url" alt="thumb" />
+            <img
+              :src="url"
+              alt="thumb"
+            >
           </button>
         </div>
       </section>
@@ -287,42 +316,108 @@ onMounted(loadDetail)
             {{ (post.author?.nickname || t('inspiration.creatorFallback')).slice(0, 1).toUpperCase() }}
           </div>
           <div class="creator-meta">
-            <div class="creator-name">{{ post.author?.nickname || t('inspiration.creatorFallback') }}</div>
-            <div class="creator-time">{{ publishedTime }}</div>
+            <div class="creator-name">
+              {{ post.author?.nickname || t('inspiration.creatorFallback') }}
+            </div>
+            <div class="creator-time">
+              {{ publishedTime }}
+            </div>
           </div>
-          <button class="creator-stats" :class="{ active: post.is_liked }" :disabled="likeLoading" @click="toggleLike">
+          <button
+            class="creator-stats"
+            :class="{ active: post.is_liked }"
+            :disabled="likeLoading"
+            @click="toggleLike"
+          >
             {{ post.is_liked ? '❤' : '♡' }} {{ post.like_count || 0 }}
           </button>
         </div>
 
-        <div v-if="post.title" class="title-wrap">
-          <h1 class="post-title">{{ post.title }}</h1>
-          <p v-if="post.description" class="post-description">{{ post.description }}</p>
+        <div
+          v-if="post.title"
+          class="title-wrap"
+        >
+          <h1 class="post-title">
+            {{ post.title }}
+          </h1>
+          <p
+            v-if="post.description"
+            class="post-description"
+          >
+            {{ post.description }}
+          </p>
         </div>
-        <div v-if="post.tags?.length" class="post-tags">
-          <span v-for="tag in post.tags" :key="tag" class="post-tag">#{{ tag }}</span>
+        <div
+          v-if="post.tags?.length"
+          class="post-tags"
+        >
+          <span
+            v-for="tag in post.tags"
+            :key="tag"
+            class="post-tag"
+          >#{{ tag }}</span>
         </div>
 
         <div class="prompt-wrap prompt-scroll">
           <div class="prompt-title-row">
-            <div class="prompt-title">{{ t('inspiration.promptTitle') }}</div>
-            <button class="prompt-copy-btn" type="button" title="Copy prompt" @click="copyPrompt">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <rect x="9" y="9" width="10" height="10" rx="2" />
+            <div class="prompt-title">
+              {{ t('inspiration.promptTitle') }}
+            </div>
+            <button
+              class="prompt-copy-btn"
+              type="button"
+              title="Copy prompt"
+              @click="copyPrompt"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <rect
+                  x="9"
+                  y="9"
+                  width="10"
+                  height="10"
+                  rx="2"
+                />
                 <path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1" />
               </svg>
             </button>
           </div>
-          <p class="prompt-text">{{ post.prompt }}</p>
+          <p class="prompt-text">
+            {{ post.prompt }}
+          </p>
         </div>
 
-        <div v-if="paramsForDisplay.length || modelName || post.type" class="prompt-wrap">
-          <div class="prompt-title">{{ t('inspiration.paramsTitle') }}<span v-if="post.type" class="title-type"> · {{ post.type === 'video' ? '视频' : '图片' }}</span></div>
+        <div
+          v-if="paramsForDisplay.length || modelName || post.type"
+          class="prompt-wrap"
+        >
+          <div class="prompt-title">
+            {{ t('inspiration.paramsTitle') }}<span
+              v-if="post.type"
+              class="title-type"
+            > · {{ post.type === 'video' ? '视频' : '图片' }}</span>
+          </div>
           <div class="params-inline">
-            <span v-if="modelName" class="param-item">{{ modelName }}</span>
-            <span v-if="modelName && paramsForDisplay.length" class="param-separator">|</span>
-            <span v-for="(item, index) in paramsForDisplay" :key="item.key" class="param-item">
-              {{ item.value }}<span v-if="index < paramsForDisplay.length - 1" class="param-separator">|</span>
+            <span
+              v-if="modelName"
+              class="param-item"
+            >{{ modelName }}</span>
+            <span
+              v-if="modelName && paramsForDisplay.length"
+              class="param-separator"
+            >|</span>
+            <span
+              v-for="(item, index) in paramsForDisplay"
+              :key="item.key"
+              class="param-item"
+            >
+              {{ item.value }}<span
+                v-if="index < paramsForDisplay.length - 1"
+                class="param-separator"
+              >|</span>
             </span>
           </div>
         </div>
@@ -333,11 +428,25 @@ onMounted(loadDetail)
         </div>
 
         <div class="action-row">
-          <button class="action-btn ghost" @click="toggleLike" :disabled="likeLoading">
+          <button
+            class="action-btn ghost"
+            :disabled="likeLoading"
+            @click="toggleLike"
+          >
             {{ post.is_liked ? t('inspiration.unlikeAction') : t('inspiration.likeAction') }}
           </button>
-          <button class="action-btn" @click="handleRemix">{{ t('inspiration.remixAction') }}</button>
-          <button class="action-btn ghost" @click="handleReference">{{ t('inspiration.referenceAction') }}</button>
+          <button
+            class="action-btn"
+            @click="handleRemix"
+          >
+            {{ t('inspiration.remixAction') }}
+          </button>
+          <button
+            class="action-btn ghost"
+            @click="handleReference"
+          >
+            {{ t('inspiration.referenceAction') }}
+          </button>
         </div>
       </aside>
     </div>

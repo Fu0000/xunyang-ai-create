@@ -168,8 +168,15 @@ watch(
 <template>
   <aside class="app-sidebar">
     <!-- Logo -->
-    <div class="sidebar-logo" @click="navigateTo('/inspiration')">
-      <img src="/images/icon.png" alt="寻氧AI" class="logo-icon" />
+    <div
+      class="sidebar-logo"
+      @click="navigateTo('/inspiration')"
+    >
+      <img
+        src="/images/icon.png"
+        alt="寻氧AI"
+        class="logo-icon"
+      >
     </div>
 
     <!-- Nav icons -->
@@ -178,22 +185,77 @@ watch(
         v-for="item in navItems"
         :key="item.name"
         :class="['nav-item', { active: isNavActive(item.name) }]"
-        @click="navigateTo(item.path)"
         :aria-label="item.label"
+        @click="navigateTo(item.path)"
       >
-        <svg v-if="item.icon === 'inspiration'" class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/>
+        <svg
+          v-if="item.icon === 'inspiration'"
+          class="nav-icon"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z" />
         </svg>
-        <svg v-else-if="item.icon === 'generate'" class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <polyline points="21 15 16 10 5 21"/>
+        <svg
+          v-else-if="item.icon === 'generate'"
+          class="nav-icon"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect
+            x="3"
+            y="3"
+            width="18"
+            height="18"
+            rx="2"
+            ry="2"
+          />
+          <circle
+            cx="8.5"
+            cy="8.5"
+            r="1.5"
+          />
+          <polyline points="21 15 16 10 5 21" />
         </svg>
-        <svg v-else-if="item.icon === 'assets'" class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        <svg
+          v-else-if="item.icon === 'assets'"
+          class="nav-icon"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
         </svg>
-        <svg v-else-if="item.icon === 'tools'" class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+        <svg
+          v-else-if="item.icon === 'tools'"
+          class="nav-icon"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
         </svg>
         <span class="nav-label">{{ item.label }}</span>
       </button>
@@ -201,7 +263,7 @@ watch(
 
     <!-- Bottom area -->
     <div class="sidebar-bottom">
-      <div class="bottom-divider"></div>
+      <div class="bottom-divider" />
 
       <!-- Daily Checkin (only show when available) -->
       <button
@@ -216,15 +278,28 @@ watch(
       </button>
 
       <!-- Diamonds -->
-      <button class="bottom-item credits-item" @click="handleOpenPricing" :data-tip="$t('sidebar.getDiamonds')" :aria-label="$t('sidebar.getDiamonds')">
+      <button
+        class="bottom-item credits-item"
+        :data-tip="$t('sidebar.getDiamonds')"
+        :aria-label="$t('sidebar.getDiamonds')"
+        @click="handleOpenPricing"
+      >
         <span class="credits-icon-lg">&#x1F48E;</span>
         <span class="credits-num">{{ userStore.userCredits }}</span>
       </button>
 
       <!-- Community -->
-      <NPopover trigger="click" placement="right-end" :show-arrow="false">
+      <NPopover
+        trigger="click"
+        placement="right-end"
+        :show-arrow="false"
+      >
         <template #trigger>
-          <button class="bottom-item community-item" :data-tip="$t('sidebar.joinCommunity')" :aria-label="$t('sidebar.joinCommunity')">
+          <button
+            class="bottom-item community-item"
+            :data-tip="$t('sidebar.joinCommunity')"
+            :aria-label="$t('sidebar.joinCommunity')"
+          >
             <NIcon class="community-icon">
               <LogoWechat />
             </NIcon>
@@ -232,23 +307,54 @@ watch(
         </template>
         <div class="community-popover">
           <div class="community-qr">
-            <img src="/images/fish.jpg" :alt="$t('sidebar.communityTitle')" class="qr-image" />
+            <img
+              src="/images/fish.jpg"
+              :alt="$t('sidebar.communityTitle')"
+              class="qr-image"
+            >
           </div>
           <div class="community-body">
-            <div class="community-title">{{ $t('sidebar.communityTitle') }}</div>
-            <div class="community-desc" style="white-space: pre-line;">{{ $t('sidebar.communityDesc') }}</div>
-            <div class="community-hint">{{ $t('sidebar.communityHint') }}</div>
+            <div class="community-title">
+              {{ $t('sidebar.communityTitle') }}
+            </div>
+            <div
+              class="community-desc"
+              style="white-space: pre-line;"
+            >
+              {{ $t('sidebar.communityDesc') }}
+            </div>
+            <div class="community-hint">
+              {{ $t('sidebar.communityHint') }}
+            </div>
           </div>
         </div>
       </NPopover>
 
       <!-- Notifications -->
-      <button class="bottom-item notification-item" @click="openNotificationDrawer" :data-tip="$t('sidebar.notifications')" :aria-label="$t('sidebar.notifications')">
-        <svg class="notification-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5"/>
-          <path d="M9 17a3 3 0 0 0 6 0"/>
+      <button
+        class="bottom-item notification-item"
+        :data-tip="$t('sidebar.notifications')"
+        :aria-label="$t('sidebar.notifications')"
+        @click="openNotificationDrawer"
+      >
+        <svg
+          class="notification-icon"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.9"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5" />
+          <path d="M9 17a3 3 0 0 0 6 0" />
         </svg>
-        <span v-if="hasUnread" class="notification-dot"></span>
+        <span
+          v-if="hasUnread"
+          class="notification-dot"
+        />
       </button>
 
       <!-- User avatar -->
@@ -260,48 +366,100 @@ watch(
         @update:show="v => { if (!v) { showThemePanel = false; showLangPanel = false } }"
       >
         <template #trigger>
-          <button class="bottom-item avatar-item" :data-tip="userStore.userNickname" :aria-label="userStore.userNickname">
+          <button
+            class="bottom-item avatar-item"
+            :data-tip="userStore.userNickname"
+            :aria-label="userStore.userNickname"
+          >
             {{ userStore.userAvatar }}
           </button>
         </template>
         <div class="user-popover">
           <template v-if="!showThemePanel && !showLangPanel">
             <div class="user-info">
-              <div class="user-name">{{ userStore.userNickname }}</div>
-              <div class="user-email">{{ userStore.currentUser?.email }}</div>
+              <div class="user-name">
+                {{ userStore.userNickname }}
+              </div>
+              <div class="user-email">
+                {{ userStore.currentUser?.email }}
+              </div>
             </div>
-            <div class="popover-divider"></div>
-            <button class="popover-item" @click="navigateToAccount">
+            <div class="popover-divider" />
+            <button
+              class="popover-item"
+              @click="navigateToAccount"
+            >
               <span>&#x1F464;</span> {{ $t('sidebar.myAccount') }}
             </button>
-            <div class="popover-divider"></div>
-            <button class="popover-item" @click="openThemePanel">
+            <div class="popover-divider" />
+            <button
+              class="popover-item"
+              @click="openThemePanel"
+            >
               <span>&#x1F3A8;</span> {{ $t('sidebar.theme') }}
               <span class="submenu-current">{{ themeIcon }}</span>
-              <svg class="submenu-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"/>
+              <svg
+                class="submenu-arrow"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="9 18 15 12 9 6" />
               </svg>
             </button>
-            <button class="popover-item" @click="openLangPanel">
+            <button
+              class="popover-item"
+              @click="openLangPanel"
+            >
               <span>&#x1F310;</span> {{ $t('sidebar.language') }}
               <span class="submenu-current">{{ langIcon }}</span>
-              <svg class="submenu-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"/>
+              <svg
+                class="submenu-arrow"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="9 18 15 12 9 6" />
               </svg>
             </button>
-            <div class="popover-divider"></div>
-            <button class="popover-item logout" @click="handleLogout">
+            <div class="popover-divider" />
+            <button
+              class="popover-item logout"
+              @click="handleLogout"
+            >
               <span>&#x1F6AA;</span> {{ $t('sidebar.logout') }}
             </button>
           </template>
           <template v-else-if="showThemePanel">
-            <button class="popover-item subpanel-back-item" @click="closeThemePanel">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"/>
+            <button
+              class="popover-item subpanel-back-item"
+              @click="closeThemePanel"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="15 18 9 12 15 6" />
               </svg>
               <span style="font-weight: 600;">{{ $t('sidebar.theme') }}</span>
             </button>
-            <div class="popover-divider"></div>
+            <div class="popover-divider" />
             <button
               v-for="opt in themeOptions"
               :key="opt.mode"
@@ -310,19 +468,42 @@ watch(
             >
               <span>{{ opt.icon }}</span>
               <span class="theme-label">{{ opt.label }}</span>
-              <svg v-if="themeStore.themeMode === opt.mode" class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
+              <svg
+                v-if="themeStore.themeMode === opt.mode"
+                class="check-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
               </svg>
             </button>
           </template>
           <template v-else-if="showLangPanel">
-            <button class="popover-item subpanel-back-item" @click="closeLangPanel">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"/>
+            <button
+              class="popover-item subpanel-back-item"
+              @click="closeLangPanel"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="15 18 9 12 15 6" />
               </svg>
               <span style="font-weight: 600;">{{ $t('sidebar.language') }}</span>
             </button>
-            <div class="popover-divider"></div>
+            <div class="popover-divider" />
             <button
               v-for="opt in langOptions"
               :key="opt.lang"
@@ -331,8 +512,19 @@ watch(
             >
               <span>{{ opt.icon }}</span>
               <span class="theme-label">{{ opt.label }}</span>
-              <svg v-if="localeStore.locale === opt.lang" class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
+              <svg
+                v-if="localeStore.locale === opt.lang"
+                class="check-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
               </svg>
             </button>
           </template>
@@ -345,24 +537,54 @@ watch(
         :aria-label="$t('auth.login')"
         @click="handleGuestAvatarClick"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21a8 8 0 0 0-16 0"/>
-          <circle cx="12" cy="7" r="4"/>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.9"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 21a8 8 0 0 0-16 0" />
+          <circle
+            cx="12"
+            cy="7"
+            r="4"
+          />
         </svg>
       </button>
     </div>
   </aside>
 
-  <NDrawer v-model:show="showNotificationDrawer" placement="left" :width="320" :trap-focus="false" :auto-focus="false">
-    <NDrawerContent :title="$t('notifications.panelTitle')" closable>
+  <NDrawer
+    v-model:show="showNotificationDrawer"
+    placement="left"
+    :width="320"
+    :trap-focus="false"
+    :auto-focus="false"
+  >
+    <NDrawerContent
+      :title="$t('notifications.panelTitle')"
+      closable
+    >
       <template #header-extra>
-        <button class="notification-mark-read" @click="notificationStore.markAllAsRead">
+        <button
+          class="notification-mark-read"
+          @click="notificationStore.markAllAsRead"
+        >
           {{ $t('notifications.markAllRead') }}
         </button>
       </template>
 
-      <div class="notification-status">{{ notificationUnreadText }}</div>
-      <div v-if="notificationItems.length" class="notification-list">
+      <div class="notification-status">
+        {{ notificationUnreadText }}
+      </div>
+      <div
+        v-if="notificationItems.length"
+        class="notification-list"
+      >
         <button
           v-for="item in notificationItems"
           :key="item.id"
@@ -370,13 +592,24 @@ watch(
           @click="openNotificationDetail(item)"
         >
           <div class="notification-row-head">
-            <div class="notification-row-title">{{ item.title }}</div>
-            <div class="notification-row-time">{{ formatNotificationTime(item.createdAt) }}</div>
+            <div class="notification-row-title">
+              {{ item.title }}
+            </div>
+            <div class="notification-row-time">
+              {{ formatNotificationTime(item.createdAt) }}
+            </div>
           </div>
-          <div class="notification-row-summary">{{ item.summary }}</div>
+          <div class="notification-row-summary">
+            {{ item.summary }}
+          </div>
         </button>
       </div>
-      <div v-else class="notification-empty">{{ $t('notifications.empty') }}</div>
+      <div
+        v-else
+        class="notification-empty"
+      >
+        {{ $t('notifications.empty') }}
+      </div>
     </NDrawerContent>
   </NDrawer>
 
@@ -386,14 +619,24 @@ watch(
     :style="{ width: 'min(560px, calc(100vw - 32px))' }"
     :mask-closable="true"
   >
-    <div v-if="activeNotification" class="notification-detail">
+    <div
+      v-if="activeNotification"
+      class="notification-detail"
+    >
       <div class="notification-detail-title">
         {{ activeNotification.title || $t('notifications.detailTitle') }}
       </div>
-      <div class="notification-detail-time">{{ formatNotificationTime(activeNotification.createdAt) }}</div>
-      <div class="notification-detail-content">{{ activeNotification.content }}</div>
+      <div class="notification-detail-time">
+        {{ formatNotificationTime(activeNotification.createdAt) }}
+      </div>
+      <div class="notification-detail-content">
+        {{ activeNotification.content }}
+      </div>
       <div class="notification-detail-footer">
-        <button class="notification-ack-btn" @click="closeNotificationDetail">
+        <button
+          class="notification-ack-btn"
+          @click="closeNotificationDetail"
+        >
           {{ $t('notifications.acknowledge') }}
         </button>
       </div>

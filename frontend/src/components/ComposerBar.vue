@@ -597,62 +597,132 @@ defineExpose({ fillPrompt, fillFromGeneration, fillEditImage })
     <div class="composer-card">
       <div class="composer-body">
         <!-- Image/Ecommerce/Veo-video mode uploads -->
-        <div v-if="creativeMode === 'image' || creativeMode === 'ecommerce' || (creativeMode === 'video' && isVeoModel)" class="composer-uploads">
+        <div
+          v-if="creativeMode === 'image' || creativeMode === 'ecommerce' || (creativeMode === 'video' && isVeoModel)"
+          class="composer-uploads"
+        >
           <!-- 多张图片折叠态 -->
-          <div v-if="uploadedImagePreviews.length >= 2 && !uploadsExpanded"
-            class="upload-stack" @click="uploadsExpanded = true" title="点击展开查看">
-            <div v-for="(img, i) in uploadedImagePreviews" :key="i"
-              class="stack-card" :style="{
+          <div
+            v-if="uploadedImagePreviews.length >= 2 && !uploadsExpanded"
+            class="upload-stack"
+            title="点击展开查看"
+            @click="uploadsExpanded = true"
+          >
+            <div
+              v-for="(img, i) in uploadedImagePreviews"
+              :key="i"
+              class="stack-card"
+              :style="{
                 '--stack-rotate': (i === 0 ? -8 : i === 1 ? 5 : -2) + 'deg',
                 'z-index': uploadedImagePreviews.length - i
-              }">
-              <img :src="img" />
+              }"
+            >
+              <img :src="img">
             </div>
             <span class="stack-badge">{{ uploadedImagePreviews.length }}</span>
           </div>
           <!-- 单张图片 / 展开态 -->
           <template v-if="uploadedImagePreviews.length === 1 || uploadsExpanded">
-            <div v-for="(img, i) in uploadedImagePreviews" :key="i"
-              class="upload-card" :style="{ '--tilt': (i % 2 === 0 ? -6 : 5) + 'deg' }">
-              <img :src="img" />
-              <button class="card-remove" @click="removeUpload(i)">×</button>
+            <div
+              v-for="(img, i) in uploadedImagePreviews"
+              :key="i"
+              class="upload-card"
+              :style="{ '--tilt': (i % 2 === 0 ? -6 : 5) + 'deg' }"
+            >
+              <img :src="img">
+              <button
+                class="card-remove"
+                @click="removeUpload(i)"
+              >
+                ×
+              </button>
             </div>
           </template>
           <!-- 添加按钮（空态 / 单张 / 展开态，且未满 3 张） -->
-          <label v-if="uploadedImageUrls.length < 3 && (uploadedImagePreviews.length <= 1 || uploadsExpanded)"
-            class="upload-card" :style="{ '--tilt': uploadedImagePreviews.length === 0 ? '-4deg' : '3deg' }">
-            <input type="file" accept="image/*" multiple @change="handleUpload" hidden />
+          <label
+            v-if="uploadedImageUrls.length < 3 && (uploadedImagePreviews.length <= 1 || uploadsExpanded)"
+            class="upload-card"
+            :style="{ '--tilt': uploadedImagePreviews.length === 0 ? '-4deg' : '3deg' }"
+          >
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              hidden
+              @change="handleUpload"
+            >
             <div class="frame-placeholder">
               <span class="add-icon">+</span>
               <span class="frame-lbl">{{ creativeMode === 'ecommerce' ? $t('composer.productImage') : $t('composer.refImage') }}</span>
             </div>
           </label>
           <!-- 展开态收起按钮 -->
-          <button v-if="uploadsExpanded && uploadedImagePreviews.length >= 2"
-            class="stack-collapse-btn" @click="uploadsExpanded = false" title="收起">−</button>
+          <button
+            v-if="uploadsExpanded && uploadedImagePreviews.length >= 2"
+            class="stack-collapse-btn"
+            title="收起"
+            @click="uploadsExpanded = false"
+          >
+            −
+          </button>
         </div>
 
         <!-- Video mode: always show first + last frame uploads -->
-        <div v-if="creativeMode === 'video'" class="composer-uploads">
-          <div class="upload-card" :style="{ '--tilt': '-5deg' }">
+        <div
+          v-if="creativeMode === 'video'"
+          class="composer-uploads"
+        >
+          <div
+            class="upload-card"
+            :style="{ '--tilt': '-5deg' }"
+          >
             <template v-if="firstFramePreview">
-              <img :src="firstFramePreview" />
-              <button class="card-remove" @click="removeFrame('first')">×</button>
+              <img :src="firstFramePreview">
+              <button
+                class="card-remove"
+                @click="removeFrame('first')"
+              >
+                ×
+              </button>
             </template>
-            <label v-else class="frame-placeholder">
-              <input type="file" accept="image/*" @change="handleFrameUpload('first', $event)" hidden />
+            <label
+              v-else
+              class="frame-placeholder"
+            >
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                @change="handleFrameUpload('first', $event)"
+              >
               <span class="add-icon">+</span>
               <span class="frame-lbl">{{ $t('composer.firstFrame') }}</span>
             </label>
           </div>
           <span class="frame-sep">→</span>
-          <div class="upload-card" :style="{ '--tilt': '5deg' }">
+          <div
+            class="upload-card"
+            :style="{ '--tilt': '5deg' }"
+          >
             <template v-if="lastFramePreview">
-              <img :src="lastFramePreview" />
-              <button class="card-remove" @click="removeFrame('last')">×</button>
+              <img :src="lastFramePreview">
+              <button
+                class="card-remove"
+                @click="removeFrame('last')"
+              >
+                ×
+              </button>
             </template>
-            <label v-else class="frame-placeholder">
-              <input type="file" accept="image/*" @change="handleFrameUpload('last', $event)" hidden />
+            <label
+              v-else
+              class="frame-placeholder"
+            >
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                @change="handleFrameUpload('last', $event)"
+              >
               <span class="add-icon">+</span>
               <span class="frame-lbl">{{ $t('composer.lastFrame') }}</span>
             </label>
@@ -663,15 +733,33 @@ defineExpose({ fillPrompt, fillFromGeneration, fillEditImage })
           <textarea
             ref="inputRef"
             v-model="prompt"
-            @keydown="handleKeydown"
             :placeholder="placeholderText"
             class="composer-input"
+            @keydown="handleKeydown"
           />
-          <div v-if="prompt.trim()" class="input-actions">
-            <button class="action-chip optimize-chip" :disabled="optimizingPrompt" @click="runPromptOptimization()" :title="$t('composer.optimizeAction')">
-              <NSpin v-if="optimizingPrompt" size="small" :stroke-width="20" />
+          <div
+            v-if="prompt.trim()"
+            class="input-actions"
+          >
+            <button
+              class="action-chip optimize-chip"
+              :disabled="optimizingPrompt"
+              :title="$t('composer.optimizeAction')"
+              @click="runPromptOptimization()"
+            >
+              <NSpin
+                v-if="optimizingPrompt"
+                size="small"
+                :stroke-width="20"
+              />
               <template v-else>
-                <svg class="chip-diamond" width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 8L12 22L20 8L12 2Z M6 8H18L12 3L6 8Z"/></svg>
+                <svg
+                  class="chip-diamond"
+                  width="9"
+                  height="9"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                ><path d="M12 2L4 8L12 22L20 8L12 2Z M6 8H18L12 3L6 8Z" /></svg>
                 <span class="optimize-cost">2</span>
                 <span>AI</span>
               </template>
@@ -683,45 +771,101 @@ defineExpose({ fillPrompt, fillFromGeneration, fillEditImage })
       <!-- Toolbar -->
       <div class="composer-toolbar">
         <div class="toolbar-left">
-          <NDropdown :options="modeDropOptions" @select="onModeSelect" trigger="click" placement="bottom-start">
+          <NDropdown
+            :options="modeDropOptions"
+            trigger="click"
+            placement="bottom-start"
+            @select="onModeSelect"
+          >
             <button class="pill pill-primary">
               {{ modeLabel }}
-              <svg class="pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              <svg
+                class="pill-arrow"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              ><path d="M6 9l6 6 6-6" /></svg>
             </button>
           </NDropdown>
 
           <!-- Image params -->
           <template v-if="creativeMode === 'image'">
-            <NDropdown :options="modelDropOptions" @select="onModelSelect" trigger="click" placement="bottom-start">
+            <NDropdown
+              :options="modelDropOptions"
+              trigger="click"
+              placement="bottom-start"
+              @select="onModelSelect"
+            >
               <button class="pill">
-                <img v-if="modelIcon" :src="modelIcon" class="pill-icon" />
+                <img
+                  v-if="modelIcon"
+                  :src="modelIcon"
+                  class="pill-icon"
+                >
                 {{ modelLabel }}
               </button>
             </NDropdown>
 
-            <NPopover trigger="click" placement="bottom-start" :show-arrow="false" raw
-              content-class="ratio-popover" v-model:show="showRatioPopover">
+            <NPopover
+              v-model:show="showRatioPopover"
+              trigger="click"
+              placement="bottom-start"
+              :show-arrow="false"
+              raw
+              content-class="ratio-popover"
+            >
               <template #trigger>
-                <button class="pill">▢ {{ aspectRatio }}&nbsp;&nbsp;{{ imageSize }}
-                  <svg class="pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                <button class="pill">
+                  ▢ {{ aspectRatio }}&nbsp;&nbsp;{{ imageSize }}
+                  <svg
+                    class="pill-arrow"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  ><path d="M6 9l6 6 6-6" /></svg>
                 </button>
               </template>
               <div class="pop-panel">
-                <div class="pop-section-title">{{ $t('composer.selectRatio') }}</div>
+                <div class="pop-section-title">
+                  {{ $t('composer.selectRatio') }}
+                </div>
                 <div class="ratio-grid">
-                  <button v-for="r in imageRatios" :key="r.value"
+                  <button
+                    v-for="r in imageRatios"
+                    :key="r.value"
                     :class="['ratio-cell', { active: aspectRatio === r.value }]"
-                    @click="aspectRatio = r.value">
-                    <span class="ratio-icon" :style="{ width: r.w + 'px', height: r.h + 'px' }"></span>
+                    @click="aspectRatio = r.value"
+                  >
+                    <span
+                      class="ratio-icon"
+                      :style="{ width: r.w + 'px', height: r.h + 'px' }"
+                    />
                     <span class="ratio-label">{{ r.value }}</span>
                   </button>
                 </div>
-                <div class="pop-section-title" style="margin-top: 14px;">{{ $t('composer.selectResolution') }}</div>
+                <div
+                  class="pop-section-title"
+                  style="margin-top: 14px;"
+                >
+                  {{ $t('composer.selectResolution') }}
+                </div>
                 <div class="seg-group">
-                  <button v-for="s in imageSizeOptions" :key="s.value"
+                  <button
+                    v-for="s in imageSizeOptions"
+                    :key="s.value"
                     :class="['seg-btn', { active: imageSize === s.value }]"
-                    @click="imageSize = s.value">
-                    {{ s.label }} <span v-if="s.badge" class="seg-badge">{{ s.badge }}</span>
+                    @click="imageSize = s.value"
+                  >
+                    {{ s.label }} <span
+                      v-if="s.badge"
+                      class="seg-badge"
+                    >{{ s.badge }}</span>
                   </button>
                 </div>
               </div>
@@ -730,48 +874,132 @@ defineExpose({ fillPrompt, fillFromGeneration, fillEditImage })
 
           <!-- Ecommerce params -->
           <template v-else-if="creativeMode === 'ecommerce'">
-            <button class="pill" style="cursor: default; opacity: .65"><img src="/images/jmlogo.png" class="pill-icon" /> Seedream-4.5</button>
+            <button
+              class="pill"
+              style="cursor: default; opacity: .65"
+            >
+              <img
+                src="/images/jmlogo.png"
+                class="pill-icon"
+              > Seedream-4.5
+            </button>
 
-            <NDropdown :options="ePlatformDropOptions" @select="k => ecommerceType = k" trigger="click" placement="bottom-start">
-              <button class="pill">🏪 {{ ecommerceType }}
-                <svg class="pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            <NDropdown
+              :options="ePlatformDropOptions"
+              trigger="click"
+              placement="bottom-start"
+              @select="k => ecommerceType = k"
+            >
+              <button class="pill">
+                🏪 {{ ecommerceType }}
+                <svg
+                  class="pill-arrow"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                ><path d="M6 9l6 6 6-6" /></svg>
               </button>
             </NDropdown>
 
-            <NDropdown :options="eImageTypeDropOptions" @select="k => imageType = k" trigger="click" placement="bottom-start">
-              <button class="pill">📷 {{ imageType }}
-                <svg class="pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            <NDropdown
+              :options="eImageTypeDropOptions"
+              trigger="click"
+              placement="bottom-start"
+              @select="k => imageType = k"
+            >
+              <button class="pill">
+                📷 {{ imageType }}
+                <svg
+                  class="pill-arrow"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                ><path d="M6 9l6 6 6-6" /></svg>
               </button>
             </NDropdown>
 
-            <NDropdown :options="eOutputCountDropOptions" @select="k => outputCount = k" trigger="click" placement="bottom-start">
-              <button class="pill">🔢 {{ $t('composer.count', { count: outputCount }) }}
-                <svg class="pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            <NDropdown
+              :options="eOutputCountDropOptions"
+              trigger="click"
+              placement="bottom-start"
+              @select="k => outputCount = k"
+            >
+              <button class="pill">
+                🔢 {{ $t('composer.count', { count: outputCount }) }}
+                <svg
+                  class="pill-arrow"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                ><path d="M6 9l6 6 6-6" /></svg>
               </button>
             </NDropdown>
 
-            <NPopover trigger="click" placement="bottom-start" :show-arrow="false" raw content-class="ratio-popover">
+            <NPopover
+              trigger="click"
+              placement="bottom-start"
+              :show-arrow="false"
+              raw
+              content-class="ratio-popover"
+            >
               <template #trigger>
-                <button class="pill">▢ {{ aspectRatio }}&nbsp;&nbsp;{{ imageSize }}
-                  <svg class="pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                <button class="pill">
+                  ▢ {{ aspectRatio }}&nbsp;&nbsp;{{ imageSize }}
+                  <svg
+                    class="pill-arrow"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  ><path d="M6 9l6 6 6-6" /></svg>
                 </button>
               </template>
               <div class="pop-panel">
-                <div class="pop-section-title">{{ $t('composer.selectRatio') }}</div>
+                <div class="pop-section-title">
+                  {{ $t('composer.selectRatio') }}
+                </div>
                 <div class="ratio-grid">
-                  <button v-for="r in imageRatios" :key="r.value"
+                  <button
+                    v-for="r in imageRatios"
+                    :key="r.value"
                     :class="['ratio-cell', { active: aspectRatio === r.value }]"
-                    @click="aspectRatio = r.value">
-                    <span class="ratio-icon" :style="{ width: r.w + 'px', height: r.h + 'px' }"></span>
+                    @click="aspectRatio = r.value"
+                  >
+                    <span
+                      class="ratio-icon"
+                      :style="{ width: r.w + 'px', height: r.h + 'px' }"
+                    />
                     <span class="ratio-label">{{ r.value }}</span>
                   </button>
                 </div>
-                <div class="pop-section-title" style="margin-top: 14px;">{{ $t('composer.selectResolution') }}</div>
+                <div
+                  class="pop-section-title"
+                  style="margin-top: 14px;"
+                >
+                  {{ $t('composer.selectResolution') }}
+                </div>
                 <div class="seg-group">
-                  <button v-for="s in ecommerceSizeOptions" :key="s.value"
+                  <button
+                    v-for="s in ecommerceSizeOptions"
+                    :key="s.value"
                     :class="['seg-btn', { active: imageSize === s.value }]"
-                    @click="imageSize = s.value">
-                    {{ s.label }} <span v-if="s.badge" class="seg-badge">{{ s.badge }}</span>
+                    @click="imageSize = s.value"
+                  >
+                    {{ s.label }} <span
+                      v-if="s.badge"
+                      class="seg-badge"
+                    >{{ s.badge }}</span>
                   </button>
                 </div>
               </div>
@@ -788,91 +1016,208 @@ defineExpose({ fillPrompt, fillFromGeneration, fillEditImage })
                 ]),
                 key: m.key
               }))"
-              @select="k => videoModel = k"
               trigger="click"
               placement="bottom-start"
+              @select="k => videoModel = k"
             >
               <button class="pill">
-                <img v-if="currentVideoModel.icon" :src="currentVideoModel.icon" class="pill-icon" />
-                <span v-else style="font-size:14px;margin-right:2px">{{ currentVideoModel.emoji }}</span>
+                <img
+                  v-if="currentVideoModel.icon"
+                  :src="currentVideoModel.icon"
+                  class="pill-icon"
+                >
+                <span
+                  v-else
+                  style="font-size:14px;margin-right:2px"
+                >{{ currentVideoModel.emoji }}</span>
                 {{ currentVideoModel.label }}
-                <svg class="pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                <svg
+                  class="pill-arrow"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                ><path d="M6 9l6 6 6-6" /></svg>
               </button>
             </NDropdown>
 
-            <NPopover trigger="click" placement="bottom-start" :show-arrow="false" raw content-class="ratio-popover">
+            <NPopover
+              trigger="click"
+              placement="bottom-start"
+              :show-arrow="false"
+              raw
+              content-class="ratio-popover"
+            >
               <template #trigger>
-                <button class="pill">▢ {{ videoRatio }}&nbsp;&nbsp;{{ videoResolution.toUpperCase() }}
-                  <svg class="pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                <button class="pill">
+                  ▢ {{ videoRatio }}&nbsp;&nbsp;{{ videoResolution.toUpperCase() }}
+                  <svg
+                    class="pill-arrow"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  ><path d="M6 9l6 6 6-6" /></svg>
                 </button>
               </template>
               <div class="pop-panel">
-                <div class="pop-section-title">{{ $t('composer.selectRatio') }}</div>
+                <div class="pop-section-title">
+                  {{ $t('composer.selectRatio') }}
+                </div>
                 <div class="ratio-grid">
-                  <button v-for="r in videoRatios" :key="r.value"
+                  <button
+                    v-for="r in videoRatios"
+                    :key="r.value"
                     :class="['ratio-cell', { active: videoRatio === r.value }]"
-                    @click="videoRatio = r.value">
-                    <span class="ratio-icon" :style="{ width: r.w + 'px', height: r.h + 'px' }"></span>
+                    @click="videoRatio = r.value"
+                  >
+                    <span
+                      class="ratio-icon"
+                      :style="{ width: r.w + 'px', height: r.h + 'px' }"
+                    />
                     <span class="ratio-label">{{ r.value }}</span>
                   </button>
                 </div>
-                <div class="pop-section-title" style="margin-top: 14px;">{{ $t('composer.selectResolution') }}</div>
+                <div
+                  class="pop-section-title"
+                  style="margin-top: 14px;"
+                >
+                  {{ $t('composer.selectResolution') }}
+                </div>
                 <div class="seg-group">
-                  <button v-for="res in videoResolutions" :key="res.value"
+                  <button
+                    v-for="res in videoResolutions"
+                    :key="res.value"
                     :class="['seg-btn', { active: videoResolution === res.value }]"
-                    @click="videoResolution = res.value">
-                    {{ res.label }} <span v-if="res.premium" class="seg-star">★</span>
+                    @click="videoResolution = res.value"
+                  >
+                    {{ res.label }} <span
+                      v-if="res.premium"
+                      class="seg-star"
+                    >★</span>
                   </button>
                 </div>
               </div>
             </NPopover>
 
-            <NDropdown :options="videoDurationOptions.map(d => ({ label: d.label, key: d.value }))" @select="k => videoDuration = k" trigger="click" placement="bottom-start">
-              <button class="pill">⏱ {{ videoDuration }}s</button>
+            <NDropdown
+              :options="videoDurationOptions.map(d => ({ label: d.label, key: d.value }))"
+              trigger="click"
+              placement="bottom-start"
+              @select="k => videoDuration = k"
+            >
+              <button class="pill">
+                ⏱ {{ videoDuration }}s
+              </button>
             </NDropdown>
 
-            <button class="pill" :class="{ 'pill-active': generateAudio }" @click="generateAudio = !generateAudio" :title="$t('composer.generateAudio')">
+            <button
+              class="pill"
+              :class="{ 'pill-active': generateAudio }"
+              :title="$t('composer.generateAudio')"
+              @click="generateAudio = !generateAudio"
+            >
               🔊
             </button>
           </template>
         </div>
 
         <div class="toolbar-right">
-          <span class="credits-badge"><svg class="credits-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 8L12 22L20 8L12 2Z"/></svg> {{ requiredCredits }}</span>
-          <button class="send-btn" :disabled="loading || (!prompt.trim() && !hasUploadedImages) || (creativeMode === 'ecommerce' && !hasUploadedImages)" @click="sendMessage">
-            <NSpin v-if="loading" size="small" />
-            <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+          <span class="credits-badge"><svg
+            class="credits-icon"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          ><path d="M12 2L4 8L12 22L20 8L12 2Z" /></svg> {{ requiredCredits }}</span>
+          <button
+            class="send-btn"
+            :disabled="loading || (!prompt.trim() && !hasUploadedImages) || (creativeMode === 'ecommerce' && !hasUploadedImages)"
+            @click="sendMessage"
+          >
+            <NSpin
+              v-if="loading"
+              size="small"
+            />
+            <svg
+              v-else
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            ><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" /></svg>
           </button>
         </div>
       </div>
 
-      <div v-if="optimizePanelVisible" class="optimize-panel">
+      <div
+        v-if="optimizePanelVisible"
+        class="optimize-panel"
+      >
         <div class="optimize-header">
-          <div class="optimize-title">{{ $t('composer.optimizePanelTitle') }}</div>
-          <button class="panel-close" @click="optimizePanelVisible = false">&times;</button>
+          <div class="optimize-title">
+            {{ $t('composer.optimizePanelTitle') }}
+          </div>
+          <button
+            class="panel-close"
+            @click="optimizePanelVisible = false"
+          >
+            &times;
+          </button>
         </div>
 
-        <div v-if="optimizingPrompt" class="optimize-loading">
+        <div
+          v-if="optimizingPrompt"
+          class="optimize-loading"
+        >
           <NSpin size="small" />
           <span>{{ $t('composer.optimizing') }}</span>
         </div>
 
         <template v-else>
           <!-- 标准单条结果 -->
-          <div v-if="optimizePrimary" class="optimize-card">
+          <div
+            v-if="optimizePrimary"
+            class="optimize-card"
+          >
             <div class="optimize-card-head">
               <strong>{{ optimizePrimary.title || $t('composer.optimizeCandidate') }}</strong>
-              <span class="optimize-reason" v-if="optimizePrimary.reason">{{ optimizePrimary.reason }}</span>
+              <span
+                v-if="optimizePrimary.reason"
+                class="optimize-reason"
+              >{{ optimizePrimary.reason }}</span>
             </div>
-            <p class="optimize-prompt">{{ optimizePrimary.prompt }}</p>
+            <p class="optimize-prompt">
+              {{ optimizePrimary.prompt }}
+            </p>
             <div class="optimize-actions">
-              <button class="pill" :disabled="!optimizeBackupPrompt" @click="undoOptimizedPrompt">撤销</button>
-              <button class="pill pill-primary" @click="generateWithCandidate(optimizePrimary)">{{ $t('composer.optimizeGenerate') }}</button>
+              <button
+                class="pill"
+                :disabled="!optimizeBackupPrompt"
+                @click="undoOptimizedPrompt"
+              >
+                撤销
+              </button>
+              <button
+                class="pill pill-primary"
+                @click="generateWithCandidate(optimizePrimary)"
+              >
+                {{ $t('composer.optimizeGenerate') }}
+              </button>
             </div>
           </div>
 
 
-          <div v-else class="optimize-empty">{{ $t('composer.optimizeEmptyHint') }}</div>
+          <div
+            v-else
+            class="optimize-empty"
+          >
+            {{ $t('composer.optimizeEmptyHint') }}
+          </div>
         </template>
       </div>
     </div>

@@ -98,34 +98,58 @@ const handleStart = () => {
 
 <template>
   <div class="landing">
-
     <!-- 导航 -->
     <nav class="landing-nav">
       <div class="nav-container">
         <div class="nav-brand">
-          <img src="/images/icon.png" alt="" class="brand-icon" />
+          <img
+            src="/images/icon.png"
+            alt=""
+            class="brand-icon"
+          >
           <span class="brand-text">寻氧AI</span>
         </div>
         <div class="nav-links">
-          <a href="#features" class="nav-link">{{ $t('landing.navFeatures') }}</a>
-          <a href="#showcase" class="nav-link">{{ $t('landing.navShowcase') }}</a>
-          <a href="#models" class="nav-link">{{ $t('landing.navModels') }}</a>
+          <a
+            href="#features"
+            class="nav-link"
+          >{{ $t('landing.navFeatures') }}</a>
+          <a
+            href="#showcase"
+            class="nav-link"
+          >{{ $t('landing.navShowcase') }}</a>
+          <a
+            href="#models"
+            class="nav-link"
+          >{{ $t('landing.navModels') }}</a>
         </div>
         <div class="nav-actions">
           <div class="lang-switcher">
-            <div class="lang-slider" :class="{ 'is-en': localeStore.locale === 'en' }"></div>
+            <div
+              class="lang-slider"
+              :class="{ 'is-en': localeStore.locale === 'en' }"
+            />
             <button
               class="lang-opt"
               :class="{ active: localeStore.locale === 'zh' }"
               @click="localeStore.setLocale('zh')"
-            >中</button>
+            >
+              中
+            </button>
             <button
               class="lang-opt"
               :class="{ active: localeStore.locale === 'en' }"
               @click="localeStore.setLocale('en')"
-            >EN</button>
+            >
+              EN
+            </button>
           </div>
-          <NButton type="primary" @click="handleStart" strong class="nav-cta">
+          <NButton
+            type="primary"
+            strong
+            class="nav-cta"
+            @click="handleStart"
+          >
             {{ $t('landing.startCreating') }}
           </NButton>
         </div>
@@ -150,7 +174,7 @@ const handleStart = () => {
           disablepictureinpicture
           disableremoteplayback
         />
-        <div class="hero-overlay"></div>
+        <div class="hero-overlay" />
       </div>
       <div class="hero-content">
         <h1 class="hero-title animate-on-scroll">
@@ -160,43 +184,71 @@ const handleStart = () => {
     </header>
 
     <!-- ========== 灵感展示 ========== -->
-    <section id="showcase" class="showcase-section">
+    <section
+      id="showcase"
+      class="showcase-section"
+    >
       <div class="section-container">
         <div class="section-header animate-on-scroll">
-          <h2 class="section-title title-line title-gradient">{{ $t('landing.showcaseTitle') }}</h2>
-          <p class="section-subtitle">{{ $t('landing.showcaseSubtitle') }}</p>
+          <h2 class="section-title title-line title-gradient">
+            {{ $t('landing.showcaseTitle') }}
+          </h2>
+          <p class="section-subtitle">
+            {{ $t('landing.showcaseSubtitle') }}
+          </p>
         </div>
       </div>
 
       <div class="showcase-grid">
-          <div
-            v-for="(item, i) in showcaseItems"
-            :key="i"
-            class="showcase-card animate-on-scroll"
-            :style="{ '--delay': (i * 0.08) + 's' }"
-            @click="handleStart"
-          >
-            <div class="showcase-card-inner">
-              <img :src="item.image" :alt="item.prompt" class="showcase-img" loading="lazy" />
-              <div class="showcase-overlay">
-                <span class="showcase-tag">{{ item.tag }}</span>
-                <p class="showcase-prompt">{{ item.prompt }}</p>
-                <span class="showcase-try">
-                  {{ $t('landing.tryThis') }}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </span>
-              </div>
+        <div
+          v-for="(item, i) in showcaseItems"
+          :key="i"
+          class="showcase-card animate-on-scroll"
+          :style="{ '--delay': (i * 0.08) + 's' }"
+          @click="handleStart"
+        >
+          <div class="showcase-card-inner">
+            <img
+              :src="item.image"
+              :alt="item.prompt"
+              class="showcase-img"
+              loading="lazy"
+            >
+            <div class="showcase-overlay">
+              <span class="showcase-tag">{{ item.tag }}</span>
+              <p class="showcase-prompt">
+                {{ item.prompt }}
+              </p>
+              <span class="showcase-try">
+                {{ $t('landing.tryThis') }}
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                ><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              </span>
             </div>
           </div>
+        </div>
       </div>
     </section>
 
     <!-- ========== 功能介绍 ========== -->
-    <section id="features" class="features-section">
+    <section
+      id="features"
+      class="features-section"
+    >
       <div class="section-container">
         <div class="section-header animate-on-scroll">
-          <h2 class="section-title title-line title-gradient">{{ $t('landing.featuresTitle') }}</h2>
-          <p class="section-subtitle">{{ $t('landing.featuresSubtitle') }}</p>
+          <h2 class="section-title title-line title-gradient">
+            {{ $t('landing.featuresTitle') }}
+          </h2>
+          <p class="section-subtitle">
+            {{ $t('landing.featuresSubtitle') }}
+          </p>
         </div>
 
         <div class="features-grid">
@@ -206,11 +258,18 @@ const handleStart = () => {
             class="feature-card animate-on-scroll"
             :style="{ '--delay': (i * 0.1) + 's' }"
           >
-            <div class="feature-icon-wrap" :style="{ background: f.gradient }">
+            <div
+              class="feature-icon-wrap"
+              :style="{ background: f.gradient }"
+            >
               <span class="feature-icon">{{ f.icon }}</span>
             </div>
-            <h3 class="feature-title">{{ f.title }}</h3>
-            <p class="feature-desc">{{ f.desc }}</p>
+            <h3 class="feature-title">
+              {{ f.title }}
+            </h3>
+            <p class="feature-desc">
+              {{ f.desc }}
+            </p>
           </div>
         </div>
       </div>
@@ -220,8 +279,12 @@ const handleStart = () => {
     <section class="video-section">
       <div class="section-container">
         <div class="section-header animate-on-scroll">
-          <h2 class="section-title title-line title-gradient">{{ $t('landing.videoTitle') }}</h2>
-          <p class="section-subtitle">{{ $t('landing.videoSubtitle') }}</p>
+          <h2 class="section-title title-line title-gradient">
+            {{ $t('landing.videoTitle') }}
+          </h2>
+          <p class="section-subtitle">
+            {{ $t('landing.videoSubtitle') }}
+          </p>
         </div>
       </div>
       <div class="video-list">
@@ -229,78 +292,188 @@ const handleStart = () => {
         <div class="video-row animate-on-scroll">
           <div class="video-text-col">
             <div class="video-text-inner">
-              <div class="video-num">01</div>
-              <h3 class="video-heading">{{ $t('landing.video01Title') }}</h3>
-              <p class="video-body">{{ $t('landing.video01Desc') }}</p>
-              <button class="video-cta" @click="handleStart">{{ $t('landing.createNow') }}</button>
+              <div class="video-num">
+                01
+              </div>
+              <h3 class="video-heading">
+                {{ $t('landing.video01Title') }}
+              </h3>
+              <p class="video-body">
+                {{ $t('landing.video01Desc') }}
+              </p>
+              <button
+                class="video-cta"
+                @click="handleStart"
+              >
+                {{ $t('landing.createNow') }}
+              </button>
             </div>
           </div>
           <div class="video-media-col">
-            <video src="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/media/0.485b16d2.mp4" poster="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/image/0.8f3410ca.jpg" class="video-media" muted loop playsinline autoplay preload="auto" />
+            <video
+              src="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/media/0.485b16d2.mp4"
+              poster="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/image/0.8f3410ca.jpg"
+              class="video-media"
+              muted
+              loop
+              playsinline
+              autoplay
+              preload="auto"
+            />
           </div>
         </div>
         <!-- 02 -->
         <div class="video-row video-row-reverse animate-on-scroll">
           <div class="video-text-col">
             <div class="video-text-inner">
-              <div class="video-num">02</div>
-              <h3 class="video-heading" v-html="$t('landing.video02Title')"></h3>
-              <p class="video-body">{{ $t('landing.video02Desc') }}</p>
-              <button class="video-cta" @click="handleStart">{{ $t('landing.createNow') }}</button>
+              <div class="video-num">
+                02
+              </div>
+              <h3
+                class="video-heading"
+                v-html="$t('landing.video02Title')"
+              />
+              <p class="video-body">
+                {{ $t('landing.video02Desc') }}
+              </p>
+              <button
+                class="video-cta"
+                @click="handleStart"
+              >
+                {{ $t('landing.createNow') }}
+              </button>
             </div>
           </div>
           <div class="video-media-col">
-            <video src="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/media/1.55160634.mp4" poster="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/image/1.b3d7df69.jpg" class="video-media" muted loop playsinline autoplay preload="auto" />
+            <video
+              src="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/media/1.55160634.mp4"
+              poster="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/image/1.b3d7df69.jpg"
+              class="video-media"
+              muted
+              loop
+              playsinline
+              autoplay
+              preload="auto"
+            />
           </div>
         </div>
         <!-- 03 -->
         <div class="video-row animate-on-scroll">
           <div class="video-text-col">
             <div class="video-text-inner">
-              <div class="video-num">03</div>
-              <h3 class="video-heading">{{ $t('landing.video03Title') }}</h3>
-              <p class="video-body">{{ $t('landing.video03Desc') }}</p>
-              <button class="video-cta" @click="handleStart">{{ $t('landing.createNow') }}</button>
+              <div class="video-num">
+                03
+              </div>
+              <h3 class="video-heading">
+                {{ $t('landing.video03Title') }}
+              </h3>
+              <p class="video-body">
+                {{ $t('landing.video03Desc') }}
+              </p>
+              <button
+                class="video-cta"
+                @click="handleStart"
+              >
+                {{ $t('landing.createNow') }}
+              </button>
             </div>
           </div>
           <div class="video-media-col">
-            <video src="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/media/2.7045d286.mp4" poster="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/image/2.6028618f.jpg" class="video-media" muted loop playsinline autoplay preload="auto" />
+            <video
+              src="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/media/2.7045d286.mp4"
+              poster="//lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/growth/jimeng/landing_page/static/image/2.6028618f.jpg"
+              class="video-media"
+              muted
+              loop
+              playsinline
+              autoplay
+              preload="auto"
+            />
           </div>
         </div>
       </div>
     </section>
 
     <!-- ========== 模型支持 ========== -->
-    <section id="models" class="models-section">
+    <section
+      id="models"
+      class="models-section"
+    >
       <div class="section-container">
         <div class="section-header animate-on-scroll">
-          <h2 class="section-title title-line title-gradient">{{ $t('landing.modelsTitle') }}</h2>
-          <p class="section-subtitle">{{ $t('landing.modelsSubtitle') }}</p>
+          <h2 class="section-title title-line title-gradient">
+            {{ $t('landing.modelsTitle') }}
+          </h2>
+          <p class="section-subtitle">
+            {{ $t('landing.modelsSubtitle') }}
+          </p>
         </div>
 
         <div class="models-grid">
-          <div class="model-card animate-on-scroll" style="--delay: 0s">
-            <div class="model-icon">🍌</div>
-            <div class="model-name">O2AI Pro</div>
-            <div class="model-provider">Gemini 3 Pro</div>
-            <div class="model-badge">{{ $t('landing.modelRecommended') }}</div>
+          <div
+            class="model-card animate-on-scroll"
+            style="--delay: 0s"
+          >
+            <div class="model-icon">
+              🍌
+            </div>
+            <div class="model-name">
+              O2AI Pro
+            </div>
+            <div class="model-provider">
+              Gemini 3 Pro
+            </div>
+            <div class="model-badge">
+              {{ $t('landing.modelRecommended') }}
+            </div>
           </div>
-          <div class="model-card animate-on-scroll" style="--delay: 0.1s">
-            <div class="model-icon">🎨</div>
-            <div class="model-name">Seedream-4.5</div>
-            <div class="model-provider">Volcengine</div>
-            <div class="model-badge hot">{{ $t('landing.modelHot') }}</div>
+          <div
+            class="model-card animate-on-scroll"
+            style="--delay: 0.1s"
+          >
+            <div class="model-icon">
+              🎨
+            </div>
+            <div class="model-name">
+              Seedream-4.5
+            </div>
+            <div class="model-provider">
+              Volcengine
+            </div>
+            <div class="model-badge hot">
+              {{ $t('landing.modelHot') }}
+            </div>
           </div>
-          <div class="model-card animate-on-scroll" style="--delay: 0.2s">
-            <div class="model-icon">🎬</div>
-            <div class="model-name">Seedance-1.5</div>
-            <div class="model-provider">Volcengine</div>
-            <div class="model-badge new">NEW</div>
+          <div
+            class="model-card animate-on-scroll"
+            style="--delay: 0.2s"
+          >
+            <div class="model-icon">
+              🎬
+            </div>
+            <div class="model-name">
+              Seedance-1.5
+            </div>
+            <div class="model-provider">
+              Volcengine
+            </div>
+            <div class="model-badge new">
+              NEW
+            </div>
           </div>
-          <div class="model-card coming-soon animate-on-scroll" style="--delay: 0.3s">
-            <div class="model-icon">🔮</div>
-            <div class="model-name">{{ $t('landing.moreModels') }}</div>
-            <div class="model-provider">{{ $t('landing.comingSoon') }}</div>
+          <div
+            class="model-card coming-soon animate-on-scroll"
+            style="--delay: 0.3s"
+          >
+            <div class="model-icon">
+              🔮
+            </div>
+            <div class="model-name">
+              {{ $t('landing.moreModels') }}
+            </div>
+            <div class="model-provider">
+              {{ $t('landing.comingSoon') }}
+            </div>
           </div>
         </div>
       </div>
@@ -309,9 +482,16 @@ const handleStart = () => {
     <!-- ========== CTA ========== -->
     <section class="cta-section">
       <div class="section-container animate-on-scroll">
-        <h2 class="cta-title">{{ $t('landing.ctaTitle') }}</h2>
-        <p class="cta-desc">{{ $t('landing.ctaDesc') }}</p>
-        <button class="cta-primary large" @click="handleStart">
+        <h2 class="cta-title">
+          {{ $t('landing.ctaTitle') }}
+        </h2>
+        <p class="cta-desc">
+          {{ $t('landing.ctaDesc') }}
+        </p>
+        <button
+          class="cta-primary large"
+          @click="handleStart"
+        >
           <span class="cta-content">{{ $t('landing.ctaButton') }}</span>
         </button>
       </div>
@@ -322,18 +502,31 @@ const handleStart = () => {
       <div class="section-container animate-on-scroll">
         <div class="community-card">
           <div class="community-qr">
-            <img src="/images/fish.jpg" alt="微信群二维码" class="qr-image" />
+            <img
+              src="/images/fish.jpg"
+              alt="微信群二维码"
+              class="qr-image"
+            >
           </div>
           <div class="community-info">
-            <h3 class="community-title">{{ $t('landing.communityTitle') }}</h3>
-            <p class="community-desc" style="white-space: pre-line">{{ $t('landing.communityDesc') }}</p>
+            <h3 class="community-title">
+              {{ $t('landing.communityTitle') }}
+            </h3>
+            <p
+              class="community-desc"
+              style="white-space: pre-line"
+            >
+              {{ $t('landing.communityDesc') }}
+            </p>
             <div class="community-tags">
               <span class="community-tag">{{ $t('landing.communityTagArt') }}</span>
               <span class="community-tag">{{ $t('landing.communityTagVideo') }}</span>
               <span class="community-tag">{{ $t('landing.communityTagExchange') }}</span>
               <span class="community-tag">{{ $t('landing.communityTagFree') }}</span>
             </div>
-            <div class="community-hint">{{ $t('landing.communityHint') }}</div>
+            <div class="community-hint">
+              {{ $t('landing.communityHint') }}
+            </div>
           </div>
         </div>
       </div>
@@ -342,12 +535,19 @@ const handleStart = () => {
     <!-- ========== Footer 备案 ========== -->
     <footer class="site-footer">
       <div class="footer-beian">
-        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">苏ICP备2025223139号-1</a>
+        <a
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >苏ICP备2025223139号-1</a>
         <span class="footer-divider">|</span>
-        <a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32050602014047" target="_blank" rel="noopener noreferrer">苏公网安备32050602014047号</a>
+        <a
+          href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32050602014047"
+          target="_blank"
+          rel="noopener noreferrer"
+        >苏公网安备32050602014047号</a>
       </div>
     </footer>
-
   </div>
 </template>
 

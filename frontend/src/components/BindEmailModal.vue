@@ -108,14 +108,23 @@ const handleKeyDown = (e) => {
       <!-- Header -->
       <div class="auth-header">
         <div class="auth-brand">
-          <img src="/images/icon.png" alt="寻氧AI" class="logo-icon" />
+          <img
+            src="/images/icon.png"
+            alt="寻氧AI"
+            class="logo-icon"
+          >
           <h1>寻氧AI</h1>
         </div>
-        <p class="subtitle">{{ $t('bind.title') }}</p>
+        <p class="subtitle">
+          {{ $t('bind.title') }}
+        </p>
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="auth-form">
+      <form
+        class="auth-form"
+        @submit.prevent="handleSubmit"
+      >
         <!-- Email -->
         <div class="form-group">
           <label class="form-label">{{ $t('bind.email') }}</label>
@@ -124,9 +133,9 @@ const handleKeyDown = (e) => {
             type="email"
             :placeholder="$t('bind.emailPlaceholder')"
             class="form-input"
-            @keydown="handleKeyDown"
             :disabled="loading"
-          />
+            @keydown="handleKeyDown"
+          >
         </div>
 
         <!-- Verification code -->
@@ -139,34 +148,46 @@ const handleKeyDown = (e) => {
               maxlength="6"
               :placeholder="$t('bind.codePlaceholder')"
               class="form-input"
-              @keydown="handleKeyDown"
               :disabled="loading"
-            />
+              @keydown="handleKeyDown"
+            >
             <button
               type="button"
-              @click="sendCode"
               :disabled="!canSendCode"
               class="resend-btn"
+              @click="sendCode"
             >
-              <span v-if="sendingCode" class="spinner-small"></span>
+              <span
+                v-if="sendingCode"
+                class="spinner-small"
+              />
               {{ sendingCode ? '' : (countdown > 0 ? `${countdown}s` : $t('bind.getCode')) }}
             </button>
           </div>
         </div>
 
         <!-- Dev mode code hint -->
-        <div v-if="devCode" class="dev-code-hint">
+        <div
+          v-if="devCode"
+          class="dev-code-hint"
+        >
           {{ $t('auth.devCode') }} <strong>{{ devCode }}</strong>
         </div>
 
         <!-- Success message -->
-        <div v-if="successMessage" class="success-alert">
+        <div
+          v-if="successMessage"
+          class="success-alert"
+        >
           <span class="success-icon">✓</span>
           <span>{{ successMessage }}</span>
         </div>
 
         <!-- Error message -->
-        <div v-if="error" class="error-alert">
+        <div
+          v-if="error"
+          class="error-alert"
+        >
           <span class="error-icon">⚠️</span>
           <span>{{ error }}</span>
         </div>
@@ -177,15 +198,25 @@ const handleKeyDown = (e) => {
           :disabled="loading"
           class="submit-btn"
         >
-          <span v-if="loading" class="spinner"></span>
+          <span
+            v-if="loading"
+            class="spinner"
+          />
           {{ loading ? $t('bind.submitting') : $t('bind.submit') }}
         </button>
       </form>
 
       <!-- Footer hint + logout -->
       <div class="auth-footer">
-        <p class="footer-text hint-text">{{ $t('bind.hint') }}</p>
-        <button class="logout-btn" @click="userStore.logout()">{{ $t('sidebar.logout') }}</button>
+        <p class="footer-text hint-text">
+          {{ $t('bind.hint') }}
+        </p>
+        <button
+          class="logout-btn"
+          @click="userStore.logout()"
+        >
+          {{ $t('sidebar.logout') }}
+        </button>
       </div>
     </div>
   </div>

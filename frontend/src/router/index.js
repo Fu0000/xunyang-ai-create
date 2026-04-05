@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import i18n from '../i18n'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
+// Configure NProgress (optional tweaking)
+NProgress.configure({ showSpinner: false, minimum: 0.2 })
 
 const OAuthCallback = () => import('../views/OAuthCallback.vue')
 const Landing = () => import('../views/Landing.vue')
@@ -16,6 +21,9 @@ const Tools = () => import('../views/Tools.vue')
 const ImageToSvg = () => import('../views/ImageToSvg.vue')
 const ReversePrompt = () => import('../views/ReversePrompt.vue')
 const ImageConvert = () => import('../views/ImageConvert.vue')
+const PricingPage = () => import('../views/PricingPage.vue')
+const FAQ = () => import('../views/FAQ.vue')
+const NotFound = () => import('../views/NotFound.vue')
 
 const routes = [
   {
@@ -54,6 +62,24 @@ const routes = [
     name: 'oauth-callback',
     component: OAuthCallback,
     meta: { guest: true }
+  },
+  {
+    path: '/pricing',
+    name: 'pricing',
+    component: PricingPage,
+    meta: {
+      titleKey: 'seo.pricing.title',
+      descriptionKey: 'seo.pricing.description'
+    }
+  },
+  {
+    path: '/faq',
+    name: 'faq',
+    component: FAQ,
+    meta: {
+      titleKey: 'seo.faq.title',
+      descriptionKey: 'seo.faq.description'
+    }
   },
   {
     path: '/',
@@ -161,7 +187,11 @@ const routes = [
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/'
+    name: 'not-found',
+    component: NotFound,
+    meta: {
+      titleKey: 'seo.notFound.title'
+    }
   }
 ]
 
@@ -200,9 +230,26 @@ function applyRouteMeta(to) {
       keywordsTag.setAttribute('content', keywords)
     }
   }
+
+  // Open Graph Tags Generation / Update
+  const updateMetaTag = (property, content) => {
+    let tag = document.querySelector(`meta[property="${property}"]`)
+    if (!tag) {
+      tag = document.createElement('meta')
+      tag.setAttribute('property', property)
+      document.head.appendChild(tag)
+    }
+    tag.setAttribute('content', content)
+  }
+
+  updateMetaTag('og:title', document.title)
+  updateMetaTag('og:description', document.querySelector('meta[name="description"]')?.getAttribute('content') || '')
+  updateMetaTag('og:image', to.meta.ogImage || 'https://xunyang.com/default-share.jpg')
+  updateMetaTag('og:url', window.location.href)
 }
 
 router.beforeEach((to, from, next) => {
+  NProgress.start()
   applyRouteMeta(to)
 
   const token = localStorage.getItem('token')
@@ -219,6 +266,10 @@ router.beforeEach((to, from, next) => {
   }
 
   next()
+})
+
+router.afterEach(() => {
+  NProgress.done()
 })
 
 if (typeof window !== 'undefined') {

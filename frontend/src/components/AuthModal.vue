@@ -370,12 +370,21 @@ const handleLinuxDoLogin = async () => {
   <div class="auth-modal-overlay">
     <div class="auth-modal">
       <!-- 关闭按钮 -->
-      <button class="close-btn" @click="$emit('close')">✕</button>
+      <button
+        class="close-btn"
+        @click="$emit('close')"
+      >
+        ✕
+      </button>
 
       <!-- Header -->
       <div class="auth-header">
         <div class="auth-brand">
-          <img src="/images/icon.png" alt="寻氧AI" class="logo-icon" />
+          <img
+            src="/images/icon.png"
+            alt="寻氧AI"
+            class="logo-icon"
+          >
           <h1>寻氧AI</h1>
         </div>
         <p class="subtitle">
@@ -384,25 +393,31 @@ const handleLinuxDoLogin = async () => {
       </div>
 
       <!-- Tab 切换 -->
-      <div class="auth-tabs" v-if="mode !== 'redeem' && mode !== 'reset'">
+      <div
+        v-if="mode !== 'redeem' && mode !== 'reset'"
+        class="auth-tabs"
+      >
         <button
-          @click="switchMode('login')"
           :class="{ active: mode === 'login' }"
           class="tab-btn"
+          @click="switchMode('login')"
         >
           {{ $t('auth.login') }}
         </button>
         <button
-          @click="switchMode('register')"
           :class="{ active: mode === 'register' }"
           class="tab-btn"
+          @click="switchMode('register')"
         >
           {{ $t('auth.register') }}
         </button>
       </div>
 
       <!-- 表单 -->
-      <form @submit.prevent="handleSubmit" class="auth-form">
+      <form
+        class="auth-form"
+        @submit.prevent="handleSubmit"
+      >
         <!-- 兑换模式 -->
         <template v-if="mode === 'redeem'">
           <div class="form-group">
@@ -413,9 +428,11 @@ const handleLinuxDoLogin = async () => {
               class="form-textarea"
               rows="8"
               :disabled="loading"
-            ></textarea>
+            />
           </div>
-          <p class="form-hint">{{ $t('auth.keyHint') }}</p>
+          <p class="form-hint">
+            {{ $t('auth.keyHint') }}
+          </p>
         </template>
 
         <!-- 登录/注册模式 -->
@@ -430,26 +447,26 @@ const handleLinuxDoLogin = async () => {
                 type="email"
                 :placeholder="$t('auth.emailPlaceholder')"
                 class="form-input"
-                @keydown="handleKeyDown"
                 :disabled="loading"
-              />
+                @keydown="handleKeyDown"
+              >
             </div>
 
             <!-- 登录方式切换 -->
             <div class="login-method">
               <button
                 type="button"
-                @click="loginMethod = 'password'"
                 :class="{ active: loginMethod === 'password' }"
                 class="method-btn"
+                @click="loginMethod = 'password'"
               >
                 {{ $t('auth.passwordLogin') }}
               </button>
               <button
                 type="button"
-                @click="loginMethod = 'code'"
                 :class="{ active: loginMethod === 'code' }"
                 class="method-btn"
+                @click="loginMethod = 'code'"
               >
                 {{ $t('auth.codeLogin') }}
               </button>
@@ -465,19 +482,23 @@ const handleLinuxDoLogin = async () => {
                     :type="showPassword ? 'text' : 'password'"
                     :placeholder="$t('auth.passwordPlaceholder')"
                     class="form-input"
-                    @keydown="handleKeyDown"
                     :disabled="loading"
-                  />
+                    @keydown="handleKeyDown"
+                  >
                   <button
                     type="button"
-                    @click="showPassword = !showPassword"
                     class="toggle-password-btn"
+                    @click="showPassword = !showPassword"
                   >
                     {{ showPassword ? '👁️' : '👁️‍🗨️' }}
                   </button>
                 </div>
                 <div class="forgot-password">
-                  <button type="button" @click="switchMode('reset')" class="link-btn">
+                  <button
+                    type="button"
+                    class="link-btn"
+                    @click="switchMode('reset')"
+                  >
                     {{ $t('auth.forgotPassword') }}
                   </button>
                 </div>
@@ -495,23 +516,29 @@ const handleLinuxDoLogin = async () => {
                     maxlength="6"
                     :placeholder="$t('auth.codePlaceholder')"
                     class="form-input"
-                    @keydown="handleKeyDown"
                     :disabled="loading"
-                  />
+                    @keydown="handleKeyDown"
+                  >
                   <button
                     type="button"
-                    @click="sendCode"
                     :disabled="!canSendCode"
                     class="resend-btn"
+                    @click="sendCode"
                   >
-                    <span v-if="sendingCode" class="spinner-small"></span>
+                    <span
+                      v-if="sendingCode"
+                      class="spinner-small"
+                    />
                     {{ sendingCode ? '' : (countdown > 0 ? `${countdown}s` : $t('auth.getCode')) }}
                   </button>
                 </div>
               </div>
 
               <!-- 开发模式验证码提示 -->
-              <div v-if="devCode" class="dev-code-hint">
+              <div
+                v-if="devCode"
+                class="dev-code-hint"
+              >
                 {{ $t('auth.devCode') }} <strong>{{ devCode }}</strong>
               </div>
             </template>
@@ -523,7 +550,7 @@ const handleLinuxDoLogin = async () => {
                   type="checkbox"
                   class="agreement-checkbox"
                   :disabled="loading"
-                />
+                >
                 <span class="agreement-text">
                   {{ $t('auth.agreePrefix') }}
                   <a
@@ -560,9 +587,9 @@ const handleLinuxDoLogin = async () => {
                 type="email"
                 :placeholder="$t('auth.emailPlaceholder')"
                 class="form-input"
-                @keydown="handleKeyDown"
                 :disabled="loading"
-              />
+                @keydown="handleKeyDown"
+              >
             </div>
 
             <!-- 验证码 -->
@@ -575,23 +602,29 @@ const handleLinuxDoLogin = async () => {
                   maxlength="6"
                   :placeholder="$t('auth.codePlaceholder')"
                   class="form-input"
-                  @keydown="handleKeyDown"
                   :disabled="loading"
-                />
+                  @keydown="handleKeyDown"
+                >
                 <button
                   type="button"
-                  @click="sendCode"
                   :disabled="!canSendCode"
                   class="resend-btn"
+                  @click="sendCode"
                 >
-                  <span v-if="sendingCode" class="spinner-small"></span>
+                  <span
+                    v-if="sendingCode"
+                    class="spinner-small"
+                  />
                   {{ sendingCode ? '' : (countdown > 0 ? `${countdown}s` : $t('auth.getCode')) }}
                 </button>
               </div>
             </div>
 
             <!-- 开发模式验证码提示 -->
-            <div v-if="devCode" class="dev-code-hint">
+            <div
+              v-if="devCode"
+              class="dev-code-hint"
+            >
               {{ $t('auth.devCode') }} <strong>{{ devCode }}</strong>
             </div>
 
@@ -604,7 +637,7 @@ const handleLinuxDoLogin = async () => {
                 :placeholder="$t('auth.nicknamePlaceholder')"
                 class="form-input"
                 :disabled="loading"
-              />
+              >
             </div>
 
             <!-- 密码 -->
@@ -616,13 +649,13 @@ const handleLinuxDoLogin = async () => {
                   :type="showPassword ? 'text' : 'password'"
                   :placeholder="$t('auth.passwordHint')"
                   class="form-input"
-                  @keydown="handleKeyDown"
                   :disabled="loading"
-                />
+                  @keydown="handleKeyDown"
+                >
                 <button
                   type="button"
-                  @click="showPassword = !showPassword"
                   class="toggle-password-btn"
+                  @click="showPassword = !showPassword"
                 >
                   {{ showPassword ? '👁️' : '👁️‍🗨️' }}
                 </button>
@@ -637,11 +670,10 @@ const handleLinuxDoLogin = async () => {
                 :type="showPassword ? 'text' : 'password'"
                 :placeholder="$t('auth.confirmPasswordPlaceholder')"
                 class="form-input"
-                @keydown="handleKeyDown"
                 :disabled="loading"
-              />
+                @keydown="handleKeyDown"
+              >
             </div>
-
           </template>
 
           <!-- ===== 重置密码模式 ===== -->
@@ -654,9 +686,9 @@ const handleLinuxDoLogin = async () => {
                 type="email"
                 :placeholder="$t('auth.registerEmail')"
                 class="form-input"
-                @keydown="handleKeyDown"
                 :disabled="loading"
-              />
+                @keydown="handleKeyDown"
+              >
             </div>
 
             <!-- 验证码 -->
@@ -669,23 +701,29 @@ const handleLinuxDoLogin = async () => {
                   maxlength="6"
                   :placeholder="$t('auth.codePlaceholder')"
                   class="form-input"
-                  @keydown="handleKeyDown"
                   :disabled="loading"
-                />
+                  @keydown="handleKeyDown"
+                >
                 <button
                   type="button"
-                  @click="sendCode"
                   :disabled="!canSendCode"
                   class="resend-btn"
+                  @click="sendCode"
                 >
-                  <span v-if="sendingCode" class="spinner-small"></span>
+                  <span
+                    v-if="sendingCode"
+                    class="spinner-small"
+                  />
                   {{ sendingCode ? '' : (countdown > 0 ? `${countdown}s` : $t('auth.getCode')) }}
                 </button>
               </div>
             </div>
 
             <!-- 开发模式验证码提示 -->
-            <div v-if="devCode" class="dev-code-hint">
+            <div
+              v-if="devCode"
+              class="dev-code-hint"
+            >
               {{ $t('auth.devCode') }} <strong>{{ devCode }}</strong>
             </div>
 
@@ -698,13 +736,13 @@ const handleLinuxDoLogin = async () => {
                   :type="showPassword ? 'text' : 'password'"
                   :placeholder="$t('auth.newPasswordHint')"
                   class="form-input"
-                  @keydown="handleKeyDown"
                   :disabled="loading"
-                />
+                  @keydown="handleKeyDown"
+                >
                 <button
                   type="button"
-                  @click="showPassword = !showPassword"
                   class="toggle-password-btn"
+                  @click="showPassword = !showPassword"
                 >
                   {{ showPassword ? '👁️' : '👁️‍🗨️' }}
                 </button>
@@ -719,21 +757,27 @@ const handleLinuxDoLogin = async () => {
                 :type="showPassword ? 'text' : 'password'"
                 :placeholder="$t('auth.confirmNewPasswordPlaceholder')"
                 class="form-input"
-                @keydown="handleKeyDown"
                 :disabled="loading"
-              />
+                @keydown="handleKeyDown"
+              >
             </div>
           </template>
         </template>
 
         <!-- 成功消息 -->
-        <div v-if="successMessage" class="success-alert">
+        <div
+          v-if="successMessage"
+          class="success-alert"
+        >
           <span class="success-icon">✓</span>
           <span>{{ successMessage }}</span>
         </div>
 
         <!-- 错误消息 -->
-        <div v-if="error" class="error-alert">
+        <div
+          v-if="error"
+          class="error-alert"
+        >
           <span class="error-icon">⚠️</span>
           <span>{{ error }}</span>
         </div>
@@ -744,7 +788,10 @@ const handleLinuxDoLogin = async () => {
           :disabled="loading"
           class="submit-btn"
         >
-          <span v-if="loading" class="spinner"></span>
+          <span
+            v-if="loading"
+            class="spinner"
+          />
           {{ submitButtonText }}
         </button>
       </form>
@@ -752,17 +799,31 @@ const handleLinuxDoLogin = async () => {
       <!-- OAuth 分割线 + 按钮 (仅登录模式显示) -->
       <template v-if="mode === 'login'">
         <div class="oauth-divider">
-          <span class="divider-line"></span>
+          <span class="divider-line" />
           <span class="divider-text">{{ $t('auth.orDivider') }}</span>
-          <span class="divider-line"></span>
+          <span class="divider-line" />
         </div>
         <button
           class="oauth-btn linuxdo-btn"
-          @click="handleLinuxDoLogin"
           :disabled="oauthLoading"
+          @click="handleLinuxDoLogin"
         >
-          <span v-if="oauthLoading" class="spinner-small"></span>
-          <svg v-else class="oauth-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <span
+            v-if="oauthLoading"
+            class="spinner-small"
+          />
+          <svg
+            v-else
+            class="oauth-icon"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
           </svg>
@@ -773,18 +834,37 @@ const handleLinuxDoLogin = async () => {
       <!-- 底部切换 -->
       <div class="auth-footer">
         <template v-if="mode === 'redeem' || mode === 'reset'">
-          <button @click="switchMode('login')" class="switch-mode-btn">
+          <button
+            class="switch-mode-btn"
+            @click="switchMode('login')"
+          >
             ← {{ $t('auth.backToLogin') }}
           </button>
         </template>
         <template v-else>
-          <p class="footer-text" v-if="mode === 'login'">
+          <p
+            v-if="mode === 'login'"
+            class="footer-text"
+          >
             {{ $t('auth.noAccount') }}
-            <button @click="switchMode('register')" class="link-btn">{{ $t('auth.registerNow') }}</button>
+            <button
+              class="link-btn"
+              @click="switchMode('register')"
+            >
+              {{ $t('auth.registerNow') }}
+            </button>
           </p>
-          <p class="footer-text" v-else>
+          <p
+            v-else
+            class="footer-text"
+          >
             {{ $t('auth.hasAccount') }}
-            <button @click="switchMode('login')" class="link-btn">{{ $t('auth.loginNow') }}</button>
+            <button
+              class="link-btn"
+              @click="switchMode('login')"
+            >
+              {{ $t('auth.loginNow') }}
+            </button>
           </p>
         </template>
       </div>

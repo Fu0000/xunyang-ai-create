@@ -553,7 +553,10 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="inspiration-page" ref="pageRef">
+  <div
+    ref="pageRef"
+    class="inspiration-page"
+  >
     <div class="inspiration-content">
       <ComposerBar
         ref="composerRef"
@@ -602,23 +605,53 @@ onBeforeUnmount(() => {
                 :placeholder="t('inspiration.searchPlaceholder')"
                 class="search-input"
                 @keyup.enter="doSearch"
-              />
-              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"/>
-                <path d="m21 21-4.35-4.35"/>
+              >
+              <svg
+                class="search-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="8"
+                />
+                <path d="m21 21-4.35-4.35" />
               </svg>
-              <button class="search-btn" @click="doSearch">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="8"/>
-                  <path d="m21 21-4.35-4.35"/>
+              <button
+                class="search-btn"
+                @click="doSearch"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="8"
+                  />
+                  <path d="m21 21-4.35-4.35" />
                 </svg>
               </button>
             </div>
-            <button class="publish-btn" @click="openPublishDialog">{{ t('inspiration.publishAction') }}</button>
+            <button
+              class="publish-btn"
+              @click="openPublishDialog"
+            >
+              {{ t('inspiration.publishAction') }}
+            </button>
           </div>
         </div>
 
-        <div v-if="tagTabs.length > 1" class="tag-tabs">
+        <div
+          v-if="tagTabs.length > 1"
+          class="tag-tabs"
+        >
           <button
             v-for="tag in tagTabs"
             :key="tag.key || 'all'"
@@ -630,7 +663,10 @@ onBeforeUnmount(() => {
           </button>
         </div>
 
-        <div v-if="!feedLoading && posts.length" class="showcase-masonry">
+        <div
+          v-if="!feedLoading && posts.length"
+          class="showcase-masonry"
+        >
           <div
             v-for="(column, colIndex) in masonryColumns"
             :key="colIndex"
@@ -661,42 +697,132 @@ onBeforeUnmount(() => {
                 :src="imageCardSrc(item)"
                 :alt="item.prompt || 'inspiration'"
                 loading="lazy"
-              />
-              <span v-if="isVideoPost(item)" class="showcase-video-badge" title="video">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              >
+              <span
+                v-if="isVideoPost(item)"
+                class="showcase-video-badge"
+                title="video"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
                   <path d="M8 6v12l10-6z" />
                 </svg>
               </span>
               <div class="showcase-overlay">
                 <div class="showcase-info">
-                  <span v-if="item.title" class="showcase-title-text">{{ item.title }}</span>
-                  <div v-if="item.tags?.length" class="showcase-tags">
-                    <span v-for="tag in item.tags.slice(0, 2)" :key="tag" class="showcase-tag">#{{ tag }}</span>
+                  <span
+                    v-if="item.title"
+                    class="showcase-title-text"
+                  >{{ item.title }}</span>
+                  <div
+                    v-if="item.tags?.length"
+                    class="showcase-tags"
+                  >
+                    <span
+                      v-for="tag in item.tags.slice(0, 2)"
+                      :key="tag"
+                      class="showcase-tag"
+                    >#{{ tag }}</span>
                   </div>
                   <span class="showcase-author">{{ item.author?.nickname || t('inspiration.creatorFallback') }}</span>
                 </div>
 
                 <div class="showcase-quick-actions">
-                  <button class="quick-btn" :title="t('inspiration.remixAction')" @click.stop="quickRemix(item)">
-                    <svg class="quick-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                      <path d="M3 12a9 9 0 0 1 15.3-6.36L21 8" stroke-linecap="round" stroke-linejoin="round" />
-                      <path d="M21 3v5h-5" stroke-linecap="round" stroke-linejoin="round" />
-                      <path d="M21 12a9 9 0 0 1-15.3 6.36L3 16" stroke-linecap="round" stroke-linejoin="round" />
-                      <path d="M3 21v-5h5" stroke-linecap="round" stroke-linejoin="round" />
+                  <button
+                    class="quick-btn"
+                    :title="t('inspiration.remixAction')"
+                    @click.stop="quickRemix(item)"
+                  >
+                    <svg
+                      class="quick-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 12a9 9 0 0 1 15.3-6.36L21 8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M21 3v5h-5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M21 12a9 9 0 0 1-15.3 6.36L3 16"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M3 21v-5h5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
                     </svg>
                   </button>
-                  <button class="quick-btn" :title="t('inspiration.referenceAction')" @click.stop="quickReference(item)">
-                    <svg class="quick-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                      <rect x="3" y="4" width="18" height="16" rx="2" ry="2" />
-                      <circle cx="8.5" cy="9" r="1.5" />
-                      <path d="M21 16l-5-5-4 4-2-2-7 7" stroke-linecap="round" stroke-linejoin="round" />
+                  <button
+                    class="quick-btn"
+                    :title="t('inspiration.referenceAction')"
+                    @click.stop="quickReference(item)"
+                  >
+                    <svg
+                      class="quick-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      aria-hidden="true"
+                    >
+                      <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="16"
+                        rx="2"
+                        ry="2"
+                      />
+                      <circle
+                        cx="8.5"
+                        cy="9"
+                        r="1.5"
+                      />
+                      <path
+                        d="M21 16l-5-5-4 4-2-2-7 7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
                     </svg>
                   </button>
-                  <button class="quick-btn quick-like-btn" :class="{ liked: item.is_liked }" :title="item.is_liked ? t('inspiration.unlikeAction') : t('inspiration.likeAction')" @click.stop="quickToggleLike(item)">
-                    <svg v-if="item.is_liked" class="quick-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <button
+                    class="quick-btn quick-like-btn"
+                    :class="{ liked: item.is_liked }"
+                    :title="item.is_liked ? t('inspiration.unlikeAction') : t('inspiration.likeAction')"
+                    @click.stop="quickToggleLike(item)"
+                  >
+                    <svg
+                      v-if="item.is_liked"
+                      class="quick-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
                       <path d="M12 21s-7.2-4.35-9.58-8.14C.4 9.67 1.52 5.5 5.5 4.59A5.57 5.57 0 0 1 12 7.09a5.57 5.57 0 0 1 6.5-2.5c3.98.91 5.1 5.08 3.08 8.27C19.2 16.65 12 21 12 21z" />
                     </svg>
-                    <svg v-else class="quick-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <svg
+                      v-else
+                      class="quick-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      aria-hidden="true"
+                    >
                       <path d="M12 21s-7.2-4.35-9.58-8.14C.4 9.67 1.52 5.5 5.5 4.59A5.57 5.57 0 0 1 12 7.09a5.57 5.57 0 0 1 6.5-2.5c3.98.91 5.1 5.08 3.08 8.27C19.2 16.65 12 21 12 21z" />
                     </svg>
                     <span class="quick-like-count">{{ item.like_count || 0 }}</span>
@@ -707,18 +833,51 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <div v-else-if="feedLoading" class="feed-placeholder">{{ t('inspiration.feedLoading') }}</div>
-        <div v-else-if="searchQuery && !posts.length" class="feed-placeholder">{{ t('inspiration.searchEmpty') }}</div>
-        <div v-else class="feed-placeholder">{{ t('inspiration.feedEmpty') }}</div>
+        <div
+          v-else-if="feedLoading"
+          class="feed-placeholder"
+        >
+          {{ t('inspiration.feedLoading') }}
+        </div>
+        <div
+          v-else-if="searchQuery && !posts.length"
+          class="feed-placeholder"
+        >
+          {{ t('inspiration.searchEmpty') }}
+        </div>
+        <div
+          v-else
+          class="feed-placeholder"
+        >
+          {{ t('inspiration.feedEmpty') }}
+        </div>
 
-        <div v-if="feedLoadingMore" class="feed-more">{{ t('inspiration.feedLoading') }}</div>
+        <div
+          v-if="feedLoadingMore"
+          class="feed-more"
+        >
+          {{ t('inspiration.feedLoading') }}
+        </div>
       </div>
     </div>
 
     <transition name="fade">
-      <button v-show="showBackTop" class="back-top-btn" @click="scrollToTop">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 15l-6-6-6 6"/>
+      <button
+        v-show="showBackTop"
+        class="back-top-btn"
+        @click="scrollToTop"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 15l-6-6-6 6" />
         </svg>
       </button>
     </transition>

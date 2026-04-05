@@ -538,12 +538,31 @@ watch(() => props.show, async (val) => {
 
 <template>
   <Transition name="fade">
-    <div v-if="show" class="share-dialog-overlay" @click="handleClose">
-      <div class="share-dialog" @click.stop>
+    <div
+      v-if="show"
+      class="share-dialog-overlay"
+      @click="handleClose"
+    >
+      <div
+        class="share-dialog"
+        @click.stop
+      >
         <div class="share-dialog-header">
-          <h3 class="share-dialog-title">{{ mode === 'upload' ? t('publishDialog.titleUpload') : t('shareDialog.title') }}</h3>
-          <button class="share-dialog-close" @click="handleClose">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <h3 class="share-dialog-title">
+            {{ mode === 'upload' ? t('publishDialog.titleUpload') : t('shareDialog.title') }}
+          </h3>
+          <button
+            class="share-dialog-close"
+            @click="handleClose"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>
@@ -560,7 +579,7 @@ watch(() => props.show, async (val) => {
                 class="form-input"
                 :placeholder="t('shareDialog.titlePlaceholder')"
                 maxlength="200"
-              />
+              >
               <span class="field-counter">{{ title.length }}/200</span>
             </div>
           </div>
@@ -575,19 +594,43 @@ watch(() => props.show, async (val) => {
             />
           </div>
 
-          <div v-if="!isUploadMode && hasPreviewMedia" class="form-field">
+          <div
+            v-if="!isUploadMode && hasPreviewMedia"
+            class="form-field"
+          >
             <label class="form-label">{{ t('publishDialog.uploadMediaLabel') }}</label>
-            <div v-if="postType === 'video' && videoUrl" class="share-preview-video">
-              <video :src="videoUrl" controls preload="metadata" playsinline />
+            <div
+              v-if="postType === 'video' && videoUrl"
+              class="share-preview-video"
+            >
+              <video
+                :src="videoUrl"
+                controls
+                preload="metadata"
+                playsinline
+              />
             </div>
-            <div v-else-if="previewImageList.length" class="preview-image-grid">
-              <div v-for="url in previewImageList" :key="url" class="preview-image-item">
-                <img :src="url" alt="preview" />
+            <div
+              v-else-if="previewImageList.length"
+              class="preview-image-grid"
+            >
+              <div
+                v-for="url in previewImageList"
+                :key="url"
+                class="preview-image-item"
+              >
+                <img
+                  :src="url"
+                  alt="preview"
+                >
               </div>
             </div>
           </div>
 
-          <div v-if="isUploadMode" class="form-field">
+          <div
+            v-if="isUploadMode"
+            class="form-field"
+          >
             <label class="form-label">{{ t('publishDialog.uploadMediaLabel') }}<span class="form-required">*</span></label>
             <div class="media-type-switch">
               <button
@@ -626,30 +669,72 @@ watch(() => props.show, async (val) => {
                   :multiple="uploadMultiple"
                   :disabled="uploaderDisabled"
                   @change="handleMediaSelect"
-                />
-                <div class="dropzone-title">{{ t('publishDialog.dropOrClick') }}</div>
-                <div class="dropzone-hint">{{ uploadHintText }}</div>
-                <button class="btn btn-secondary tiny single-upload-btn" type="button" :disabled="uploaderDisabled" @click.stop="openMediaPicker">
+                >
+                <div class="dropzone-title">
+                  {{ t('publishDialog.dropOrClick') }}
+                </div>
+                <div class="dropzone-hint">
+                  {{ uploadHintText }}
+                </div>
+                <button
+                  class="btn btn-secondary tiny single-upload-btn"
+                  type="button"
+                  :disabled="uploaderDisabled"
+                  @click.stop="openMediaPicker"
+                >
                   {{ uploadButtonText }}
                 </button>
               </div>
             </div>
-            <div v-if="uploadLoading" class="upload-status">{{ t('publishDialog.uploading') }}</div>
+            <div
+              v-if="uploadLoading"
+              class="upload-status"
+            >
+              {{ t('publishDialog.uploading') }}
+            </div>
 
-            <div v-if="postType === 'image' && images.length" class="image-preview-list">
-              <div v-for="url in images" :key="url" class="image-preview-item">
-                <img :src="url" alt="preview" />
-                <button type="button" class="remove-btn" @click="removeImage(url)">{{ t('publishDialog.delete') }}</button>
+            <div
+              v-if="postType === 'image' && images.length"
+              class="image-preview-list"
+            >
+              <div
+                v-for="url in images"
+                :key="url"
+                class="image-preview-item"
+              >
+                <img
+                  :src="url"
+                  alt="preview"
+                >
+                <button
+                  type="button"
+                  class="remove-btn"
+                  @click="removeImage(url)"
+                >
+                  {{ t('publishDialog.delete') }}
+                </button>
               </div>
             </div>
 
-            <div v-if="postType === 'video' && videoUrl" class="video-preview-row">
+            <div
+              v-if="postType === 'video' && videoUrl"
+              class="video-preview-row"
+            >
               <span class="video-url">{{ videoUrl }}</span>
-              <button type="button" class="remove-btn" @click="clearVideo">{{ t('publishDialog.removeVideo') }}</button>
+              <button
+                type="button"
+                class="remove-btn"
+                @click="clearVideo"
+              >
+                {{ t('publishDialog.removeVideo') }}
+              </button>
             </div>
           </div>
 
-          <div v-if="postType === 'video'" class="form-field">
+          <div
+            v-if="postType === 'video'"
+            class="form-field"
+          >
             <label class="form-label">{{ t('publishDialog.coverLabel') }}<span class="form-required">*</span></label>
             <input
               ref="coverUploadInputRef"
@@ -658,7 +743,7 @@ watch(() => props.show, async (val) => {
               accept="image/*"
               :disabled="coverActionsDisabled"
               @change="handleCoverSelect"
-            />
+            >
 
             <div class="cover-editor">
               <div
@@ -666,12 +751,26 @@ watch(() => props.show, async (val) => {
                 :class="{ clickable: !coverActionsDisabled }"
                 @click="openCoverPicker"
               >
-                <img v-if="coverUrl" :src="coverUrl" alt="video cover" />
-                <div v-else class="cover-placeholder">{{ t('publishDialog.coverRequiredHint') }}</div>
+                <img
+                  v-if="coverUrl"
+                  :src="coverUrl"
+                  alt="video cover"
+                >
+                <div
+                  v-else
+                  class="cover-placeholder"
+                >
+                  {{ t('publishDialog.coverRequiredHint') }}
+                </div>
               </div>
 
               <div class="cover-actions">
-                <button class="btn btn-secondary tiny" type="button" :disabled="coverActionsDisabled || !videoUrl" @click="regenerateCoverFromVideo">
+                <button
+                  class="btn btn-secondary tiny"
+                  type="button"
+                  :disabled="coverActionsDisabled || !videoUrl"
+                  @click="regenerateCoverFromVideo"
+                >
                   {{ coverLoading ? t('publishDialog.coverGenerating') : t('publishDialog.autoExtractCover') }}
                 </button>
               </div>
@@ -705,10 +804,19 @@ watch(() => props.show, async (val) => {
                   @blur="handleTagInputBlur"
                   @keyup.enter.prevent="addTag(); showTagDropdown = false"
                   @keydown.down.prevent="showTagDropdown = true"
-                />
-                <button class="btn btn-secondary tiny" type="button" @click="addTag(); showTagDropdown = false">{{ t('publishDialog.addTag') }}</button>
+                >
+                <button
+                  class="btn btn-secondary tiny"
+                  type="button"
+                  @click="addTag(); showTagDropdown = false"
+                >
+                  {{ t('publishDialog.addTag') }}
+                </button>
               </div>
-              <div v-if="showTagDropdown && filteredTagSuggestions.length" class="tag-suggestion-panel">
+              <div
+                v-if="showTagDropdown && filteredTagSuggestions.length"
+                class="tag-suggestion-panel"
+              >
                 <button
                   v-for="item in filteredTagSuggestions"
                   :key="item"
@@ -721,8 +829,17 @@ watch(() => props.show, async (val) => {
                 </button>
               </div>
             </div>
-            <div v-if="tags.length" class="tag-list">
-              <button v-for="tag in tags" :key="tag" type="button" class="tag-chip" @click="removeTag(tag)">
+            <div
+              v-if="tags.length"
+              class="tag-list"
+            >
+              <button
+                v-for="tag in tags"
+                :key="tag"
+                type="button"
+                class="tag-chip"
+                @click="removeTag(tag)"
+              >
                 {{ tag }} x
               </button>
             </div>
@@ -730,13 +847,22 @@ watch(() => props.show, async (val) => {
         </div>
 
         <div class="share-dialog-footer">
-          <button class="btn btn-secondary" @click="handleCancel" :disabled="loading || uploadLoading">{{ t('common.cancel') }}</button>
+          <button
+            class="btn btn-secondary"
+            :disabled="loading || uploadLoading"
+            @click="handleCancel"
+          >
+            {{ t('common.cancel') }}
+          </button>
           <button
             class="btn btn-primary"
             :disabled="confirmDisabled"
             @click="handleConfirm"
           >
-            <span v-if="loading" class="btn-loading">{{ t('publishDialog.publishing') }}</span>
+            <span
+              v-if="loading"
+              class="btn-loading"
+            >{{ t('publishDialog.publishing') }}</span>
             <span v-else>{{ t('shareDialog.publish') }}</span>
           </button>
         </div>

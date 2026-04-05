@@ -394,127 +394,366 @@ const handleScroll = (e) => {
     <!-- Filter bar -->
     <div class="filter-bar">
       <div class="filter-row">
-        <button :class="['filter-tab', { active: typeFilter === 'all' }]" @click="setTypeFilter('all')">{{ $t('assets.all') }}</button>
-        <button :class="['filter-tab', { active: typeFilter === 'image' }]" @click="setTypeFilter('image')">{{ $t('assets.images') }}</button>
-        <button :class="['filter-tab', { active: typeFilter === 'video' }]" @click="setTypeFilter('video')">{{ $t('assets.videos') }}</button>
+        <button
+          :class="['filter-tab', { active: typeFilter === 'all' }]"
+          @click="setTypeFilter('all')"
+        >
+          {{ $t('assets.all') }}
+        </button>
+        <button
+          :class="['filter-tab', { active: typeFilter === 'image' }]"
+          @click="setTypeFilter('image')"
+        >
+          {{ $t('assets.images') }}
+        </button>
+        <button
+          :class="['filter-tab', { active: typeFilter === 'video' }]"
+          @click="setTypeFilter('video')"
+        >
+          {{ $t('assets.videos') }}
+        </button>
       </div>
       <div class="filter-row sub-row">
-        <button :class="['filter-chip', { active: subFilter === 'all' }]" @click="setSubFilter('all')">{{ $t('assets.allItems') }}</button>
-        <button :class="['filter-chip', { active: subFilter === 'favorite' }]" @click="setSubFilter('favorite')">{{ $t('assets.favorites') }}</button>
-        <button :class="['filter-chip', { active: subFilter === 'shared' }]" @click="setSubFilter('shared')">{{ $t('assets.myShares') }}</button>
-        <button :class="['filter-chip', { active: subFilter === 'liked' }]" @click="setSubFilter('liked')">{{ $t('assets.myLikes') }}</button>
-        <button v-if="subFilter === 'shared'" class="publish-btn" @click="openPublishDialog">{{ t('inspiration.publishAction') }}</button>
+        <button
+          :class="['filter-chip', { active: subFilter === 'all' }]"
+          @click="setSubFilter('all')"
+        >
+          {{ $t('assets.allItems') }}
+        </button>
+        <button
+          :class="['filter-chip', { active: subFilter === 'favorite' }]"
+          @click="setSubFilter('favorite')"
+        >
+          {{ $t('assets.favorites') }}
+        </button>
+        <button
+          :class="['filter-chip', { active: subFilter === 'shared' }]"
+          @click="setSubFilter('shared')"
+        >
+          {{ $t('assets.myShares') }}
+        </button>
+        <button
+          :class="['filter-chip', { active: subFilter === 'liked' }]"
+          @click="setSubFilter('liked')"
+        >
+          {{ $t('assets.myLikes') }}
+        </button>
+        <button
+          v-if="subFilter === 'shared'"
+          class="publish-btn"
+          @click="openPublishDialog"
+        >
+          {{ t('inspiration.publishAction') }}
+        </button>
       </div>
     </div>
     <!-- Assets grid -->
-    <div class="assets-scroll" @scroll="handleScroll">
-      <div v-for="group in timelineGroups" :key="group.label" class="timeline-group">
-        <div class="section-label">{{ group.label }}</div>
+    <div
+      class="assets-scroll"
+      @scroll="handleScroll"
+    >
+      <div
+        v-for="group in timelineGroups"
+        :key="group.label"
+        class="timeline-group"
+      >
+        <div class="section-label">
+          {{ group.label }}
+        </div>
         <div class="assets-grid">
-          <div v-for="item in group.items" :key="(subFilter === 'liked' || subFilter === 'shared') ? item.share_id : item.id" class="asset-card">
-            <div v-if="subFilter === 'liked'" class="asset-preview" @click="openInspirationDetail(item)">
-              <img :src="item.cover_url || item.images?.[0] || item.video_url" class="asset-thumb" loading="lazy" />
+          <div
+            v-for="item in group.items"
+            :key="(subFilter === 'liked' || subFilter === 'shared') ? item.share_id : item.id"
+            class="asset-card"
+          >
+            <div
+              v-if="subFilter === 'liked'"
+              class="asset-preview"
+              @click="openInspirationDetail(item)"
+            >
+              <img
+                :src="item.cover_url || item.images?.[0] || item.video_url"
+                class="asset-thumb"
+                loading="lazy"
+              >
             </div>
-            <div v-else-if="subFilter === 'shared'" class="asset-preview" @click="openInspirationDetail(item)">
-              <video v-if="item.video_url" :src="item.video_url" class="asset-thumb" preload="metadata" muted />
-              <img v-else :src="item.cover_url || item.images?.[0]" class="asset-thumb" loading="lazy" />
+            <div
+              v-else-if="subFilter === 'shared'"
+              class="asset-preview"
+              @click="openInspirationDetail(item)"
+            >
+              <video
+                v-if="item.video_url"
+                :src="item.video_url"
+                class="asset-thumb"
+                preload="metadata"
+                muted
+              />
+              <img
+                v-else
+                :src="item.cover_url || item.images?.[0]"
+                class="asset-thumb"
+                loading="lazy"
+              >
             </div>
             <!-- Image asset -->
-            <div v-else-if="item.images?.length" class="asset-preview" @click="viewInGenerate(item)">
-              <img :src="item.images[0]" class="asset-thumb" loading="lazy" />
-              <div v-if="item.images.length > 1" class="asset-count">+{{ item.images.length - 1 }}</div>
+            <div
+              v-else-if="item.images?.length"
+              class="asset-preview"
+              @click="viewInGenerate(item)"
+            >
+              <img
+                :src="item.images[0]"
+                class="asset-thumb"
+                loading="lazy"
+              >
+              <div
+                v-if="item.images.length > 1"
+                class="asset-count"
+              >
+                +{{ item.images.length - 1 }}
+              </div>
             </div>
             <!-- Video asset -->
-            <div v-else-if="item.video_url" class="asset-preview" @click="viewInGenerate(item)">
-              <video :src="item.video_url" class="asset-thumb" preload="metadata" muted />
-              <div class="asset-play">▶</div>
+            <div
+              v-else-if="item.video_url"
+              class="asset-preview"
+              @click="viewInGenerate(item)"
+            >
+              <video
+                :src="item.video_url"
+                class="asset-thumb"
+                preload="metadata"
+                muted
+              />
+              <div class="asset-play">
+                ▶
+              </div>
             </div>
 
             <div class="asset-info">
-              <div v-if="subFilter === 'shared'" class="review-badge" :class="reviewStatusClass(item.review_status)">
+              <div
+                v-if="subFilter === 'shared'"
+                class="review-badge"
+                :class="reviewStatusClass(item.review_status)"
+              >
                 {{ reviewStatusText(item.review_status) }}
               </div>
-              <p class="asset-prompt">{{ item.prompt }}</p>
-              <div v-if="subFilter === 'liked'" class="asset-actions">
-                <button class="action-btn favorited" @click="toggleLikePost(item)" :title="t('inspiration.unlikeAction')">
-                  <svg class="action-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <p class="asset-prompt">
+                {{ item.prompt }}
+              </p>
+              <div
+                v-if="subFilter === 'liked'"
+                class="asset-actions"
+              >
+                <button
+                  class="action-btn favorited"
+                  :title="t('inspiration.unlikeAction')"
+                  @click="toggleLikePost(item)"
+                >
+                  <svg
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
                     <path d="M12 21s-6.7-4.3-9.2-8.2c-1.6-2.5-1-5.9 1.8-7.4 2.1-1.2 4.5-.6 6.1 1.2 1.6-1.8 4-2.4 6.1-1.2 2.8 1.5 3.4 4.9 1.8 7.4C18.7 16.7 12 21 12 21z" />
                   </svg>
                 </button>
-                <button class="action-btn" @click="openInspirationDetail(item)" :title="t('inspiration.viewDetail')">
-                  <svg class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <button
+                  class="action-btn"
+                  :title="t('inspiration.viewDetail')"
+                  @click="openInspirationDetail(item)"
+                >
+                  <svg
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
                     <path d="M14 5h5v5" />
                     <path d="M10 14L19 5" />
                     <path d="M19 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4" />
                   </svg>
                 </button>
-                <button class="action-btn" @click="downloadImage(item.cover_url || item.images?.[0] || item.video_url, 0)" :title="t('generate.download')">
-                  <svg class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <button
+                  class="action-btn"
+                  :title="t('generate.download')"
+                  @click="downloadImage(item.cover_url || item.images?.[0] || item.video_url, 0)"
+                >
+                  <svg
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
                     <path d="M12 4v10" />
                     <path d="M8 10l4 4 4-4" />
                     <path d="M5 19h14" />
                   </svg>
                 </button>
-                <NPopover v-if="!item.video_url" trigger="click" placement="top" :show-arrow="false">
+                <NPopover
+                  v-if="!item.video_url"
+                  trigger="click"
+                  placement="top"
+                  :show-arrow="false"
+                >
                   <template #trigger>
-                    <button class="action-btn" :title="t('generate.toolbox')">
-                      <svg class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <button
+                      class="action-btn"
+                      :title="t('generate.toolbox')"
+                    >
+                      <svg
+                        class="action-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true"
+                      >
                         <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                       </svg>
                     </button>
                   </template>
                   <div class="toolbox-menu">
-                    <button class="toolbox-menu-item" @click="openImageToSvg(item.cover_url || item.images?.[0])">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    <button
+                      class="toolbox-menu-item"
+                      @click="openImageToSvg(item.cover_url || item.images?.[0])"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /></svg>
                       {{ t('generate.toSvg') }}
                     </button>
                   </div>
                 </NPopover>
               </div>
-              <div v-else-if="subFilter === 'shared'" class="asset-actions">
-                <button class="action-btn shared" @click="toggleShareInspiration(item)" :title="t('common.unshare')">
-                  <svg class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <div
+                v-else-if="subFilter === 'shared'"
+                class="asset-actions"
+              >
+                <button
+                  class="action-btn shared"
+                  :title="t('common.unshare')"
+                  @click="toggleShareInspiration(item)"
+                >
+                  <svg
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
                     <path d="M5 12l4 4L19 6" />
                   </svg>
                 </button>
-                <button class="action-btn" @click="openInspirationDetail(item)" :title="t('inspiration.viewDetail')">
-                  <svg class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <button
+                  class="action-btn"
+                  :title="t('inspiration.viewDetail')"
+                  @click="openInspirationDetail(item)"
+                >
+                  <svg
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
                     <path d="M14 5h5v5" />
                     <path d="M10 14L19 5" />
                     <path d="M19 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4" />
                   </svg>
                 </button>
-                <button class="action-btn" @click="downloadImage(item.cover_url || item.images?.[0] || item.video_url, 0)" :title="t('generate.download')">
-                  <svg class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <button
+                  class="action-btn"
+                  :title="t('generate.download')"
+                  @click="downloadImage(item.cover_url || item.images?.[0] || item.video_url, 0)"
+                >
+                  <svg
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
                     <path d="M12 4v10" />
                     <path d="M8 10l4 4 4-4" />
                     <path d="M5 19h14" />
                   </svg>
                 </button>
-                <NPopover v-if="!item.video_url" trigger="click" placement="top" :show-arrow="false">
+                <NPopover
+                  v-if="!item.video_url"
+                  trigger="click"
+                  placement="top"
+                  :show-arrow="false"
+                >
                   <template #trigger>
-                    <button class="action-btn" :title="t('generate.toolbox')">
-                      <svg class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <button
+                      class="action-btn"
+                      :title="t('generate.toolbox')"
+                    >
+                      <svg
+                        class="action-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true"
+                      >
                         <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                       </svg>
                     </button>
                   </template>
                   <div class="toolbox-menu">
-                    <button class="toolbox-menu-item" @click="openImageToSvg(item.cover_url || item.images?.[0])">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    <button
+                      class="toolbox-menu-item"
+                      @click="openImageToSvg(item.cover_url || item.images?.[0])"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /></svg>
                       {{ t('generate.toSvg') }}
                     </button>
                   </div>
                 </NPopover>
               </div>
-              <div v-else class="asset-actions">
-                <button class="action-btn" :class="{ favorited: item.is_favorite }" @click="toggleFavorite(item.id)" :title="t('assets.favorites')">
-                  <svg class="action-icon" viewBox="0 0 24 24" :fill="item.is_favorite ? 'currentColor' : 'none'" aria-hidden="true">
+              <div
+                v-else
+                class="asset-actions"
+              >
+                <button
+                  class="action-btn"
+                  :class="{ favorited: item.is_favorite }"
+                  :title="t('assets.favorites')"
+                  @click="toggleFavorite(item.id)"
+                >
+                  <svg
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    :fill="item.is_favorite ? 'currentColor' : 'none'"
+                    aria-hidden="true"
+                  >
                     <path d="M12 21s-6.7-4.3-9.2-8.2c-1.6-2.5-1-5.9 1.8-7.4 2.1-1.2 4.5-.6 6.1 1.2 1.6-1.8 4-2.4 6.1-1.2 2.8 1.5 3.4 4.9 1.8 7.4C18.7 16.7 12 21 12 21z" />
                   </svg>
                 </button>
-                <button class="action-btn" @click="downloadImage(item.images?.[0] || item.video_url, 0)" :title="t('generate.download')">
-                  <svg class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <button
+                  class="action-btn"
+                  :title="t('generate.download')"
+                  @click="downloadImage(item.images?.[0] || item.video_url, 0)"
+                >
+                  <svg
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
                     <path d="M12 4v10" />
                     <path d="M8 10l4 4 4-4" />
                     <path d="M5 19h14" />
@@ -523,20 +762,41 @@ const handleScroll = (e) => {
                 <button
                   class="action-btn"
                   :class="{ shared: item.is_shared }"
-                  @click="toggleShareInspiration(item)"
                   :title="item.is_shared ? t('common.unshare') : t('common.share')"
+                  @click="toggleShareInspiration(item)"
                 >
-                  <svg v-if="item.is_shared" class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <svg
+                    v-if="item.is_shared"
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
                     <path d="M5 12l4 4L19 6" />
                   </svg>
-                  <svg v-else class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <svg
+                    v-else
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
                     <path d="M12 5v10" />
                     <path d="M8 9l4-4 4 4" />
                     <path d="M5 14v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4" />
                   </svg>
                 </button>
-                <button class="action-btn delete-btn" @click="deleteAsset(item.id)" :title="t('common.delete')">
-                  <svg class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <button
+                  class="action-btn delete-btn"
+                  :title="t('common.delete')"
+                  @click="deleteAsset(item.id)"
+                >
+                  <svg
+                    class="action-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
                     <path d="M4 7h16" />
                     <path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
                     <path d="M8 7v12a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7" />
@@ -544,17 +804,42 @@ const handleScroll = (e) => {
                     <path d="M14 11v6" />
                   </svg>
                 </button>
-                <NPopover v-if="item.images?.length" trigger="click" placement="top" :show-arrow="false">
+                <NPopover
+                  v-if="item.images?.length"
+                  trigger="click"
+                  placement="top"
+                  :show-arrow="false"
+                >
                   <template #trigger>
-                    <button class="action-btn" :title="t('generate.toolbox')">
-                      <svg class="action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <button
+                      class="action-btn"
+                      :title="t('generate.toolbox')"
+                    >
+                      <svg
+                        class="action-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true"
+                      >
                         <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                       </svg>
                     </button>
                   </template>
                   <div class="toolbox-menu">
-                    <button class="toolbox-menu-item" @click="openImageToSvg(item.images[0])">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    <button
+                      class="toolbox-menu-item"
+                      @click="openImageToSvg(item.images[0])"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /></svg>
                       {{ t('generate.toSvg') }}
                     </button>
                   </div>
@@ -565,11 +850,23 @@ const handleScroll = (e) => {
         </div>
       </div>
 
-      <div v-if="showEmpty && subFilter === 'shared'" class="empty-publish-wrap">
+      <div
+        v-if="showEmpty && subFilter === 'shared'"
+        class="empty-publish-wrap"
+      >
         <NEmpty :description="$t('assets.noAssets')" />
-        <button class="empty-publish-btn" @click="openPublishDialog">{{ t('inspiration.publishAction') }}</button>
+        <button
+          class="empty-publish-btn"
+          @click="openPublishDialog"
+        >
+          {{ t('inspiration.publishAction') }}
+        </button>
       </div>
-      <NEmpty v-else-if="showEmpty" :description="$t('assets.noAssets')" style="margin-top: 80px;" />
+      <NEmpty
+        v-else-if="showEmpty"
+        :description="$t('assets.noAssets')"
+        style="margin-top: 80px;"
+      />
 
       <div
         v-if="isCurrentLoading"

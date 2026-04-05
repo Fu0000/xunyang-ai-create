@@ -141,55 +141,138 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="pricing-overlay" @click.self="emit('close')">
+  <div
+    class="pricing-overlay"
+    @click.self="emit('close')"
+  >
     <div class="pricing-modal">
       <!-- 关闭按钮 -->
-      <button class="close-btn" @click="emit('close')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      <button
+        class="close-btn"
+        @click="emit('close')"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line
+            x1="18"
+            y1="6"
+            x2="6"
+            y2="18"
+          /><line
+            x1="6"
+            y1="6"
+            x2="18"
+            y2="18"
+          />
         </svg>
       </button>
 
       <!-- Payment Status Overlay -->
-      <div v-if="paymentStatus" class="payment-status-overlay">
+      <div
+        v-if="paymentStatus"
+        class="payment-status-overlay"
+      >
         <!-- Waiting -->
-        <div v-if="paymentStatus === 'waiting'" class="payment-status-card">
-          <div class="status-spinner"></div>
+        <div
+          v-if="paymentStatus === 'waiting'"
+          class="payment-status-card"
+        >
+          <div class="status-spinner" />
           <h3>{{ $t('payment.waitingTitle') }}</h3>
-          <p class="status-sub">{{ $t('payment.waitingDesc') }}</p>
-          <div class="status-order">{{ $t('payment.orderNo') }}: {{ paymentOrderNo }}</div>
-          <button class="status-cancel-btn" @click="resetPayment">{{ $t('payment.cancel') }}</button>
+          <p class="status-sub">
+            {{ $t('payment.waitingDesc') }}
+          </p>
+          <div class="status-order">
+            {{ $t('payment.orderNo') }}: {{ paymentOrderNo }}
+          </div>
+          <button
+            class="status-cancel-btn"
+            @click="resetPayment"
+          >
+            {{ $t('payment.cancel') }}
+          </button>
         </div>
 
         <!-- Success -->
-        <div v-else-if="paymentStatus === 'success'" class="payment-status-card">
-          <div class="status-icon success-icon">✓</div>
+        <div
+          v-else-if="paymentStatus === 'success'"
+          class="payment-status-card"
+        >
+          <div class="status-icon success-icon">
+            ✓
+          </div>
           <h3>{{ $t('payment.successTitle') }}</h3>
-          <p class="status-sub">{{ $t('payment.successDesc', { diamonds: paymentDiamonds }) }}</p>
-          <button class="status-done-btn" @click="resetPayment">{{ $t('payment.done') }}</button>
+          <p class="status-sub">
+            {{ $t('payment.successDesc', { diamonds: paymentDiamonds }) }}
+          </p>
+          <button
+            class="status-done-btn"
+            @click="resetPayment"
+          >
+            {{ $t('payment.done') }}
+          </button>
         </div>
 
         <!-- Failed -->
-        <div v-else-if="paymentStatus === 'failed'" class="payment-status-card">
-          <div class="status-icon fail-icon">✕</div>
+        <div
+          v-else-if="paymentStatus === 'failed'"
+          class="payment-status-card"
+        >
+          <div class="status-icon fail-icon">
+            ✕
+          </div>
           <h3>{{ $t('payment.failedTitle') }}</h3>
-          <p class="status-sub">{{ $t('payment.failedDesc') }}</p>
-          <button class="status-done-btn" @click="resetPayment">{{ $t('payment.retry') }}</button>
+          <p class="status-sub">
+            {{ $t('payment.failedDesc') }}
+          </p>
+          <button
+            class="status-done-btn"
+            @click="resetPayment"
+          >
+            {{ $t('payment.retry') }}
+          </button>
         </div>
 
         <!-- Expired -->
-        <div v-else-if="paymentStatus === 'expired'" class="payment-status-card">
-          <div class="status-icon fail-icon">⏱</div>
+        <div
+          v-else-if="paymentStatus === 'expired'"
+          class="payment-status-card"
+        >
+          <div class="status-icon fail-icon">
+            ⏱
+          </div>
           <h3>{{ $t('payment.expiredTitle') }}</h3>
-          <p class="status-sub">{{ $t('payment.expiredDesc') }}</p>
-          <button class="status-done-btn" @click="resetPayment">{{ $t('payment.retry') }}</button>
+          <p class="status-sub">
+            {{ $t('payment.expiredDesc') }}
+          </p>
+          <button
+            class="status-done-btn"
+            @click="resetPayment"
+          >
+            {{ $t('payment.retry') }}
+          </button>
         </div>
       </div>
 
       <!-- Header -->
       <div class="pricing-header">
         <h2>{{ $t('pricing.title') }} <span class="header-accent">{{ $t('pricing.titleAccent') }}</span></h2>
-        <p class="subtitle">{{ $t('pricing.subtitle') }} <button class="inline-link" @click="emit('open-redeem')">{{ $t('pricing.keyRedeem') }}</button></p>
+        <p class="subtitle">
+          {{ $t('pricing.subtitle') }} <button
+            class="inline-link"
+            @click="emit('open-redeem')"
+          >
+            {{ $t('pricing.keyRedeem') }}
+          </button>
+        </p>
       </div>
 
       <!-- 定价卡片 -->
@@ -199,18 +282,27 @@ onBeforeUnmount(() => {
           :key="plan.key"
           :class="['pricing-card', { recommended: plan.recommended }]"
         >
-          <div v-if="plan.recommended" class="recommend-badge">{{ plan.badge }}</div>
+          <div
+            v-if="plan.recommended"
+            class="recommend-badge"
+          >
+            {{ plan.badge }}
+          </div>
 
           <div class="card-top">
-            <div class="card-name">{{ plan.name }}</div>
+            <div class="card-name">
+              {{ plan.name }}
+            </div>
             <div class="card-price-row">
               <span class="currency">¥</span>
               <span class="amount">{{ plan.price }}</span>
             </div>
-            <div class="card-unit">{{ $t('pricing.unitPrice', { price: plan.unitPrice }) }}</div>
+            <div class="card-unit">
+              {{ $t('pricing.unitPrice', { price: plan.unitPrice }) }}
+            </div>
           </div>
 
-          <div class="card-divider"></div>
+          <div class="card-divider" />
 
           <div class="card-diamonds">
             <span class="diamond-icon">💎</span>
@@ -219,7 +311,10 @@ onBeforeUnmount(() => {
           </div>
 
           <ul class="card-features">
-            <li v-for="feature in plan.features" :key="feature">
+            <li
+              v-for="feature in plan.features"
+              :key="feature"
+            >
               <span class="check">✓</span>
               {{ feature }}
             </li>
@@ -248,21 +343,56 @@ onBeforeUnmount(() => {
       <!-- 底部引导 -->
       <div class="pricing-footer">
         <span class="footer-text">{{ $t('pricing.hasKey') }}</span>
-        <button class="redeem-trigger" @click="emit('open-redeem')">
+        <button
+          class="redeem-trigger"
+          @click="emit('open-redeem')"
+        >
           🔑 {{ $t('pricing.redeemNow') }}
         </button>
       </div>
 
       <!-- 闲鱼商品卡片弹窗 -->
-      <div v-if="showFishCard" class="fish-overlay" @click.self="showFishCard = false">
+      <div
+        v-if="showFishCard"
+        class="fish-overlay"
+        @click.self="showFishCard = false"
+      >
         <div class="fish-card">
-          <button class="fish-close" @click="showFishCard = false">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <button
+            class="fish-close"
+            @click="showFishCard = false"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line
+                x1="18"
+                y1="6"
+                x2="6"
+                y2="18"
+              /><line
+                x1="6"
+                y1="6"
+                x2="18"
+                y2="18"
+              />
             </svg>
           </button>
-          <img src="/images/fish.jpg" alt="闲鱼商品" class="fish-image" />
-          <p class="fish-tip">{{ $t('pricing.fishTip') }}</p>
+          <img
+            src="/images/fish.jpg"
+            alt="闲鱼商品"
+            class="fish-image"
+          >
+          <p class="fish-tip">
+            {{ $t('pricing.fishTip') }}
+          </p>
         </div>
       </div>
     </div>

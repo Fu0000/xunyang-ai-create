@@ -83,29 +83,52 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="invite-modal-overlay" @click.self="$emit('close')">
+  <div
+    class="invite-modal-overlay"
+    @click.self="$emit('close')"
+  >
     <div class="invite-modal">
       <!-- 关闭按钮 -->
-      <button class="close-btn" @click="$emit('close')">✕</button>
+      <button
+        class="close-btn"
+        @click="$emit('close')"
+      >
+        ✕
+      </button>
 
       <!-- Header -->
       <div class="invite-header">
-        <div class="header-icon">🎁</div>
+        <div class="header-icon">
+          🎁
+        </div>
         <h2>{{ $t('invite.title') }}</h2>
-        <p class="subtitle">{{ $t('invite.subtitle') }}</p>
+        <p class="subtitle">
+          {{ $t('invite.subtitle') }}
+        </p>
       </div>
 
       <!-- Loading -->
-      <div v-if="loading" class="loading-state">
-        <div class="spinner"></div>
+      <div
+        v-if="loading"
+        class="loading-state"
+      >
+        <div class="spinner" />
         <p>{{ $t('invite.loading') }}</p>
       </div>
 
       <!-- Error -->
-      <div v-else-if="error" class="error-state">
+      <div
+        v-else-if="error"
+        class="error-state"
+      >
         <span class="error-icon">⚠️</span>
         <p>{{ error }}</p>
-        <button @click="fetchInvitationData" class="retry-btn">{{ $t('invite.retry') }}</button>
+        <button
+          class="retry-btn"
+          @click="fetchInvitationData"
+        >
+          {{ $t('invite.retry') }}
+        </button>
       </div>
 
       <!-- Content -->
@@ -133,7 +156,11 @@ onMounted(() => {
           <label class="section-label">{{ $t('invite.myInviteCode') }}</label>
           <div class="code-display">
             <span class="code-text">{{ inviteData.invite_code }}</span>
-            <button @click="copyInviteCode" class="copy-btn" :title="$t('invite.copyCode')">
+            <button
+              class="copy-btn"
+              :title="$t('invite.copyCode')"
+              @click="copyInviteCode"
+            >
               📋
             </button>
           </div>
@@ -144,21 +171,31 @@ onMounted(() => {
           <label class="section-label">{{ $t('invite.inviteLink') }}</label>
           <div class="link-display">
             <span class="link-text">{{ inviteLink }}</span>
-            <button @click="copyInviteLink" class="copy-btn" :title="$t('invite.copyLink')">
+            <button
+              class="copy-btn"
+              :title="$t('invite.copyLink')"
+              @click="copyInviteLink"
+            >
               📋
             </button>
           </div>
         </div>
 
         <!-- 复制成功提示 -->
-        <div v-if="copySuccessMessage" class="copy-success-toast">
+        <div
+          v-if="copySuccessMessage"
+          class="copy-success-toast"
+        >
           ✓ {{ copySuccessMessage }}
         </div>
 
         <!-- 邀请记录 -->
         <div class="records-section">
           <label class="section-label">{{ $t('invite.records') }}</label>
-          <div v-if="inviteData.records && inviteData.records.length > 0" class="records-list">
+          <div
+            v-if="inviteData.records && inviteData.records.length > 0"
+            class="records-list"
+          >
             <div
               v-for="record in inviteData.records"
               :key="record.id"
@@ -174,10 +211,15 @@ onMounted(() => {
               </div>
             </div>
           </div>
-          <div v-else class="empty-records">
+          <div
+            v-else
+            class="empty-records"
+          >
             <span class="empty-icon">📭</span>
             <p>{{ $t('invite.noRecords') }}</p>
-            <p class="empty-hint">{{ $t('invite.noRecordsHint') }}</p>
+            <p class="empty-hint">
+              {{ $t('invite.noRecordsHint') }}
+            </p>
           </div>
         </div>
       </template>
