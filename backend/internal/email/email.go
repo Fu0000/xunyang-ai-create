@@ -1,12 +1,19 @@
 package email
 
 import (
+	"bytes"
+	"crypto/tls"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"net/smtp"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var (
@@ -16,6 +23,11 @@ var (
 	smtpPassword string
 	fromEmail    string
 	fromName     string
+
+	cfWorkerBase    string
+	cfAdminPassword string
+	cfDefaultDomain string
+	cfJwtSecret     string
 )
 
 // InitEmail 初始化邮件配置
@@ -39,16 +51,23 @@ func InitEmail() {
 		fromName = "寻氧AI"
 	}
 
-	if smtpUser != "" && smtpPassword != "" {
+	cfWorkerBase = os.Getenv("CF_WORKER_BASE")
+	cfAdminPassword = os.Getenv("CF_ADMIN_PASSWORD")
+	cfDefaultDomain = os.Getenv("CF_DEFAULT_DOMAIN")
+	cfJwtSecret = os.Getenv("CF_JWT_SECRET")
+
+	if cfWorkerBase != "" {
+		log.Printf("邮件服务已配置: 采用 CF Worker 代理模式 (%s)", cfWorkerBase)
+	} else if smtpUser != "" && smtpPassword != "" {
 		log.Printf("邮件服务已配置: %s:%s", smtpHost, smtpPort)
 	} else {
-		log.Printf("警告: 邮件服务未配置 (SMTP_USER/SMTP_PASSWORD 未设置)")
+		log.Printf("警告: 邮件服务未配置 (CF_WORKER / SMTP 未设置)")
 	}
 }
 
 // IsConfigured 检查邮件服务是否配置
 func IsConfigured() bool {
-	return smtpUser != "" && smtpPassword != ""
+	return cfWorkerBase != "" || (smtpUser != "" && smtpPassword != "")
 }
 
 // SendVerificationCode 发送验证码邮件
@@ -140,6 +159,10 @@ func SendVerificationCode(to, code, purpose string) error {
 
 // sendHTML 发送HTML格式邮件
 func sendHTML(to, subject, body string) error {
+	if cfWorkerBase != "" {
+		return sendHTMLViaCFWorker(to, subject, body)
+	}
+
 	auth := smtp.PlainAuth("", smtpUser, smtpPassword, smtpHost)
 
 	headers := make(map[string]string)
@@ -156,7 +179,52 @@ func sendHTML(to, subject, body string) error {
 	message += "\r\n" + body
 
 	addr := fmt.Sprintf("%s:%s", smtpHost, smtpPort)
-	err := smtp.SendMail(addr, auth, fromEmail, []string{to}, []byte(message))
+	
+	var err error
+	if smtpPort == "465" {
+		// 针对 465 隐式 TLS 的处理方式，原生 smtp.SendMail 仅支持 587 STARTTLS
+		tlsconfig := &tls.Config{
+			InsecureSkipVerify: true,
+			ServerName:         smtpHost,
+		}
+		conn, errConn := tls.Dial("tcp", addr, tlsconfig)
+		if errConn != nil {
+			err = errConn
+		} else {
+			defer conn.Close()
+			client, errClient := smtp.NewClient(conn, smtpHost)
+			if errClient != nil {
+				err = errClient
+			} else {
+				defer client.Close()
+				if errAuth := client.Auth(auth); errAuth != nil {
+					err = errAuth
+				} else if errMail := client.Mail(fromEmail); errMail != nil {
+					err = errMail
+				} else if errRcpt := client.Rcpt(to); errRcpt != nil {
+					err = errRcpt
+				} else {
+					w, errData := client.Data()
+					if errData != nil {
+						err = errData
+					} else {
+						_, errWrite := w.Write([]byte(message))
+						errClose := w.Close()
+						client.Quit()
+						if errWrite != nil {
+							err = errWrite
+						} else {
+							err = errClose
+						}
+					}
+				}
+			}
+		}
+	} else {
+		// 标准端口或支持 STARTTLS 的 587 端口走原生库
+		err = smtp.SendMail(addr, auth, fromEmail, []string{to}, []byte(message))
+	}
+
 	if err != nil {
 		// QQ邮箱的SMTP服务器有时会在邮件发送成功后返回不完整的响应
 		// 导致 "short response" 错误，但邮件实际上已经发送成功
@@ -171,5 +239,71 @@ func sendHTML(to, subject, body string) error {
 	}
 
 	log.Printf("邮件发送成功: %s <- %s", to, subject)
+	return nil
+}
+
+// generateCFMailToken 模拟 CF Worker 的 Jwt().sign({ address }) 逻辑
+func generateCFMailToken(address, secret string) string {
+	claims := jwt.MapClaims{
+		"address": address,
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, _ := token.SignedString([]byte(secret))
+	return tokenString
+}
+
+// sendHTMLViaCFWorker 通过 Cloudflare Worker 大部分标准的 API 格式发送
+func sendHTMLViaCFWorker(to, subject, body string) error {
+	endpoint := strings.TrimRight(cfWorkerBase, "/") + "/api/send_mail"
+	
+	senderEmail := fromEmail
+	// 对于 CF Worker，必须使用在其域名下经过校验的发件地址
+	if !strings.HasSuffix(senderEmail, "@"+cfDefaultDomain) {
+		senderEmail = "no-reply@" + cfDefaultDomain
+	}
+
+	// 适配最常见开源 CF 邮件代理 (如 dreamhunter2333/cloudflare_temp_email) 的精确 JSON 格式和认证
+	payload := map[string]interface{}{
+		"to_mail":   to,
+		"to_name":   to,
+		"from_name": fromName,
+		// 发信地址会在 worker 内部结合 address 参数或者管理员覆写被处理
+		"subject":   subject,
+		"content":   body,
+		"is_html":   true,
+	}
+	
+	jsonData, _ := json.Marshal(payload)
+
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return fmt.Errorf("构建 CF worker 请求失败: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	
+	if cfJwtSecret != "" {
+		tokenString := generateCFMailToken(senderEmail, cfJwtSecret)
+		req.Header.Set("Authorization", "Bearer "+tokenString)
+	} else {
+		// 回退到 admin header 如果没有提供 jwt secret
+		req.Header.Set("x-admin-password", cfAdminPassword)
+	}
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("CF Worker 邮件网络请求失败 [%s]: %v", to, err)
+		return fmt.Errorf("网络请求失败: %w", err)
+	}
+	defer resp.Body.Close()
+
+	respBody, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		log.Printf("CF Worker 返回错误 [%d]: %s", resp.StatusCode, string(respBody))
+		return fmt.Errorf("CF Worker 发送失败 (状态码 %d)", resp.StatusCode)
+	}
+
+	log.Printf("CF Worker 邮件发送成功: %s <- %s", to, subject)
 	return nil
 }

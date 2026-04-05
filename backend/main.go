@@ -78,6 +78,10 @@ func main() {
 	corsConfig.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization", "X-Admin-Token"}
 	r.Use(cors.New(corsConfig))
 
+	// Serve generic local uploads if OSS is not available
+	_ = os.MkdirAll("uploads", 0755)
+	r.StaticFS("/uploads", http.Dir("uploads"))
+
 	// TASK-11: 全局 IP 限速（100 req/min/IP）
 	r.Use(api.GlobalRateLimitMiddleware())
 
@@ -183,6 +187,12 @@ func main() {
 		{
 			adminGroup.GET("/inspirations", adminapi.ListInspirations)
 			adminGroup.POST("/inspirations/:id/review", adminapi.ReviewInspiration)
+			
+			adminGroup.GET("/users", adminapi.ListUsers)
+			adminGroup.POST("/users/:id/credits", adminapi.UpdateUserCredits)
+			adminGroup.PUT("/users/:id/status", adminapi.UpdateUserStatus)
+			
+			adminGroup.GET("/generations", adminapi.ListGenerations)
 		}
 	}
 

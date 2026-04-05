@@ -12,8 +12,7 @@ const themeStore = useThemeStore()
 const localeStore = useLocaleStore()
 
 
-// 落地页强制深色
-themeStore.forceTheme('dark')
+// 落地页移除强制深色主题，允许自由切换
 
 // Hero 背景视频轮播
 const activeVideo = ref(0)
@@ -88,12 +87,23 @@ onMounted(() => {
 onUnmounted(() => {
   observer?.disconnect()
   if (videoTimer) clearInterval(videoTimer)
-  themeStore.clearForceTheme()
 })
 
 const handleStart = () => {
   router.push('/inspiration')
 }
+
+// 自由切换主题逻辑
+const cycleTheme = () => {
+  const modes = ['system', 'dark', 'light']
+  const next = modes[(modes.indexOf(themeStore.themeMode) + 1) % 3]
+  themeStore.setThemeMode(next)
+}
+
+const themeIcon = computed(() => {
+  if (themeStore.themeMode === 'system') return '💻'
+  return themeStore.isDark ? '🌙' : '☀️'
+})
 </script>
 
 <template>
@@ -144,6 +154,14 @@ const handleStart = () => {
               EN
             </button>
           </div>
+
+          <button
+            class="nav-theme-btn"
+            @click="cycleTheme"
+            :title="themeStore.themeMode"
+          >
+            {{ themeIcon }}
+          </button>
           <NButton
             type="primary"
             strong
@@ -565,7 +583,11 @@ const handleStart = () => {
   left: 0;
   right: 0;
   z-index: 1000;
-  background: transparent;
+  background: rgba(10, 14, 23, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
 }
 
 .nav-container {
@@ -709,7 +731,8 @@ const handleStart = () => {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: transparent;
+  background: radial-gradient(circle at center, transparent 0%, var(--color-bg-deep) 100%),
+              linear-gradient(to bottom, rgba(10, 14, 23, 0.4) 0%, var(--color-bg-deep) 100%);
   z-index: 1;
 }
 
@@ -764,27 +787,26 @@ const handleStart = () => {
 }
 
 .title-line {
-  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: 'Inter', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
   font-size: 64px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 1.15;
   color: var(--color-text-primary);
-  letter-spacing: 0.04em;
-  text-shadow: 0 2px 20px var(--color-tint-black-30);
-  font-style: italic;
-  transform: skewX(-6deg);
+  letter-spacing: -0.02em;
   display: inline-block;
+  text-shadow: 0 4px 24px rgba(255, 255, 255, 0.1);
 }
 
 .title-gradient {
   font-size: 64px;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  font-style: italic;
-  transform: skewX(-6deg);
+  font-weight: 800;
+  letter-spacing: -0.02em;
   display: inline-block;
-  color: var(--color-text-primary);
-  text-shadow: 0 2px 20px var(--color-tint-black-30);
+  background: linear-gradient(135deg, #a5b4fc 0%, #d8b4fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 32px rgba(165, 180, 252, 0.3);
 }
 
 @keyframes gradientFlow {
@@ -811,28 +833,27 @@ const handleStart = () => {
   margin-bottom: 44px;
 }
 
-/* ========== CTA 按钮 ========== */
 .cta-primary {
   position: relative;
-  padding: 12px 24px;
-  border-radius: 12px;
-  background-color: #00cae0;
+  padding: 12px 28px;
+  border-radius: 14px;
+  background: var(--primary-gradient);
   color: white;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   border: none;
   cursor: pointer;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 20px rgba(0, 202, 224, 0.35);
+  transition: var(--transition-spring);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .cta-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0, 202, 224, 0.45);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(99, 102, 241, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
-.cta-primary:active { transform: translateY(-1px); }
+.cta-primary:active { transform: scale(0.96); box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3); }
 
 .cta-primary.small {
   padding: 10px 24px;
@@ -897,6 +918,7 @@ const handleStart = () => {
   font-weight: 800;
   background: linear-gradient(135deg, #a5b4fc, #f093fb);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -1063,21 +1085,23 @@ const handleStart = () => {
 }
 
 .feature-card {
-  background: var(--color-tint-white-02);
-  border: 1px solid var(--color-tint-white-06);
-  border-radius: 14px;
-  padding: 24px 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 28px 24px;
   text-align: center;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--transition-spring);
   position: relative;
   overflow: hidden;
   animation-delay: var(--delay);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm), var(--glass-inset-shadow);
 }
 
 .feature-card:hover {
-  border-color: var(--color-tint-white-12);
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px var(--color-tint-black-35);
+  border-color: var(--glass-border-hover);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow), var(--glass-inset-shadow);
 }
 
 .feature-icon-wrap {
@@ -1172,21 +1196,21 @@ const handleStart = () => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 11px 26px;
+  padding: 12px 28px;
   border-radius: 12px;
-  background-color: #00cae0;
+  background: var(--primary-gradient);
   color: white;
   font-size: 14px;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 20px rgba(0, 202, 224, 0.3);
+  transition: var(--transition-spring);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
 }
 
 .video-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0, 202, 224, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(99, 102, 241, 0.45);
 }
 
 .video-media-col {
@@ -1213,21 +1237,23 @@ const handleStart = () => {
 }
 
 .model-card {
-  background: var(--color-tint-white-02);
-  border: 1px solid var(--color-tint-white-06);
-  border-radius: 14px;
-  padding: 24px 18px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 28px 24px;
   text-align: center;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--transition-spring);
   position: relative;
   overflow: hidden;
   animation-delay: var(--delay);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm), var(--glass-inset-shadow);
 }
 
 .model-card:hover {
-  border-color: var(--color-tint-white-12);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 32px var(--color-tint-black-30);
+  border-color: var(--glass-border-hover);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md), var(--shadow-glow), var(--glass-inset-shadow);
 }
 
 .model-card.coming-soon { opacity: 0.45; }
@@ -1419,13 +1445,21 @@ const handleStart = () => {
   display: flex;
   align-items: center;
   gap: 40px;
-  max-width: 640px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 32px 40px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  backdrop-filter: blur(12px);
+  padding: 36px 48px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  backdrop-filter: blur(24px);
+  box-shadow: var(--shadow-md), var(--glass-inset-shadow);
+  transition: var(--transition-spring);
+}
+
+.community-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--shadow-lg), var(--shadow-glow), var(--glass-inset-shadow);
 }
 
 .community-qr {
@@ -1497,6 +1531,28 @@ const handleStart = () => {
   .community-desc br {
     display: none;
   }
+}
+
+/* ====== Theme Switcher ====== */
+.nav-theme-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.nav-theme-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
 }
 
 /* ====== Footer ====== */

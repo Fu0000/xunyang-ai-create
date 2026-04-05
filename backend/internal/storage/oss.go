@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -107,15 +108,16 @@ func buildPublicURL(objectKey string) string {
 // directory: target directory (e.g., "banana" or "useredit")
 // returns: public URL of the uploaded image
 func UploadImageData(imageData []byte, licenseID string, directory string) (string, error) {
-	if bucket == nil {
-		return "", fmt.Errorf("OSS 客户端未初始化")
-	}
-
 	// Generate unique filename with random suffix to prevent collision
 	timestamp := time.Now().UnixNano() / 1e6 // milliseconds
 	randBytes := make([]byte, 4)
 	rand.Read(randBytes)
 	objectKey := fmt.Sprintf("%s/%d_%s.png", directory, timestamp, hex.EncodeToString(randBytes))
+
+	if bucket == nil {
+		log.Printf("OSS 客户端未初始化，回退到本地存储 [用户:%s]", licenseID)
+		return saveToLocal(imageData, objectKey)
+	}
 
 	// Upload to OSS
 	err := bucket.PutObject(objectKey, bytes.NewReader(imageData))
@@ -136,10 +138,6 @@ func UploadImageData(imageData []byte, licenseID string, directory string) (stri
 // directory: target directory (e.g., "banana" or "useredit")
 // returns: public URL of the uploaded image
 func UploadBase64Image(base64Data string, licenseID string, directory string) (string, error) {
-	if bucket == nil {
-		return "", fmt.Errorf("OSS 客户端未初始化")
-	}
-
 	// Decode base64 to binary
 	imageData, err := base64.StdEncoding.DecodeString(base64Data)
 	if err != nil {
@@ -153,9 +151,6 @@ func UploadBase64Image(base64Data string, licenseID string, directory string) (s
 
 // UploadVideoData uploads video binary data to OSS and returns public URL.
 func UploadVideoData(videoData []byte, userID string, extension string) (string, error) {
-	if bucket == nil {
-		return "", fmt.Errorf("OSS client is not initialized")
-	}
 	if len(videoData) == 0 {
 		return "", fmt.Errorf("video data is empty")
 	}
@@ -178,6 +173,11 @@ func UploadVideoData(videoData []byte, userID string, extension string) (string,
 		contentType = "video/mp4"
 	}
 
+	if bucket == nil {
+		log.Printf("OSS 客户端未初始化，视频回退到本地存储 [用户:%s]", userID)
+		return saveToLocal(videoData, objectKey)
+	}
+
 	err := bucket.PutObject(objectKey, bytes.NewReader(videoData), oss.ContentType(contentType))
 	if err != nil {
 		log.Printf("upload video to OSS failed [user:%s]: %v", userID, err)
@@ -195,9 +195,6 @@ func UploadVideoData(videoData []byte, userID string, extension string) (string,
 // headers: 可选的请求头（如 Google API 需要 x-goog-api-key）
 // returns: OSS上的永久URL
 func DownloadAndUploadVideo(videoURL string, userID string, headers ...map[string]string) (string, error) {
-	if bucket == nil {
-		return "", fmt.Errorf("OSS 客户端未初始化")
-	}
 	log.Printf("downloading video: %s", videoURL)
 	// 下载视频（Google 等需要代理的 URL 自动走代理）
 	client := &http.Client{Timeout: 300 * time.Second}
@@ -239,6 +236,11 @@ func DownloadAndUploadVideo(videoURL string, userID string, headers ...map[strin
 	rand.Read(randBytes)
 	objectKey := fmt.Sprintf("videos/%s/%d_%s.mp4", userID, timestamp, hex.EncodeToString(randBytes))
 
+	if bucket == nil {
+		log.Printf("OSS 客户端未初始化，下载的视频回退到本地存储 [用户:%s]", userID)
+		return saveToLocal(videoData, objectKey)
+	}
+
 	// 上传到OSS
 	err = bucket.PutObject(objectKey, bytes.NewReader(videoData))
 	if err != nil {
@@ -250,4 +252,20 @@ func DownloadAndUploadVideo(videoURL string, userID string, headers ...map[strin
 	publicURL := buildPublicURL(objectKey)
 	log.Printf("视频上传成功: %s -> %s (大小: %d bytes)", objectKey, publicURL, len(videoData))
 	return publicURL, nil
+}
+
+func saveToLocal(data []byte, objectKey string) (string, error) {
+	localPath := filepath.Join("uploads", objectKey)
+	dir := filepath.Dir(localPath)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return "", fmt.Errorf("创建本地目录失败: %v", err)
+	}
+	if err := os.WriteFile(localPath, data, 0644); err != nil {
+		return "", fmt.Errorf("写入本地文件失败: %v", err)
+	}
+	baseURL := os.Getenv("API_BASE_URL")
+	if baseURL == "" {
+		baseURL = "http://127.0.0.1:8092"
+	}
+	return fmt.Sprintf("%s/uploads/%s", strings.TrimRight(baseURL, "/"), objectKey), nil
 }

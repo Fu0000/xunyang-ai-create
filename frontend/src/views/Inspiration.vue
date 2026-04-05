@@ -935,16 +935,16 @@ onBeforeUnmount(() => {
 }
 
 .feature-card:hover {
-  background: rgba(0, 202, 224, 0.06);
-  border-color: rgba(0, 202, 224, 0.2);
+  background: rgba(99, 102, 241, 0.08);
+  border-color: var(--color-border-focus);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 202, 224, 0.12);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.15);
 }
 
 .feature-card.active {
-  background: rgba(0, 202, 224, 0.1);
-  border-color: rgba(0, 202, 224, 0.4);
-  box-shadow: 0 0 0 1px rgba(0, 202, 224, 0.2), 0 4px 16px rgba(0, 202, 224, 0.15);
+  background: rgba(99, 102, 241, 0.12);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25), 0 4px 16px rgba(99, 102, 241, 0.2);
 }
 
 .feature-icon {
@@ -1024,8 +1024,8 @@ onBeforeUnmount(() => {
 
 .search-input:focus {
   background: var(--color-tint-white-05, rgba(255,255,255,.05));
-  border-color: rgba(0, 202, 224, 0.5);
-  box-shadow: 0 0 0 3px rgba(0, 202, 224, 0.1);
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
 .search-icon {
@@ -1046,7 +1046,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 202, 224, 0.9);
+  background: var(--primary-gradient);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -1060,17 +1060,17 @@ onBeforeUnmount(() => {
 }
 
 .search-btn:hover {
-  background: rgba(0, 202, 224, 1);
-  box-shadow: 0 2px 8px rgba(0, 202, 224, 0.35);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }
 
 .publish-btn {
   height: 36px;
   padding: 0 14px;
   border-radius: 10px;
-  border: 1px solid rgba(0, 202, 224, 0.35);
-  background: rgba(0, 202, 224, 0.18);
-  color: #d8fbff;
+  border: 1px solid var(--color-border-focus);
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--color-primary-light);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -1078,8 +1078,8 @@ onBeforeUnmount(() => {
 }
 
 .publish-btn:hover {
-  background: rgba(0, 202, 224, 0.3);
-  box-shadow: 0 2px 10px rgba(0, 202, 224, 0.25);
+  background: rgba(99, 102, 241, 0.25);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
 .feed-type-tabs {
@@ -1110,8 +1110,8 @@ onBeforeUnmount(() => {
 
 .feed-type-tab.active {
   color: #fff;
-  background: rgba(0, 202, 224, 0.9);
-  box-shadow: 0 2px 8px rgba(0, 202, 224, 0.25);
+  background: var(--primary-gradient);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
 }
 
 .tag-tabs {
@@ -1133,14 +1133,14 @@ onBeforeUnmount(() => {
 }
 
 .tag-tab:hover {
-  border-color: rgba(0, 202, 224, 0.35);
+  border-color: var(--color-border-focus);
   color: var(--color-text-primary);
 }
 
 .tag-tab.active {
-  border-color: rgba(0, 202, 224, 0.45);
-  background: rgba(0, 202, 224, 0.14);
-  color: #c9f8ff;
+  border-color: var(--color-primary-light);
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--color-primary-light);
 }
 
 @media (max-width: 900px) {
@@ -1249,6 +1249,7 @@ onBeforeUnmount(() => {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -1261,8 +1262,8 @@ onBeforeUnmount(() => {
 .showcase-tag {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.9);
-  background: rgba(0, 202, 224, 0.24);
-  border: 1px solid rgba(0, 202, 224, 0.35);
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(99, 102, 241, 0.4);
   padding: 1px 6px;
   border-radius: 999px;
 }
@@ -1301,8 +1302,8 @@ onBeforeUnmount(() => {
 }
 
 .quick-btn:hover {
-  border-color: rgba(0, 202, 224, 0.45);
-  background: rgba(0, 202, 224, 0.2);
+  border-color: var(--color-border-focus);
+  background: rgba(99, 102, 241, 0.2);
 }
 
 .quick-btn.liked {

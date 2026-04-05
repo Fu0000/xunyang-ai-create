@@ -1074,16 +1074,18 @@ const getStatusText = (s) => ({ queued: t('generate.queued'), running: t('genera
 }
 
 .ai-avatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: rgba(0, 202, 224, 0.12);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   margin-top: 2px;
   overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
 }
 .ai-avatar-img {
   width: 20px;
@@ -1161,13 +1163,13 @@ const getStatusText = (s) => ({ queued: t('generate.queued'), running: t('genera
   transition: all .2s;
 }
 .result-action-btn:hover {
-  border-color: rgba(0, 202, 224, 0.45);
-  background: rgba(0, 202, 224, 0.2);
+  border-color: var(--color-border-focus);
+  background: rgba(99, 102, 241, 0.2);
 }
 .result-action-btn.shared {
-  color: #8cefff;
-  border-color: rgba(0, 202, 224, 0.45);
-  background: rgba(0, 202, 224, 0.18);
+  color: var(--color-primary-light);
+  border-color: var(--color-border-focus);
+  background: rgba(99, 102, 241, 0.15);
 }
 .result-action-btn.loading,
 .result-action-btn:disabled {
@@ -1241,7 +1243,7 @@ const getStatusText = (s) => ({ queued: t('generate.queued'), running: t('genera
   font-family: inherit;
 }
 .toolbox-menu-item:hover {
-  background: var(--color-popover-hover, rgba(0, 202, 224, 0.08));
+  background: var(--color-popover-hover);
   color: var(--color-text-primary);
 }
 

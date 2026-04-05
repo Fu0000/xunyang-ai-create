@@ -2,17 +2,18 @@ package api
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"google-ai-proxy/internal/config"
 	"google-ai-proxy/internal/db"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,7 @@ import (
 const (
 	CreditTxTypeReversePromptCost = "reverse_prompt_cost"
 	reversePromptCredits          = 2
-	reversePromptModel            = "doubao-seed-2-0-pro-260215"
+	reversePromptModel            = "gemini-2.5-pro"
 )
 
 // ReversePromptRequest 图片反推提示词请求。
@@ -99,7 +100,7 @@ func ReversePrompt(c *gin.Context) {
 	resp := ReversePromptResponse{
 		Prompt: prompt,
 		Meta: map[string]interface{}{
-			"provider":          "volcengine",
+			"provider":          "google",
 			"model":             reversePromptModel,
 			"language":          req.Language,
 			"target_model":      req.TargetModel,
@@ -147,39 +148,37 @@ func deductReversePromptCredits(userID uint64, currentCredits, requiredCredits i
 	return nil
 }
 
-type volcengineChatRequest struct {
-	Model    string                  `json:"model"`
-	Messages []volcengineChatMessage `json:"messages"`
+type geminiPart struct {
+	Text       string           `json:"text,omitempty"`
+	InlineData *geminiInlineData `json:"inlineData,omitempty"`
 }
 
-type volcengineChatMessage struct {
-	Role    string      `json:"role"`
-	Content interface{} `json:"content"`
+type geminiInlineData struct {
+	MimeType string `json:"mimeType"`
+	Data     string `json:"data"`
 }
 
-type volcengineChatContentPart struct {
-	Type     string                  `json:"type"`
-	Text     string                  `json:"text,omitempty"`
-	ImageURL *volcengineChatImageURL `json:"image_url,omitempty"`
+type geminiContent struct {
+	Parts []geminiPart `json:"parts"`
 }
 
-type volcengineChatImageURL struct {
-	URL string `json:"url"`
+type geminiGenerateContentRequest struct {
+	Contents []geminiContent `json:"contents"`
 }
 
-type volcengineChatResponse struct {
-	ID      string `json:"id"`
-	Choices []struct {
-		Message struct {
-			Role    string `json:"role"`
-			Content string `json:"content"`
-		} `json:"message"`
-	} `json:"choices"`
-	Usage struct {
-		PromptTokens     int `json:"prompt_tokens"`
-		CompletionTokens int `json:"completion_tokens"`
-		TotalTokens      int `json:"total_tokens"`
-	} `json:"usage"`
+type geminiGenerateContentResponse struct {
+	Candidates []struct {
+		Content struct {
+			Parts []struct {
+				Text string `json:"text"`
+			} `json:"parts"`
+		} `json:"content"`
+	} `json:"candidates"`
+	UsageMetadata struct {
+		PromptTokenCount     int `json:"promptTokenCount"`
+		CandidatesTokenCount int `json:"candidatesTokenCount"`
+		TotalTokenCount      int `json:"totalTokenCount"`
+	} `json:"usageMetadata"`
 }
 
 func callReversePromptAPI(req ReversePromptRequest) (string, struct {
@@ -193,34 +192,63 @@ func callReversePromptAPI(req ReversePromptRequest) (string, struct {
 		TotalTokens      int
 	}
 
-	apiKey := strings.TrimSpace(config.GetVolcengineAPIKey())
+	apiKey := os.Getenv("GOOGLE_API_KEY")
 	if apiKey == "" {
-		return "", emptyUsage, errors.New("ARK_API_KEY is not configured")
+		return "", emptyUsage, errors.New("GOOGLE_API_KEY is not configured")
 	}
 
 	systemPrompt := buildReversePromptSystemPrompt(req.Language, req.TargetModel)
 
-	imageURL := req.Image
-	if !strings.HasPrefix(imageURL, "data:") && !strings.HasPrefix(imageURL, "http") {
-		imageURL = "data:image/jpeg;base64," + imageURL
+	var mimeType string
+	var b64Data string
+
+	if strings.HasPrefix(req.Image, "http") {
+		client := &http.Client{Timeout: 10 * time.Second}
+		resp, err := client.Get(req.Image)
+		if err != nil {
+			return "", emptyUsage, fmt.Errorf("failed to fetch image url: %w", err)
+		}
+		defer resp.Body.Close()
+		imgBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return "", emptyUsage, fmt.Errorf("failed to read fetched image: %w", err)
+		}
+		mimeType = resp.Header.Get("Content-Type")
+		if mimeType == "" {
+			mimeType = "image/jpeg"
+		}
+		b64Data = base64.StdEncoding.EncodeToString(imgBytes)
+	} else if strings.HasPrefix(req.Image, "data:") {
+		parts := strings.SplitN(req.Image, ",", 2)
+		if len(parts) == 2 {
+			mimeTypePart := strings.TrimPrefix(parts[0], "data:")
+			mimeType = strings.Split(mimeTypePart, ";")[0]
+			b64Data = parts[1]
+		}
+	} else {
+		mimeType = "image/jpeg"
+		b64Data = req.Image
 	}
 
-	userContent := []volcengineChatContentPart{
-		{
-			Type:     "image_url",
-			ImageURL: &volcengineChatImageURL{URL: imageURL},
-		},
-		{
-			Type: "text",
-			Text: "请分析这张图片，反推出可以生成该图片的提示词。",
-		},
+	if mimeType == "" {
+		mimeType = "image/jpeg"
 	}
 
-	chatReq := volcengineChatRequest{
-		Model: reversePromptModel,
-		Messages: []volcengineChatMessage{
-			{Role: "system", Content: systemPrompt},
-			{Role: "user", Content: userContent},
+	chatReq := geminiGenerateContentRequest{
+		Contents: []geminiContent{
+			{
+				Parts: []geminiPart{
+					{
+						Text: systemPrompt + "\n\n请分析这张图片，反推出可以生成该图片的提示词。",
+					},
+					{
+						InlineData: &geminiInlineData{
+							MimeType: mimeType,
+							Data:     b64Data,
+						},
+					},
+				},
+			},
 		},
 	}
 
@@ -229,12 +257,11 @@ func callReversePromptAPI(req ReversePromptRequest) (string, struct {
 		return "", emptyUsage, fmt.Errorf("marshal request: %w", err)
 	}
 
-	endpoint := "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
+	endpoint := "https://generativelanguage.googleapis.com/v1beta/models/" + reversePromptModel + ":generateContent?key=" + apiKey
 	httpReq, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(bodyBytes))
 	if err != nil {
 		return "", emptyUsage, fmt.Errorf("create request: %w", err)
 	}
-	httpReq.Header.Set("Authorization", "Bearer "+apiKey)
 	httpReq.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{Timeout: 60 * time.Second}
@@ -249,25 +276,25 @@ func callReversePromptAPI(req ReversePromptRequest) (string, struct {
 		return "", emptyUsage, fmt.Errorf("read response: %w", err)
 	}
 	if httpResp.StatusCode >= http.StatusBadRequest {
-		return "", emptyUsage, fmt.Errorf("volcengine status=%d body=%s", httpResp.StatusCode, string(respBytes))
+		return "", emptyUsage, fmt.Errorf("gemini status=%d body=%s", httpResp.StatusCode, string(respBytes))
 	}
 
-	var parsed volcengineChatResponse
+	var parsed geminiGenerateContentResponse
 	if err := json.Unmarshal(respBytes, &parsed); err != nil {
 		return "", emptyUsage, fmt.Errorf("unmarshal response: %w", err)
 	}
-	if len(parsed.Choices) == 0 {
-		return "", emptyUsage, errors.New("volcengine returned empty choices")
+	if len(parsed.Candidates) == 0 || len(parsed.Candidates[0].Content.Parts) == 0 {
+		return "", emptyUsage, errors.New("gemini returned empty response")
 	}
 
-	prompt := strings.TrimSpace(parsed.Choices[0].Message.Content)
+	prompt := strings.TrimSpace(parsed.Candidates[0].Content.Parts[0].Text)
 	if prompt == "" {
-		return "", emptyUsage, errors.New("volcengine returned empty content")
+		return "", emptyUsage, errors.New("gemini returned empty text")
 	}
 
-	emptyUsage.PromptTokens = parsed.Usage.PromptTokens
-	emptyUsage.CompletionTokens = parsed.Usage.CompletionTokens
-	emptyUsage.TotalTokens = parsed.Usage.TotalTokens
+	emptyUsage.PromptTokens = parsed.UsageMetadata.PromptTokenCount
+	emptyUsage.CompletionTokens = parsed.UsageMetadata.CandidatesTokenCount
+	emptyUsage.TotalTokens = parsed.UsageMetadata.TotalTokenCount
 
 	return prompt, emptyUsage, nil
 }
