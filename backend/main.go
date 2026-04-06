@@ -80,7 +80,8 @@ func main() {
 
 	// Serve generic local uploads if OSS is not available
 	_ = os.MkdirAll("uploads", 0755)
-	r.StaticFS("/uploads", http.Dir("uploads"))
+	apiGroup := r.Group("/api")
+	apiGroup.StaticFS("/uploads", http.Dir("uploads"))
 
 	// TASK-11: 全局 IP 限速（100 req/min/IP）
 	r.Use(api.GlobalRateLimitMiddleware())
@@ -103,7 +104,7 @@ func main() {
 		})
 	})
 
-	apiGroup := r.Group("/api")
+	// apiGroup definition was moved up to accommodate StaticFS
 	{
 		// Public
 		apiGroup.GET("/pricing", api.GetPricing)
