@@ -6,7 +6,8 @@ import {
   UserOutlined,
   FileSearchOutlined,
   CameraOutlined,
-  ReloadOutlined
+  ReloadOutlined,
+  SettingOutlined
 } from '@ant-design/icons-vue'
 import { useAdmin } from '../composables/useAdmin'
 
@@ -19,7 +20,8 @@ const collapsed = ref(false)
 const moduleMenuItems = [
   { key: 'inspirations', icon: () => h(FileSearchOutlined), label: '灵感内容审核' },
   { key: 'users', icon: () => h(UserOutlined), label: '用户列表' },
-  { key: 'generations', icon: () => h(CameraOutlined), label: '生成列表' }
+  { key: 'generations', icon: () => h(CameraOutlined), label: '生成列表' },
+  { key: 'settings', icon: () => h(SettingOutlined), label: '系统设置' }
 ]
 
 const activeMenuKey = computed(() => route.name || '')

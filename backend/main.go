@@ -194,6 +194,9 @@ func main() {
 			adminGroup.PUT("/users/:id/status", adminapi.UpdateUserStatus)
 			
 			adminGroup.GET("/generations", adminapi.ListGenerations)
+			
+			adminGroup.GET("/settings", adminapi.GetSettings)
+			adminGroup.PUT("/settings", adminapi.UpdateSetting)
 		}
 	}
 

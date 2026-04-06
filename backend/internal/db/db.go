@@ -274,6 +274,14 @@ type InspirationReviewLog struct {
 	CreatedAt      time.Time `gorm:"type:datetime;index;comment:Created at" json:"created_at"`
 }
 
+// SystemSetting stores system-wide dynamic configurations.
+type SystemSetting struct {
+	Key         string    `gorm:"primaryKey;type:varchar(50);comment:Setting Key" json:"key"`
+	Value       string    `gorm:"type:text;comment:Setting Value" json:"value"`
+	Description string    `gorm:"type:varchar(255);comment:Description" json:"description"`
+	UpdatedAt   time.Time `gorm:"type:datetime;comment:Updated at" json:"updated_at"`
+}
+
 // InitDB initializes the MySQL database connection.
 func InitDB() {
 	dbHost := os.Getenv("DB_HOST")

@@ -6,6 +6,7 @@ const AdminLayout = () => import('../views/AdminLayout.vue')
 const InspirationReview = () => import('../views/InspirationReview.vue')
 const UserList = () => import('../views/UserList.vue')
 const GenerationList = () => import('../views/GenerationList.vue')
+const Settings = () => import('../views/Settings.vue')
 
 const routes = [
   {
@@ -38,6 +39,12 @@ const routes = [
         name: 'generations',
         component: GenerationList,
         meta: { title: '生成列表', subTitle: '任务、产物和调用拦截追踪', moduleKey: 'generation_list' }
+      },
+      {
+        path: 'settings',
+        name: 'settings',
+        component: Settings,
+        meta: { title: '系统设置', subTitle: '全局配置与动态参数控制', moduleKey: 'settings' }
       }
     ]
   }

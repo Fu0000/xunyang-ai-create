@@ -44,6 +44,17 @@ type reviewSnapshot struct {
 }
 
 func isInspirationAutoApprove() bool {
+	// 1. First check the DB settings
+	var setting db.SystemSetting
+	if err := db.DB.Where("`key` = ?", "inspiration_auto_approve").First(&setting).Error; err == nil {
+		if strings.ToLower(strings.TrimSpace(setting.Value)) == "true" {
+			return true
+		} else if strings.ToLower(strings.TrimSpace(setting.Value)) == "false" {
+			return false
+		}
+	}
+
+	// 2. Fallback to env
 	raw := strings.ToLower(strings.TrimSpace(os.Getenv("INSPIRATION_AUTO_APPROVE")))
 	if raw == "" {
 		return true
