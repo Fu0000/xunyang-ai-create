@@ -70,6 +70,21 @@ export function useAdmin() {
     return data
   }
 
+  // --- Settings
+  async function getSettings() {
+    const { data } = await axios.get('/api/admin/settings', {
+      headers: adminHeaders()
+    })
+    return data
+  }
+
+  async function updateSetting(payload = {}) {
+    const { data } = await axios.put('/api/admin/settings', payload, {
+      headers: adminHeaders()
+    })
+    return data
+  }
+
   return {
     getStoredAdminToken,
     saveAdminToken,
@@ -81,6 +96,9 @@ export function useAdmin() {
     updateUserCredits,
     updateUserStatus,
 
-    listGenerations
+    listGenerations,
+
+    getSettings,
+    updateSetting
   }
 }

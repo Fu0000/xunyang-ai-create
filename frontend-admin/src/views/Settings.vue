@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { useAdmin } from '../composables/useAdmin'
 
-const { fetchWithToken } = useAdmin()
+const { getSettings, updateSetting } = useAdmin()
 
 const loading = ref(false)
 const saving = ref(false)
@@ -15,7 +15,7 @@ const settings = ref({
 const loadSettings = async () => {
   loading.value = true
   try {
-    const data = await fetchWithToken('/api/admin/settings')
+    const data = await getSettings()
     if (data && data.settings) {
       const autoApproveItem = data.settings.find(s => s.key === 'inspiration_auto_approve')
       if (autoApproveItem) {
@@ -32,12 +32,9 @@ const loadSettings = async () => {
 const toggleAutoApprove = async (checked) => {
   saving.value = true
   try {
-    await fetchWithToken('/api/admin/settings', {
-      method: 'PUT',
-      body: JSON.stringify({
-        key: 'inspiration_auto_approve',
-        value: checked ? 'true' : 'false'
-      })
+    await updateSetting({
+      key: 'inspiration_auto_approve',
+      value: checked ? 'true' : 'false'
     })
     message.success('配置已保存生效')
     settings.value.inspiration_auto_approve = checked
