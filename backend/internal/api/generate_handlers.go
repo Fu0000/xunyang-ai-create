@@ -291,7 +291,7 @@ func handleUnifiedVideoGenerate(c *gin.Context, userID uint64, req UnifiedGenera
 
 	model := req.Model
 	if model == "" {
-		model = "doubao-seedance-1-5-pro-251215"
+		model = "doubao-seedance-2-0-260128" // 默认使用 Seedance 2.0
 	}
 
 	videoProvider := provider.GetVideoProviderForModel(model)
@@ -376,6 +376,30 @@ func handleUnifiedVideoGenerate(c *gin.Context, userID uint64, req UnifiedGenera
 		}
 	}
 
+	// 提取 Seedance 2.0 多模态参考图 URL（1~9张）
+	var subjectImageURLs []string
+	if rawSubjects, ok := req.Params["subject_images"].([]interface{}); ok {
+		for _, s := range rawSubjects {
+			if url, ok := s.(string); ok && url != "" {
+				subjectImageURLs = append(subjectImageURLs, url)
+			}
+		}
+	}
+
+	// 下载多模态参考图（Seedance 2.0）
+	var subjectImageBase64s []string
+	for i, imgURL := range subjectImageURLs {
+		if i >= 9 {
+			break
+		}
+		base64Data, err := downloadImageAsBase64(imgURL)
+		if err != nil {
+			log.Printf("[Video] 下载多模态参考图 %d 失败: %v", i+1, err)
+			continue
+		}
+		subjectImageBase64s = append(subjectImageBase64s, base64Data)
+	}
+
 	result, err := videoProvider.CreateVideoTask(provider.VideoGenerateRequest{
 		Model:           model,
 		Prompt:          req.Prompt,
@@ -387,6 +411,7 @@ func handleUnifiedVideoGenerate(c *gin.Context, userID uint64, req UnifiedGenera
 		FirstFrame:      firstFrameBase64,
 		LastFrame:       lastFrameBase64,
 		ReferenceImages: refImageBase64s,
+		SubjectImages:   subjectImageBase64s, // Seedance 2.0 多模态参考图
 	})
 
 	if err != nil {
@@ -412,6 +437,7 @@ func handleUnifiedVideoGenerate(c *gin.Context, userID uint64, req UnifiedGenera
 		"ratio":         ratio,
 		"duration":      duration,
 		"generateAudio": generateAudio,
+		"subjectImages": subjectImageURLs, // Seedance 2.0 多模态参考图 URL
 	}
 	genReq := CreateGenerationRequest{
 		Type:            "video",

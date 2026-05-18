@@ -200,6 +200,193 @@ server {
 4. 推送分支 (`git push origin feature/amazing-feature`)
 5. 发起 Pull Request
 
+## 代码架构深度解析
+
+> 本节从代码层面深入剖析项目的设计决策与实现细节，适合二次开发者或希望深入理解系统的读者。
+
+### 系统整体架构
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         用户端 / 管理端                           │
+│   frontend/ (Vue3+NaiveUI)    frontend-admin/ (Vue3+AntDesign)  │
+└────────────────────┬────────────────────────────────────────────┘
+                     │ HTTP/REST (CORS)
+┌────────────────────▼────────────────────────────────────────────┐
+│                      backend/  Go + Gin                          │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────────────┐  │
+│  │   API    │  │  Auth    │  │ Payment  │  │ Background     │  │
+│  │ Handlers │  │  JWT     │  │ Linux.do │  │ Workers (poller│  │
+│  └────┬─────┘  └──────────┘  └──────────┘  │ cleanup tasks) │  │
+│       │                                     └────────────────┘  │
+│  ┌────▼──────────────────────────────────────────────────────┐  │
+│  │              Provider 抽象层 (interface.go)                │  │
+│  │  Gemini(图) │ Volcengine(图) │ GoogleVideo │ VolcVideo     │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────┐  ┌─────────────────────────────┐  │
+│  │  db/ (GORM + MySQL)      │  │  storage/ (阿里云 OSS)       │  │
+│  └──────────────────────────┘  └─────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 路由层设计
+
+`main.go` 将所有路由清晰分为四个权限层级：
+
+| 层级 | 路径前缀 | 鉴权方式 | 限速策略 |
+|------|---------|---------|---------|
+| 公开接口 | `/api/pricing`, `/api/models`, `/api/inspirations` | 无 | 全局 100 req/min/IP |
+| Auth 接口 | `/api/auth/*` | 无 | 严格 10 req/min/IP（防暴力破解） |
+| 用户接口 | `/api/user/*`, `/api/generate`, `/api/generations` | JWT Bearer Token | 全局限速 |
+| 管理接口 | `/api/admin/*` | `X-Admin-Token` 请求头 | 全局限速 |
+
+**后台 Worker（启动时注册）：**
+- `StartVideoTaskPoller()` — 轮询视频任务状态，驱动 queued → success/failed 状态机
+- `StartVerificationCleanup()` — 清理过期邮箱验证码
+- `StartGenerationCleanup()` — 清理长时间 pending 的生成记录
+- `StartAPILogCleanup()` — 定期删除 30 天前的 API 日志
+
+### 统一生成接口 `POST /api/generate`
+
+整个创作能力汇聚于单一接口，通过 `type` 字段路由：
+
+```
+UnifiedGenerate (generate_handlers.go)
+  ├── type="image"      → handleUnifiedImageGenerate
+  │     └── 后台 goroutine（有并发槽位控制）
+  ├── type="video"      → handleUnifiedVideoGenerate
+  │     └── Provider.CreateVideoTask() → 任务 ID → Poller 轮询
+  └── type="ecommerce"  → handleUnifiedEcommerceGenerate
+        └── 后台 goroutine（支持 5~15 张批量输出）
+```
+
+**图片/电商钻石扣费流程（防超扣设计）：**
+
+```
+1. 检查余额（读取用户 credits）
+2. 乐观锁扣费：UPDATE users SET credits=credits-N WHERE id=? AND credits>=N
+3. 写积分流水账本（credit_transactions）
+4. 创建 Generation 记录（status=generating）
+5. 申请并发槽位（generate_pool.go，防 goroutine 无限累积）
+6. 启动 goroutine 执行生成
+   └── 任意步骤失败 → refundCredits() 退款 + 更新记录为 failed
+```
+
+### AI Provider 抽象层
+
+`internal/provider/` 定义了两套接口，以适配图像和视频的不同调用模式：
+
+```go
+// 图像生成（同步调用）
+ImageGenerator       → GenerateImage(prompt, opts) (*ImageResult, error)
+MultiImageGenerator  → GenerateMultiImage(prompt, inputs, count, opts) → 电商多图
+
+// 视频生成（异步任务）
+VideoProvider        → CreateVideoTask(req) → TaskID
+                    → QueryVideoTask(taskID) → 状态 + 结果 URL
+                    → CalculateCredits(resolution, duration, audio) → 积分数
+```
+
+**当前接入的模型：**
+
+| 模型 ID | 文件 | 用途 |
+|---------|------|------|
+| `gemini-3-pro-image-preview` | `gemini.go` | 图像生成（默认首选） |
+| `gemini-3.1-flash-image-preview` | `gemini.go` | 图像生成（Flash 版本） |
+| `doubao-seedream-4-5` | `volcengine.go` | 图像生成 + 电商多图 |
+| `doubao-seedance-1-5-*` | `volcengine_video.go` | 视频生成 |
+| Veo 3.1（Google Video） | `google_video.go` | 视频生成 |
+
+Provider 使用注册表模式（`init()` 自动注册），`GetDefault()` 按优先级列表选择首个可用模型。
+
+### 数据模型速查
+
+```
+User                  用户信息 + 钻石余额 + 邀请码 + 签到连续天数
+CreditTransaction     积分流水账本（type: generate-cost/refund/register-gift/invite-reward/checkin/license-redeem/payment）
+Generation            统一生成历史（type: image/video，status: generating/queued/success/failed）
+InspirationPost       灵感广场 UGC 帖子（含审核状态 review_status: pending/approved/rejected）
+InspirationLike       用户点赞关系表
+InspirationTag        标签字典（带 slug + 使用计数）
+InspirationPostTag    帖子↔标签多对多关系
+InspirationReviewLog  审核操作日志（记录每次状态流转）
+PaymentOrder          支付订单（provider: linuxdo）
+License               兑换码（status: active/redeemed/disabled）
+UserNotification      站内通知（bizKey 做幂等）
+SystemSetting         系统动态 KV 配置（管理后台可实时修改）
+EmailVerification     邮箱验证码（含尝试次数，防暴力枚举）
+APILog                API 调用日志（含请求/响应体，定期清理）
+```
+
+### 数据库迁移系统
+
+项目自研了一个轻量级迁移引擎（`db/db.go:runMigrations()`），无需外部依赖：
+
+- 使用 `schema_migrations` 表追踪已执行版本
+- 按文件名字典序执行 `.sql` 文件，每次启动只跑新增文件
+- 幂等性错误（`duplicate column name`、`already exists` 等）静默跳过，兼容 MySQL < 8.0.4
+- 真正失败时调用 `log.Fatalf()` 阻止服务启动，确保数据库结构一致
+
+> 当前已有 **28 个迁移版本**，完整记录了从 License 系统 → 用户体系 → 生成统一模型 → 灵感广场 → 支付系统的演化路径。
+
+### 前端架构（用户端）
+
+**状态管理（Pinia Stores）：**
+
+| Store | 职责 |
+|-------|------|
+| `userStore` | 用户信息、JWT Token、登录状态（localStorage 持久化） |
+| `themeStore` | 明/暗/跟随系统主题（3 态切换，持久化） |
+| `localeStore` | 中英文语言切换（持久化） |
+
+**核心组件职责：**
+
+| 组件 | 大小 | 职责 |
+|------|------|------|
+| `ComposerBar.vue` | ~49KB | 创作台核心交互：图/视/电商三模式参数配置 + 图片上传 |
+| `AppSidebar.vue` | ~30KB | 左侧导航栏（含用户信息、积分显示、历史记录入口） |
+| `AuthModal.vue` | ~36KB | 注册/登录/重置密码弹窗（邮箱验证码 + OAuth 双路径） |
+| `ShareGenerationDialog.vue` | ~33KB | 作品发布到灵感广场对话框（含标签、描述配置） |
+| `PricingModal.vue` | ~22KB | 定价/充值弹窗 |
+
+**落地页（`Landing.vue`）设计要点：**
+- Hero 区使用视频轮播（3 个视频，3s 切换，淡入淡出）
+- IntersectionObserver 驱动 `.animate-on-scroll` 进入视口时触发滑入动画
+- 支持独立的语言切换器（滑块式动画）和主题切换按钮
+
+### 管理后台架构
+
+独立的轻量 SPA（无 Pinia，无复杂路由守卫），使用 Ant Design Vue。
+
+```
+AdminLayout.vue          → 侧边导航框架
+├── InspirationReview    → 灵感帖子审核（通过/拒绝，支持预览）
+├── UserList             → 用户管理（搜索、钻石调整、封禁/解冻）
+├── GenerationList       → 生成记录查看
+└── Settings             → SystemSetting KV 动态配置
+```
+
+鉴权通过 `useAdmin` composable 统一封装，每个请求自动携带 `X-Admin-Token`。
+
+### 积分（钻石）体系
+
+| 事件 | 变动 |
+|------|------|
+| 新用户注册 | +10 |
+| 每日签到 | +1（连续签到 streak 递增） |
+| 邀请新用户注册 | +10（上限 500） |
+| 兑换 License 码 | +码内余额 |
+| 线上支付 | 按套餐方案 |
+| 图像生成 1K | -1 |
+| 图像生成 2K | -2 |
+| 图像生成 4K | -4 |
+| 视频生成（按分辨率×时长） | -N（Provider 计算） |
+| 生成失败 | 自动退款 |
+
+所有变动均写入 `credit_transactions` 流水账本，可通过 `/api/user/credits/transactions` 查询。
+
+---
+
 ## 未来功能
 
 - **画布支持** — 可视化画布编辑器，支持图层操作、局部重绘与自由拼接

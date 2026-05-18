@@ -31,16 +31,19 @@ type VideoModel struct {
 
 // VideoGenerateRequest 视频生成请求（通用）
 type VideoGenerateRequest struct {
-	Model           string   `json:"model"`            // 模型ID
-	Prompt          string   `json:"prompt"`           // 提示词
-	Mode            string   `json:"mode"`             // text-to-video, first-frame, first-last-frame
-	Resolution      string   `json:"resolution"`       // 480p, 720p, 1080p, 4k
-	Ratio           string   `json:"ratio"`            // 16:9, 9:16, 1:1, 4:3, 3:4, 21:9
-	Duration        int      `json:"duration"`         // 时长秒
-	GenerateAudio   bool     `json:"generate_audio"`   // 是否生成配音
-	FirstFrame      string   `json:"first_frame"`      // 首帧图片 base64
-	LastFrame       string   `json:"last_frame"`       // 尾帧图片 base64
+	Model         string   `json:"model"`            // 模型ID
+	Prompt        string   `json:"prompt"`           // 提示词
+	Mode          string   `json:"mode"`             // text-to-video, first-frame, first-last-frame, multimodal-reference, multimodal-reference-first-frame
+	Resolution    string   `json:"resolution"`       // 480p, 720p, 1080p
+	Ratio         string   `json:"ratio"`            // 16:9, 9:16, 1:1, 4:3, 3:4, 21:9, adaptive
+	Duration      int      `json:"duration"`         // 时长秒（Seedance 2.0: 4-15s, 1.5: 4-12s）
+	GenerateAudio bool     `json:"generate_audio"`   // 是否生成配音
+	FirstFrame    string   `json:"first_frame"`      // 首帧图片 base64
+	LastFrame     string   `json:"last_frame"`       // 尾帧图片 base64
 	ReferenceImages []string `json:"reference_images"` // 参考图 base64 (Veo 3.1, 最多3张)
+	// Seedance 2.0 多模态参考模式：参考图 base64（1~9张）
+	// 官方文档确认：参考图直接放入 content 数组，无需特殊 role 字段
+	SubjectImages []string `json:"subject_images"`
 }
 
 // VideoTaskResult 创建任务结果
@@ -64,8 +67,10 @@ type VideoTaskStatusResponse struct {
 
 // 模型到服务商的映射
 var modelProviderMap = map[string]string{
-	// 火山引擎 - Seedance-1.5
-	"doubao-seedance-1-5-pro-251215": "volcengine",
+	// 火山引擎 - Seedance 系列
+	"doubao-seedance-1-5-pro-251215":  "volcengine",
+	"doubao-seedance-2-0-260128":      "volcengine", // Seedance 2.0
+	"doubao-seedance-2-0-fast-260128": "volcengine", // Seedance 2.0 Fast
 	// Google Veo 3.1
 	"veo-3.1-generate-preview": "google",
 	// 快手可灵 (未来)

@@ -12,7 +12,7 @@ import (
 	"google-ai-proxy/internal/config"
 )
 
-// VolcengineVideoProvider 火山引擎视频生成 Seedance-1.5
+// VolcengineVideoProvider 火山引擎视频生成 Seedance 系列
 type VolcengineVideoProvider struct{}
 
 // 火山引擎支持的模型
@@ -21,7 +21,20 @@ var volcengineVideoModels = []VideoModel{
 		ID:          "doubao-seedance-1-5-pro-251215",
 		Name:        "Seedance-1.5",
 		Provider:    "volcengine",
-		Description: "火山引擎视频生成",
+		Description: "火山引擎视频生成 Seedance 1.5",
+	},
+	// Seedance 2.0 系列（官方文档确认的 Model ID）
+	{
+		ID:          "doubao-seedance-2-0-260128",
+		Name:        "Seedance-2.0",
+		Provider:    "volcengine",
+		Description: "Seedance 2.0，支持多模态参考、编辑、延长视频，最长 15s",
+	},
+	{
+		ID:          "doubao-seedance-2-0-fast-260128",
+		Name:        "Seedance-2.0 Fast",
+		Provider:    "volcengine",
+		Description: "Seedance 2.0 高速版，较低延迟和成本",
 	},
 }
 
@@ -180,6 +193,43 @@ func (v *VolcengineVideoProvider) CreateVideoTask(req VideoGenerateRequest) (*Vi
 				Role: "last_frame",
 			})
 		}
+	case "multimodal-reference":
+		// Seedance 2.0 多模态参考模式：参考图直接放入 content，无需 role
+		// 官方文档：支持 1~9 张参考图
+		for i, imgBase64 := range req.SubjectImages {
+			if i >= 9 {
+				break
+			}
+			content = append(content, volcengineVideoContent{
+				Type: "image_url",
+				ImageURL: &volcengineVideoImageURL{
+					URL: "data:image/png;base64," + imgBase64,
+				},
+				// 无 role 字段：官方文档显示参考图直接放入 content 即可
+			})
+		}
+	case "multimodal-reference-first-frame":
+		// 全能参考 + 首帧组合模式（先首帧，再参考图）
+		if req.FirstFrame != "" {
+			content = append(content, volcengineVideoContent{
+				Type: "image_url",
+				ImageURL: &volcengineVideoImageURL{
+					URL: "data:image/png;base64," + req.FirstFrame,
+				},
+				Role: "first_frame",
+			})
+		}
+		for i, imgBase64 := range req.SubjectImages {
+			if i >= 9 {
+				break
+			}
+			content = append(content, volcengineVideoContent{
+				Type: "image_url",
+				ImageURL: &volcengineVideoImageURL{
+					URL: "data:image/png;base64," + imgBase64,
+				},
+			})
+		}
 	}
 
 	// 确定使用的模型（火山引擎只支持自己的模型）
@@ -209,8 +259,13 @@ func (v *VolcengineVideoProvider) CreateVideoTask(req VideoGenerateRequest) (*Vi
 	if reqBody.Duration == 0 || reqBody.Duration < 4 {
 		reqBody.Duration = 5
 	}
-	if reqBody.Duration > 12 {
-		reqBody.Duration = 12
+	// Seedance 2.0 支持最长 15s，1.5 支持最长 12s
+	maxDuration := 12
+	if req.Model == "doubao-seedance-2-0-260128" || req.Model == "doubao-seedance-2-0-fast-260128" {
+		maxDuration = 15
+	}
+	if reqBody.Duration > maxDuration {
+		reqBody.Duration = maxDuration
 	}
 
 	jsonData, err := json.Marshal(reqBody)
